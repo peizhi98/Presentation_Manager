@@ -1,0 +1,79 @@
+<div class="pl-2">
+  <input
+    type="file"
+    appReadexcel
+    (eventEmitter)="DataFromEventEmitter($event)"
+  />
+</div>
+
+<ng-container *ngIf="presentationModels.length">
+  <mat-card style="
+  width: 95%;
+  display: block;
+  margin-left:auto;
+  margin-right:auto;
+margin-top: 5px;" *ngFor="let presentation of presentationModels;let i = index">
+    <mat-card-content>
+      <div>
+        <div>
+
+          <label>Project Title: </label>
+          <mat-form-field class="w-50" appearance="fill">
+            <mat-label>Presentation Title</mat-label>
+            <input matInput [(ngModel)]="presentation.title">
+          </mat-form-field>
+
+          <button style="float: right" mat-raised-button color="primary" (click)="removeForm(i)">Remove</button>
+          <div><label>Supervisor: </label>
+            <mat-form-field class="w-50" appearance="fill">
+              <mat-label>Supervisor Um Mail</mat-label>
+              <input matInput [(ngModel)]="presentation.supervisorModel.email">
+            </mat-form-field>
+          </div>
+
+          <div>
+            <label>Student: </label>
+            <mat-form-field class="w-50" appearance="fill">
+              <mat-label>Student Siswa Mail</mat-label>
+              <input matInput [(ngModel)]="presentation.studentEmail">
+            </mat-form-field>
+          </div>
+
+          <div *ngFor="let panel of presentation.panelModels;let i=index;">
+            <label>Panel {{i + 1}}: </label>
+            <mat-form-field class="w-50" appearance="fill">
+              <mat-label>Panel UM Mail</mat-label>
+              <input matInput [(ngModel)]="panel.email">
+            </mat-form-field>
+            <button style="margin-left: 10px; margin-bottom: 10px;" mat-raised-button color="primary"
+                    (click)="removePanel(presentation.panelModels,i)">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+          <button mat-raised-button color="primary"
+                  (click)="addPanel(presentation)">
+            Add a Panel
+          </button>
+
+        </div>
+      </div>
+    </mat-card-content>
+
+  </mat-card>
+  <mat-card style="margin-top: 10px;">
+    <p align="center">
+      <button mat-raised-button color="primary" (click)="addForm()">Add Another Presentation</button>
+    </p>
+  </mat-card>
+
+
+  <p p class="pt-1 pr-2" align="right">
+    <button mat-raised-button color="primary" (click)="save()">Confirm and Save</button>
+  </p>
+
+
+</ng-container>
+
+
+
+

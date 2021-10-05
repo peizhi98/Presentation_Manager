@@ -1,0 +1,28 @@
+<!--<ng-container *ngIf=!auth()>-->
+<!--  <div style="background-color: #4056A1;height: 100vh;">-->
+
+<!--    <app-login></app-login>-->
+
+<!--  </div>-->
+<!--</ng-container>-->
+
+
+<mat-toolbar color="primary" *ngIf=isAuth()>
+  <div class="spacer"></div>
+  <div >
+    <a mat-button [routerLink]="routeConstant.SCHEDULE" routerLinkActive="router-link-active">Schedule</a>
+    <a mat-button [routerLink]="routeConstant.AVAILABILITY" routerLinkActive="router-link-active">Availability</a>
+  </div>
+  <!--  <button mat-button color="primary" [routerLink]="routeConstant.SCHEDULE">-->
+  <!--    <div style="color: white">Schedule</div>-->
+  <!--  </button>-->
+  <!--  <button mat-button color="primary" [routerLink]="routeConstant.AVAILABILITY">-->
+  <!--    <div style="color: white">Availability</div>-->
+  <!--  </button>-->
+  <button mat-button color="primary" (click)="logout()">
+    <div style="color: white">Logout</div>
+  </button>
+</mat-toolbar>
+<mat-progress-bar [mode]="progressBarMode" value="0"></mat-progress-bar>
+<router-outlet></router-outlet>
+

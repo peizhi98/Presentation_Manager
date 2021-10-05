@@ -1,0 +1,22 @@
+<mat-card>
+
+  <mat-card-content>
+    <div>
+          Title: {{presentationModel.title}}
+    </div>
+    <div>
+        Supervisor: {{presentationModel.supervisorId}}
+    </div>
+    <div>
+      Student: {{presentationModel.studentEmail}}
+    </div>
+    <div>Panel: <ng-container *ngIf="!presentationModel.panelModels">
+      -
+    </ng-container></div>
+
+    <div *ngFor="let panel of presentationModel.panelModels; let i = index">
+      Panel {{i+1}}: {{panel.email}}
+    </div>
+  </mat-card-content>
+
+</mat-card>
