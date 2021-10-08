@@ -38,17 +38,53 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     @Override
     public List<AvailabilityModel> addEditAndDeleteAuthUserAvailabilities(List<AvailabilityModel> updatedAvailabilities) {
         CustomUserDetails authUserDetails = authService.getAuthUser();
-        List<AvailabilityBean> availabilityBeans = new ArrayList<>();
+        List<AvailabilityBean> existingAvailabilities = this.availabilityRepo.findAvailabilityBeansByUserId(authUserDetails.getId());
+
         if (updatedAvailabilities != null) {
+            if (existingAvailabilities != null) {
+                compareModelsAndDeleteBeans(existingAvailabilities, updatedAvailabilities);
+            }
             for (AvailabilityModel availabilityModel : updatedAvailabilities) {
-                AvailabilityBean availabilityBean = new AvailabilityBean();
+                AvailabilityBean availabilityBean;
+                if (availabilityModel.getId() != null) {
+                    availabilityBean = this.availabilityRepo.getById(availabilityModel.getId());
+                } else {
+                    availabilityBean = new AvailabilityBean();
+                }
                 availabilityBean.setStartTime(availabilityModel.getStartTime());
                 availabilityBean.setEndTime(availabilityModel.getEndTime());
                 availabilityBean.setUserId(authUserDetails.getId());
-                availabilityBeans.add(availabilityBean);
+                existingAvailabilities.add(availabilityBean);
             }
         }
-        this.availabilityRepo.saveAll(availabilityBeans);
+        this.availabilityRepo.saveAll(existingAvailabilities);
         return updatedAvailabilities;
+    }
+
+    private void compareModelsAndDeleteBeans(List<AvailabilityBean> availabilityBeans, List<AvailabilityModel> availabilityModels) {
+        if (availabilityBeans != null) {
+            List<AvailabilityBean> availabilityBeansCopy = new ArrayList<>(availabilityBeans);
+            for (AvailabilityBean availabilityBean : availabilityBeansCopy) {
+                if (!findBeanFromModelsById(availabilityBean, availabilityModels)) {
+                    availabilityBeans.remove(availabilityBeans.indexOf(availabilityBean));
+                    this.deleteAvailabilityBeanById(availabilityBean.getId());
+                }
+            }
+        }
+
+    }
+
+    private boolean findBeanFromModelsById(AvailabilityBean availabilityBean, List<AvailabilityModel> availabilityModels) {
+        if (availabilityModels != null) {
+            for (AvailabilityModel availabilityModel : availabilityModels) {
+                if (availabilityBean.getId() == availabilityModel.getId())
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public void deleteAvailabilityBeanById(Integer id) {
+        this.availabilityRepo.deleteById(id);
     }
 }

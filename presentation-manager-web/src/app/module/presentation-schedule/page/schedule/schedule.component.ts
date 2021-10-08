@@ -1,13 +1,11 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ScheduleService} from '../../../../service/schedule.service';
-import {Select, Store} from '@ngxs/store';
-import {ActivatedRoute} from '@angular/router';
+import {Store} from '@ngxs/store';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ScheduleModel} from '../../../../model/schedule.model';
 import {Constant} from '../../../../../assets/constant/app.constant';
-import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
-import {ChangeContentTitle, ViewPresentation} from '../../../../store/schedule/schedule.action';
-import {GeneralComponent} from '../../component/general/general.component';
+import {RouteConstant} from '../../../../../assets/constant/route.contant';
+import {SetScheduleId} from '../../../../store/schedule/schedule.action';
 
 @Component({
   selector: 'app-schedule',
@@ -15,32 +13,55 @@ import {GeneralComponent} from '../../component/general/general.component';
   styleUrls: ['./schedule.component.css']
 })
 export class ScheduleComponent implements OnInit {
+  navLinks = [];
+  activeLinkIndex = -1;
   scheduleModel: ScheduleModel = new ScheduleModel();
   loading = true;
   contentTitle = '';
-  general = false;
-  addPresentation = false;
-  viewPresentation = false;
   scheduleId: number;
 
-
-  @Select(ScheduleState.getContentTitle)
-  contentTitle$: Observable<string>;
-
-  @ViewChild(GeneralComponent, {static: false}) generalComponent: GeneralComponent;
-
   constructor(private scheduleService: ScheduleService,
-              private activatedRoute: ActivatedRoute, private store: Store) {
+              private activatedRoute: ActivatedRoute, private store: Store, private router: Router) {
+    this.navLinks = [
+      {
+        label: 'Presentation',
+        link: RouteConstant.PRESENTATION,
+        index: 0
+      }, {
+        label: 'Timetable',
+        link: RouteConstant.TIMETABLE,
+        index: 1
+      }, {
+        label: 'Evaluation Form',
+        link: './form',
+        index: 2
+      },
+      {
+        label: 'Evaluation Report',
+        link: './report',
+        index: 3
+      },
+      {
+        label: 'Details',
+        link: './details',
+        index: 4
+      },
+      {
+        label: 'Add',
+        link: RouteConstant.ADD_PRESENTATION,
+        index: 5
+      },
+    ];
   }
 
   ngOnInit(): void {
-    // const scheduleId = this.store.selectSnapshot(ScheduleState.getScheduleId);
-    this.contentTitle$.subscribe(state => {
-      this.contentTitle = state;
+    this.router.events.subscribe((res) => {
+      this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
     });
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+    this.activatedRoute.params.subscribe(params => {
+      if (params) {
         this.scheduleId = params.id;
+        this.store.dispatch(new SetScheduleId(this.scheduleId));
         this.scheduleService.getSchedule(this.scheduleId).subscribe(resp => {
           if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
             this.scheduleModel = resp.data;
@@ -50,31 +71,6 @@ export class ScheduleComponent implements OnInit {
         });
       }
     });
-  }
-
-  switchGeneral(): void {
-    if (this.general) {
-      this.generalComponent.switchGeneral();
-    }
-    this.store.dispatch(new ChangeContentTitle('General'));
-    this.addPresentation = false;
-    this.general = true;
-    this.viewPresentation = false;
-
-  }
-
-  switchAddPresentation(): void {
-    this.store.dispatch(new ChangeContentTitle('Add Presentation'));
-    this.addPresentation = true;
-    this.general = false;
-    this.viewPresentation = false;
-  }
-
-  switchViewPresentation(presentationId: number): void {
-    this.store.dispatch(new ViewPresentation(presentationId));
-    this.addPresentation = false;
-    this.viewPresentation = true;
-    this.general = false;
   }
 
 }

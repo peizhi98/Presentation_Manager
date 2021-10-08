@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Constant} from '../../assets/constant/app.constant';
 import {HttpClient} from '@angular/common/http';
-import {EvaluationType} from '../model/evaluation-form.model';
 import {Observable} from 'rxjs';
 import {ResponseModel} from '../model/response.model';
 import {AvailabilityModel} from '../model/availability.model';

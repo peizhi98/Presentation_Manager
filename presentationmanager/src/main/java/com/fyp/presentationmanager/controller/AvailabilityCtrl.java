@@ -1,6 +1,5 @@
 package com.fyp.presentationmanager.controller;
 
-import com.fyp.presentationmanager.model.EvaluationFormModel;
 import com.fyp.presentationmanager.model.ResponseModel;
 import com.fyp.presentationmanager.model.availability.AvailabilityModel;
 import com.fyp.presentationmanager.service.availability.AvailabilityService;
@@ -14,10 +13,16 @@ import java.util.List;
 public class AvailabilityCtrl {
     @Autowired
     private AvailabilityService availabilityService;
+
     @PostMapping(value = "/add-edit-delete")
     private ResponseModel<List<AvailabilityModel>> addEditAndDeleteAvailabilities(@RequestBody List<AvailabilityModel> availabilityModels) {
         ResponseModel<List<AvailabilityModel>> responseModel = new ResponseModel();
-        responseModel.success(availabilityService.addEditAndDeleteAuthUserAvailabilities(availabilityModels));
+        try {
+            responseModel.success(availabilityService.addEditAndDeleteAuthUserAvailabilities(availabilityModels));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
         return responseModel;
 
     }
@@ -25,7 +30,13 @@ public class AvailabilityCtrl {
     @GetMapping(value = "/get")
     private ResponseModel<List<AvailabilityModel>> getAvailabilities() {
         ResponseModel<List<AvailabilityModel>> responseModel = new ResponseModel();
-        responseModel.success(availabilityService.getAuthUserAvailabilities());
+        try{
+            responseModel.success(availabilityService.getAuthUserAvailabilities());
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+
         return responseModel;
 
     }

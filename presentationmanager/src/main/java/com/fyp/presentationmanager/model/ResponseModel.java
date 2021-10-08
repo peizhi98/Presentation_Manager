@@ -17,25 +17,30 @@ public class ResponseModel<T> {
 
     private String message;
 
-    public void success(T data){
-        this.data=data;
-        this.status=ResponseStatus.SUCCESS;
+    public void success(T data) {
+        this.data = data;
+        this.status = ResponseStatus.SUCCESS;
     }
 
-    public void success(T data,String message){
-        this.data=data;
-        this.status=ResponseStatus.SUCCESS;
-        this.message=message;
-    }
-    public void failed(T data){
-        this.data=data;
-        this.status=ResponseStatus.FAILED;
+    public void success(T data, String message) {
+        this.data = data;
+        this.status = ResponseStatus.SUCCESS;
+        this.message = message;
     }
 
-    public void failed(T data,String message){
-        this.data=data;
-        this.status=ResponseStatus.FAILED;
-        this.message=message;
+    public void failed() {
+        this.status = ResponseStatus.FAILED;
+    }
+
+    public void failed(T data) {
+        this.data = data;
+        this.status = ResponseStatus.FAILED;
+    }
+
+    public void failed(T data, String message) {
+        this.data = data;
+        this.status = ResponseStatus.FAILED;
+        this.message = message;
     }
 
 }

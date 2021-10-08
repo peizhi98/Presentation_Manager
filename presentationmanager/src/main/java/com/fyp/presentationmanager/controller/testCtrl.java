@@ -5,6 +5,7 @@ import com.fyp.presentationmanager.service.EvaluationFormService;
 import com.fyp.presentationmanager.service.PresentationService;
 import com.fyp.presentationmanager.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,8 +25,16 @@ public class testCtrl {
 
     @GetMapping(value = "test")
     public ResponseModel<String> test(@RequestParam String id) {
-        ResponseModel<String> response = new ResponseModel<>();
-        response.success(id);
+        ResponseModel<String> responseModel = new ResponseModel<>();
+        responseModel.success(id);
+
+
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
 //        evaluationFormService.addNewEvaluationForm(new EvaluationFormModel());
 //        ScheduleModel scheduleModel = new ScheduleModel(
 //                null,
@@ -39,6 +48,6 @@ public class testCtrl {
 //                null,
 //                null);
 //        scheduleService.addOrEditSchedule(scheduleModel);
-        return response;
+        return responseModel;
     }
 }

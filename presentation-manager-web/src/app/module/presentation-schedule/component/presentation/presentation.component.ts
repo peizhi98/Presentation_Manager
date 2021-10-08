@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {PresentationService} from '../../../../service/presentation.service';
-import {ChangeContentTitle} from '../../../../store/schedule/schedule.action';
 import {Select, Store} from '@ngxs/store';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
 import {Observable} from 'rxjs';
@@ -29,7 +28,6 @@ export class PresentationComponent implements OnInit {
           .getPresentation(id)
           .subscribe(resp => {
             this.presentationModel = resp.data;
-            this.store.dispatch(new ChangeContentTitle(this.presentationModel.title));
             console.log(resp);
           });
       }

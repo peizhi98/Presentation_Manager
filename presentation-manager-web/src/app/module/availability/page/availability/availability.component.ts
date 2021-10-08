@@ -15,6 +15,8 @@ import {isNullOrUndefined} from '@syncfusion/ej2-base';
 import {AvailabilityDisplayModel, AvailabilityModel} from '../../../../model/availability.model';
 import {AvailabilityService} from '../../../../service/availability.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
+import {Store} from '@ngxs/store';
+import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 
 @Component({
   selector: 'app-availability',
@@ -33,7 +35,7 @@ export class AvailabilityComponent implements OnInit {
   public eventSettings: EventSettingsModel;
   public slotData: AvailabilityDisplayModel = new AvailabilityDisplayModel(new AvailabilityModel());
 
-  constructor(private availabilityService: AvailabilityService) {
+  constructor(private availabilityService: AvailabilityService, private store: Store, private dialogUtil: LoadingDialogUtil) {
   }
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export class AvailabilityComponent implements OnInit {
     // }
     // this.eventSettings.dataSource = this.availabilityModels;
     // console.log(this.eventSettings.dataSource);
-
+    console.log('sdfase');
 
     this.availabilityService.getAvailabilities().subscribe(resp => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
@@ -108,9 +110,13 @@ export class AvailabilityComponent implements OnInit {
   }
 
   addSlotData(): void {
-    this.slotData.schedulerId = this.scheduleObj.getEventMaxID();
-    this.scheduleObj.addEvent(this.slotData);
-    this.scheduleObj.closeQuickInfoPopup();
+    console.log(this.slotData);
+    if (this.slotData.startTime && this.slotData.endTime) {
+      this.slotData.schedulerId = this.scheduleObj.getEventMaxID();
+      this.scheduleObj.addEvent(this.slotData);
+      this.scheduleObj.closeQuickInfoPopup();
+    }
+
   }
 
   deleteSelectedEvent(): void {
@@ -131,10 +137,12 @@ export class AvailabilityComponent implements OnInit {
 
   saveAvailabilities(): void {
     console.log(this.eventSettings.dataSource);
+    const dialogRef = this.dialogUtil.openLoadingDialog('Saving changes...');
     this.availabilityService.addEditAndDeleteAvailabilities(this.eventSettings.dataSource as AvailabilityModel[]).subscribe(resp => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
         console.log('aaaaaaaaa');
       }
+      dialogRef.close();
     });
   }
 

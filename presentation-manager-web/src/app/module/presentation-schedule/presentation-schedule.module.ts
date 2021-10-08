@@ -9,13 +9,14 @@ import {ScheduleComponent} from './page/schedule/schedule.component';
 import {AddPresentationComponent} from './component/add-presentation/add-presentation.component';
 import {ReadexcelDirective} from '../../../assets/directive/read-excel.directive';
 import {EvaluationCriteriaComponent} from '../../component/evaluation-criteria/evaluation-criteria.component';
-import {GeneralComponent} from './component/general/general.component';
 import {PresentationComponent} from './component/presentation/presentation.component';
 import {PresentationListComponent} from './component/presentation-list/presentation-list.component';
 import {
-  DayService, DragAndDropService,
+  DayService,
+  DragAndDropService,
   MonthAgendaService,
-  MonthService, ResizeService,
+  MonthService,
+  ResizeService,
   ScheduleAllModule,
   WeekService,
   WorkWeekService,
@@ -31,7 +32,6 @@ console.log('schedule');
     AddPresentationComponent,
     ReadexcelDirective,
     EvaluationCriteriaComponent,
-    GeneralComponent,
     PresentationComponent,
     PresentationListComponent
   ],
@@ -42,7 +42,6 @@ console.log('schedule');
     AddPresentationComponent,
     ReadexcelDirective,
     EvaluationCriteriaComponent,
-    GeneralComponent,
     PresentationComponent,
     PresentationListComponent
   ],

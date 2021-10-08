@@ -11,19 +11,13 @@ import {AuthInterceptor} from './util/auth.interceptor';
 import {AuthState} from './store/auth/auth.store';
 import {AppState} from './store/app/app.store';
 import {SharedModule} from './module/shared.module';
-import {
-  AgendaService,
-  DayService, ExcelExportService,
-  MonthAgendaService,
-  MonthService,
-  TimelineViewsService,
-  WeekService,
-  WorkWeekService
-} from '@syncfusion/ej2-angular-schedule';
+import {LoadingDialogComponent} from './component/loading-dialog/loading-dialog.component';
+import {ErrorHandlingInterceptor} from './util/error-handling.interceptor';
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoadingDialogComponent,
   ],
   imports: [
     SharedModule,
@@ -35,6 +29,7 @@ import {
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorHandlingInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
 })

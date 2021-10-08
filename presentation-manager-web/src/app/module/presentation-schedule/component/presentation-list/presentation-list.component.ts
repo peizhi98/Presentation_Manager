@@ -1,10 +1,16 @@
-import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {PresentationModel} from '../../../../model/presentation/presentation.model';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {PresentationService} from '../../../../service/presentation.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
+import {ActivatedRoute} from '@angular/router';
+import {RouteConstant} from '../../../../../assets/constant/route.contant';
+import {Select} from '@ngxs/store';
+import {Observable} from 'rxjs';
+import {ScheduleState} from '../../../../store/schedule/schedule.store';
+import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 
 @Component({
   selector: 'app-presentation-list',
@@ -12,23 +18,31 @@ import {Constant} from '../../../../../assets/constant/app.constant';
   styleUrls: ['./presentation-list.component.css']
 })
 export class PresentationListComponent implements OnInit {
-  @Input() scheduleId: number;
+  // @Input() scheduleId: number;
+  routeConstant = RouteConstant;
   presentationModels = [];
   dataSource: MatTableDataSource<PresentationModel>;
   displayedColumns = ['number', 'studentName', 'title', 'sv'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
   @ViewChild(MatSort, {static: false}) sort: MatSort;
 
-  constructor(private cdr: ChangeDetectorRef, private presentationService: PresentationService) {
+  @Select(ScheduleState.getScheduleId)
+  scheduleId$: Observable<number>;
+
+  constructor(private cdr: ChangeDetectorRef, private activatedRoute: ActivatedRoute, private loadingUtil: LoadingDialogUtil, private presentationService: PresentationService) {
   }
 
   ngOnInit(): void {
-    this.presentationService.getPresentations(this.scheduleId).subscribe(res => {
-      if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
-        this.presentationModels = res.data;
-        this.initTable();
-      }
+    const loadingRef = this.loadingUtil.openLoadingDialog();
+    this.scheduleId$.subscribe(id => {
+      console.log(id);
+      this.presentationService.getPresentations(id).subscribe(res => {
+        if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
+          this.presentationModels = res.data;
+          this.initTable();
+          loadingRef.close();
+        }
+      });
     });
   }
 
@@ -47,6 +61,7 @@ export class PresentationListComponent implements OnInit {
       return dataStr.indexOf(filter) !== -1;
     };
   }
+
   // custom sorting accessor, MatTableDataSource use the column name to sort by default
   initSortingAccessor(): void {
     this.dataSource.sortingDataAccessor = (item, property) => {

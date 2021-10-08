@@ -32,9 +32,17 @@ margin-top: 5px;" *ngFor="let presentation of presentationModels;let i = index">
           </div>
 
           <div>
-            <label>Student: </label>
+            <label>Student Name: </label>
             <mat-form-field class="w-50" appearance="fill">
-              <mat-label>Student Siswa Mail</mat-label>
+              <mat-label>Student Name</mat-label>
+              <input matInput [(ngModel)]="presentation.studentName">
+            </mat-form-field>
+          </div>
+
+          <div>
+            <label>Student Email: </label>
+            <mat-form-field class="w-50" appearance="fill">
+              <mat-label>Student Email</mat-label>
               <input matInput [(ngModel)]="presentation.studentEmail">
             </mat-form-field>
           </div>

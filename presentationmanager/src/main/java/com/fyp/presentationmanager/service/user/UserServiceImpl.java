@@ -19,4 +19,9 @@ public class UserServiceImpl implements UserService {
         this.userRepo.save(userBean);
         return userBean.getId();
     }
+
+    @Override
+    public UserBean getUserById(Integer id) {
+        return this.userRepo.getById(id);
+    }
 }

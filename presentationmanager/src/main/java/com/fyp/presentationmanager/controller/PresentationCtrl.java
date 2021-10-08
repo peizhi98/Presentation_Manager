@@ -17,7 +17,12 @@ public class PresentationCtrl {
     @PostMapping(value = "/add-presentation-list")
     private ResponseModel<List<PresentationModel>> addPresentationList(@RequestBody List<PresentationModel> presentationModelList) {
         ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
-        responseModel.success(presentationService.addPresentationList(presentationModelList));
+        try {
+            responseModel.success(presentationService.addPresentationList(presentationModelList));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
         return responseModel;
 
     }
@@ -25,7 +30,12 @@ public class PresentationCtrl {
     @GetMapping(value = "/get-presentation")
     private ResponseModel<PresentationModel> addPresentationList(@RequestParam Integer id) {
         ResponseModel<PresentationModel> responseModel = new ResponseModel();
-        responseModel.success(presentationService.getPresentation(id));
+        try {
+            responseModel.success(presentationService.getPresentation(id));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
         return responseModel;
 
     }
@@ -33,7 +43,12 @@ public class PresentationCtrl {
     @GetMapping(value = "/get-presentations")
     private ResponseModel<List<PresentationModel>> getPresentations(@RequestParam Integer scheduleId) {
         ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
-        responseModel.success(presentationService.getPresentationList(scheduleId));
+        try {
+            responseModel.success(presentationService.getPresentationList(scheduleId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
         return responseModel;
 
     }

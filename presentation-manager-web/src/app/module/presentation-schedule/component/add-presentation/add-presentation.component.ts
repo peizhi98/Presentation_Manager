@@ -1,9 +1,13 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PresentationModel} from '../../../../model/presentation/presentation.model';
 import {PresentationService} from '../../../../service/presentation.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {PanelModel} from '../../../../model/role/panel.model';
+import {Select} from '@ngxs/store';
+import {ScheduleState} from '../../../../store/schedule/schedule.store';
+import {Observable} from 'rxjs';
+import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 
 @Component({
   selector: 'app-add-presentation',
@@ -12,12 +16,18 @@ import {PanelModel} from '../../../../model/role/panel.model';
 })
 export class AddPresentationComponent implements OnInit {
   presentationModels: PresentationModel[] = [];
-  @Input() scheduleId: number;
+  scheduleId: number;
 
-  constructor(private presentationService: PresentationService, private matSnackBar: MatSnackBar) {
+  @Select(ScheduleState.getScheduleId)
+  scheduleId$: Observable<number>;
+
+  constructor(private presentationService: PresentationService, private loadingUtil: LoadingDialogUtil, private matSnackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
+    this.scheduleId$.subscribe(id => {
+      this.scheduleId = id;
+    });
     this.addForm();
   }
 
@@ -54,6 +64,7 @@ export class AddPresentationComponent implements OnInit {
   }
 
   save(): void {
+    const loadingRef = this.loadingUtil.openLoadingDialog();
     console.log(this.presentationModels);
     this.presentationService.addPresentationList(this.presentationModels).subscribe(resp => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
@@ -63,6 +74,7 @@ export class AddPresentationComponent implements OnInit {
       } else {
         this.openSnackBar('Failed to Add Presentations.');
       }
+      loadingRef.close();
     });
   }
 

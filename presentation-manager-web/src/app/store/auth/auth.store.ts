@@ -1,4 +1,4 @@
-import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
+import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
 import {UserModel} from '../../model/user.model';
 import {Login, Logout, SetUser} from './auth.action';

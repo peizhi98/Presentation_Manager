@@ -16,12 +16,17 @@ public class ScheduleCtrl {
 
     @PostMapping(value = "/add-edit")
     private ResponseModel<ScheduleModel> addOrEditSchedule(@RequestBody ScheduleModel scheduleModel) {
-
         ResponseModel<ScheduleModel> responseModel = new ResponseModel();
-        responseModel.success(this.scheduleService.addOrEditSchedule(scheduleModel));
+        try {
+            responseModel.success(this.scheduleService.addOrEditSchedule(scheduleModel));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
         return responseModel;
 
     }
+
     @GetMapping(value = "get-schedules")
     public ResponseModel<List<ScheduleModel>> getSchedules() {
         ResponseModel<List<ScheduleModel>> response = new ResponseModel<>();
