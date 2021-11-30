@@ -3,6 +3,11 @@ import {Observable} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {ResponseModel} from '../model/response.model';
 
+export class TimeRange {
+  startTime: Date;
+  endTime: Date;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +19,13 @@ export class TestService {
   }
 
   test(): Observable<ResponseModel<string>> {
+    console.log('testing...');
     const params = new HttpParams().set('id', 'aaaaaaaaaa');
-    return this.http.get<ResponseModel<string>>(this.serverUrl + this.testUrl + 'test', {params});
+    const timeRange: TimeRange = new TimeRange();
+    timeRange.startTime = new Date();
+    timeRange.endTime = new Date();
+    timeRange.endTime.setHours(new Date().getHours() + 1);
+    console.log(timeRange);
+    return this.http.post<ResponseModel<string>>(this.serverUrl + this.testUrl + 'test', timeRange);
   }
 }

@@ -10,7 +10,7 @@ export class LoadingDialogUtil {
   openLoadingDialog(message?: string): MatDialogRef<LoadingDialogComponent> {
     return this.dialog.open(LoadingDialogComponent, {
       disableClose: true,
-      data: message
+      data: message,
     });
   }
 }

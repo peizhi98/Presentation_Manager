@@ -1,14 +1,14 @@
 package com.fyp.presentationmanager.config.request;
 
-import com.fyp.presentationmanager.enums.PresentationType;
+import com.fyp.presentationmanager.enums.PresentationMode;
 import org.springframework.core.convert.converter.Converter;
 
-public class StringToPresentationTypeConvertor implements Converter<String, PresentationType> {
+public class StringToPresentationTypeConvertor implements Converter<String, PresentationMode> {
     @Override
-    public PresentationType convert(String source) {
+    public PresentationMode convert(String source) {
         try {
 
-            return PresentationType.valueOf(source.toUpperCase());
+            return PresentationMode.valueOf(source.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
         }

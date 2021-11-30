@@ -23,11 +23,16 @@ public class ScheduleData {
         availableScheduleTimeSlots = new ArrayList<>();
         presentationDuration = 15;
 
-        TimeRange timeRange = new TimeRange(new Date(2021, 1, 1, 9, 0), new Date(2021, 1, 1, 10, 0));
+        TimeRange timeRange = new TimeRange(new Date(2021, 1, 1, 9, 0),
+                new Date(2021, 1, 1, 10, 0));
         availableScheduleTimeSlots.add(timeRange);
         timeRange = new TimeRange(new Date(2021, 1, 1, 12, 0),
-                new Date(2021, 1, 1, 13, 15));
+                new Date(2021, 1, 1, 13, 0));
         availableScheduleTimeSlots.add(timeRange);
+//        timeRange = new TimeRange(new Date(2021, 1, 1, 14, 0),
+//                new Date(2021, 1, 1, 15, 0));
+//        availableScheduleTimeSlots.add(timeRange);
+
 
         List<TimeRange> panelAvailableTime = new ArrayList<>();
         timeRange = new TimeRange(new Date(2021, 1, 1, 12, 0),

@@ -9,13 +9,15 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
     Integer id;
+    String name;
     String email;
     String password;
 
 
-    public CustomUserDetails(Integer id,String email, String password) {
+    public CustomUserDetails(Integer id, String name, String email, String password) {
         this.id = id;
-        this.email=email;
+        this.name = name;
+        this.email = email;
         this.password = password;
     }
 
@@ -23,12 +25,17 @@ public class CustomUserDetails implements UserDetails {
 
         return new CustomUserDetails(
                 userBean.getId(),
+                userBean.getName(),
                 userBean.getEmail(),
                 userBean.getPassword());
     }
 
     public Integer getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

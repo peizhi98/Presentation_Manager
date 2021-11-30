@@ -2,31 +2,37 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {CreateScheduleComponent} from './page/create-schedule/create-schedule.component';
 import {ScheduleComponent} from './page/schedule/schedule.component';
-import {HomeComponent} from './page/home/home.component';
-import {PresentationListComponent} from './component/presentation-list/presentation-list.component';
+import {SchedulesViewComponent} from './page/schedules-view/schedules-view.component';
+import {PresentationsViewComponent} from './component/presentations-view/presentations-view.component';
 import {RouteConstant} from '../../../assets/constant/route.contant';
 import {AddPresentationComponent} from './component/add-presentation/add-presentation.component';
+import {TimetableComponent} from './component/timetable/timetable.component';
+import {EvaluationCriteriaComponent} from './component/evaluation-criteria/evaluation-criteria.component';
+import {PresentationComponent} from './component/presentation/presentation.component';
 
 const routes: Routes = [
   {
     path: '', component: null,
     children: [
-      {path: '', component: HomeComponent},
+      {path: '', component: SchedulesViewComponent},
+      {path: RouteConstant.CREATE, component: CreateScheduleComponent},
       {
-        path: RouteConstant.SCHEDULE, component: ScheduleComponent, children: [
-          {path: '', redirectTo: RouteConstant.PRESENTATION},
+        path: RouteConstant.SCHEDULE, component: ScheduleComponent,
+        children: [
           {
-            path: RouteConstant.PRESENTATION, component: null,
+            path: RouteConstant.PRESENTATION_VIEW, component: null,
             children: [
-              {path: '', component: PresentationListComponent},
+              {path: '', component: PresentationsViewComponent},
+              {path: RouteConstant.PRESENTATION, component: PresentationComponent},
               {path: RouteConstant.ADD_PRESENTATION, component: AddPresentationComponent},
             ]
           },
 
-          {path: RouteConstant.TIMETABLE, component: PresentationListComponent},
+          {path: RouteConstant.TIMETABLE, component: TimetableComponent},
+          {path: RouteConstant.CRITERIA, component: EvaluationCriteriaComponent},
         ]
       },
-      {path: RouteConstant.CREATE, component: CreateScheduleComponent},
+
     ],
   },
 ];

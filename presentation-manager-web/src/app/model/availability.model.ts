@@ -9,7 +9,7 @@ export class UserAvailabilityModel {
   availabilityModels: AvailabilityModel[];
 }
 
-export class AvailabilityDisplayModel extends AvailabilityModel {
+export class SchedulerAvailabilityModel extends AvailabilityModel {
   subject = 'Available';
   schedulerId: number | string;
 

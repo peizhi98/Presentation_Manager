@@ -1,8 +1,11 @@
 package com.fyp.presentationmanager.controller;
 
 import com.fyp.presentationmanager.model.ResponseModel;
+import com.fyp.presentationmanager.model.auth.AuthUserModel;
 import com.fyp.presentationmanager.model.auth.AuthenticationRequest;
 import com.fyp.presentationmanager.model.auth.AuthenticationResponse;
+import com.fyp.presentationmanager.model.user.UserModel;
+import com.fyp.presentationmanager.service.auth.AuthService;
 import com.fyp.presentationmanager.util.JwtUtil;
 import com.fyp.presentationmanager.service.auth.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,8 @@ public class AuthCtrl {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
+    private AuthService authService;
+    @Autowired
     private JwtUtil jwtUtil;
 
     @PostMapping(value = "/login")
@@ -32,6 +37,18 @@ public class AuthCtrl {
         } catch (Exception e) {
             e.printStackTrace();
             responseModel.failed(new AuthenticationResponse(null));
+        }
+        return responseModel;
+    }
+
+    @GetMapping(value = "/get-auth-user")
+    private ResponseModel<UserModel> getAuthUser() {
+        ResponseModel<UserModel> responseModel = new ResponseModel();
+        try {
+            responseModel.success(this.authService.getAuthUserModel());
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed(null);
         }
         return responseModel;
     }

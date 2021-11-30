@@ -55,10 +55,17 @@ export class AuthState implements NgxsOnInit {
     this.authService.login(action.username, action.password).subscribe(resp => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
         ctx.patchState({
-          jwt: resp.data.jwt
+          jwt: resp.data.jwt,
         });
         this.saveJwtToLocal(resp.data.jwt);
         ctx.dispatch(new ProgressBarStopLoading());
+        this.authService.getAuthUser().subscribe(res => {
+          if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
+            ctx.patchState(
+              {user: res.data}
+            );
+          }
+        });
       }
     });
   }

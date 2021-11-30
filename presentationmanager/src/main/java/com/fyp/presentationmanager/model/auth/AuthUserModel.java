@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthUserModel {
     private Integer id;
+    private String name;
 }

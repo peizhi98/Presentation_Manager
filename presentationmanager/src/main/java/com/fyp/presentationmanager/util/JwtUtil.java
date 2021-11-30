@@ -18,7 +18,8 @@ import java.util.function.Function;
 public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
-    private final int EXPIRATION_DURATION_IN_MILLIS = 1000*60*60*10;//10 hours
+//    private final int EXPIRATION_DURATION_IN_MILLIS = 1000*60*60*10;//10 hours
+    private final int EXPIRATION_DURATION_IN_MILLIS = 1000*60*60*24;
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();

@@ -13,14 +13,12 @@ const SHARED_MODULE = [
 
 @NgModule({
   declarations: [
-    // [...IMPORTED_AND_EXPORTED_COMPONENTS],
   ],
   imports: [
     ...SHARED_MODULE,
   ],
   exports: [
     ...SHARED_MODULE,
-    // ...IMPORTED_AND_EXPORTED_COMPONENTS
   ]
 })
 export class SharedModule {

@@ -9,4 +9,7 @@ export class Constant {
   // ui
   public static readonly THEME_COLOR = '#4056A1';
 
+  //date
+  public static readonly TIME_FORMAT = 'dd MMM yyyy hh:mm a';
+
 }

@@ -13,11 +13,15 @@ import {AppState} from './store/app/app.store';
 import {SharedModule} from './module/shared.module';
 import {LoadingDialogComponent} from './component/loading-dialog/loading-dialog.component';
 import {ErrorHandlingInterceptor} from './util/error-handling.interceptor';
+import {UserState} from './store/user/user.store';
+import {NotFoundComponent} from './component/not-found/not-found.component';
+import {EvaluationState} from './store/evaluation/evaluation.store';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoadingDialogComponent,
+    NotFoundComponent,
   ],
   imports: [
     SharedModule,
@@ -25,7 +29,7 @@ import {ErrorHandlingInterceptor} from './util/error-handling.interceptor';
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    NgxsModule.forRoot([ScheduleState, AuthState, AppState]),
+    NgxsModule.forRoot([ScheduleState, AuthState, AppState, UserState, EvaluationState]),
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

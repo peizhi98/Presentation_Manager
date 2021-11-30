@@ -3,7 +3,7 @@ import {Constant} from '../../assets/constant/app.constant';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ResponseModel} from '../model/response.model';
-import {PresentationModel} from '../model/presentation/presentation.model';
+import {PresentationModel, PresentationScheduleModel} from '../model/presentation/presentation.model';
 
 
 @Injectable({
@@ -32,5 +32,10 @@ export class PresentationService {
     const params = new HttpParams().set('scheduleId', scheduleId.toString());
     return this.http
       .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations', {params});
+  }
+
+  schedulePresentations(presentationList: PresentationScheduleModel[]): Observable<ResponseModel<PresentationScheduleModel[]>>{
+    return this.http
+      .post<ResponseModel<PresentationScheduleModel[]>>(this.serverUrl + this.presentationUrl + 'schedule-presentations', presentationList);
   }
 }

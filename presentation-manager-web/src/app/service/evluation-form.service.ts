@@ -18,7 +18,7 @@ export class EvaluationFormService {
   }
 
   getEvaluationForm(scheduleId: number, evaluationType: EvaluationType): Observable<ResponseModel<EvaluationFormModel>> {
-    const params = new HttpParams().set('scheduleId', scheduleId.toString()).set('evaluationType', evaluationType);
+    const params = new HttpParams().set('scheduleId', scheduleId.toString()).set('evaluationType', evaluationType.toString());
     return this.http
       .get<ResponseModel<EvaluationFormModel>>(this.serverUrl + this.evaluationFormUrl + 'get-evaluation-form', {params});
   }

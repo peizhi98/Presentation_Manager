@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -54,6 +56,15 @@ public class EvaluationFormServiceImpl implements EvaluationFormService {
             evaluationFormModel.setRubricUrl(evaluationFormBean.getRubricUrl());
             List<CriteriaModel> criteriaModels = new ArrayList<>();
             if (evaluationFormBean.getCriteriaBeans() != null) {
+                Collections.sort(evaluationFormBean.getCriteriaBeans(), new Comparator<CriteriaBean>() {
+                    @Override
+                    public int compare(CriteriaBean o1, CriteriaBean o2) {
+                        if (o1.getCriteriaOrder() == o2.getCriteriaOrder()) {
+                            return 0;
+                        }
+                        return o1.getCriteriaOrder() > o2.getCriteriaOrder() ? 1 : -1;
+                    }
+                });
                 for (CriteriaBean criteriaBean : evaluationFormBean.getCriteriaBeans()) {
                     CriteriaModel criteriaModel = new CriteriaModel();
                     criteriaModel.setId(criteriaBean.getId());

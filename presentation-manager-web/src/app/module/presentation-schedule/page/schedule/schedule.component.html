@@ -1,41 +1,3 @@
-<!--<mat-sidenav-container class="h-100">-->
-<!--  <mat-sidenav style="width: 300px" mode="side" opened>-->
-<!--    <div>-->
-<!--      <button mat-button [routerLink]="'/home'"><< Back</button>-->
-<!--      <button style="float: right;" mat-button [matMenuTriggerFor]="menu">-->
-<!--        <mat-icon>more_horiz</mat-icon>-->
-<!--      </button>-->
-<!--      <mat-menu #menu="matMenu">-->
-<!--        <button mat-menu-item>View Detail</button>-->
-<!--      </mat-menu>-->
-<!--    </div>-->
-<!--    <div *ngIf="!loading" style="height: 100px;">-->
-<!--      <div class="mat-display-1 text-center">{{scheduleModel.title}}</div>-->
-
-<!--    </div>-->
-<!--    <mat-divider></mat-divider>-->
-<!--    <mat-nav-list>-->
-<!--      <button mat-list-item (click)="switchGeneral()">General</button>-->
-<!--      <button mat-list-item (click)="switchAddPresentation()">Add New Presentation</button>-->
-<!--      <ng-container *ngIf="scheduleModel&&!loading&&scheduleModel.presentationModels">-->
-<!--        <ng-container *ngFor="let p of scheduleModel.presentationModels">-->
-<!--          <a style="margin-left:30px;" mat-list-item (click)="switchViewPresentation(p.id)">{{p.title}}</a>-->
-<!--          <mat-divider></mat-divider>-->
-<!--        </ng-container>-->
-<!--      </ng-container>-->
-
-
-<!--    </mat-nav-list>-->
-<!--  </mat-sidenav>-->
-
-<!--  <mat-sidenav-content>-->
-<!--    <div class="mat-display-1 pl-2 pt-2">{{contentTitle}}</div>-->
-<!--    <app-general *ngIf="general" [scheduleId]="scheduleModel.id"></app-general>-->
-<!--    <app-add-presentation *ngIf="addPresentation" [scheduleId]="scheduleModel.id"></app-add-presentation>-->
-<!--    <app-presentation *ngIf="viewPresentation"></app-presentation>-->
-<!--  </mat-sidenav-content>-->
-<!--</mat-sidenav-container>-->
-
 <div class="pl-2 pt-1"
      style="font: 400 34px/40px Roboto, 'Helvetica Neue', sans-serif;">{{scheduleModel.title}}</div>
 <nav mat-tab-nav-bar>
@@ -48,36 +10,4 @@
   </a>
 </nav>
 <router-outlet></router-outlet>
-
-<!--<mat-tab-group>-->
-<!--  <mat-tab label="Timetable">-->
-<!--    <ng-template matTabContent>-->
-<!--      <ejs-schedule #scheduleObj width='100%' [startHour]="'9:00'" [endHour]="'18:00'">-->
-<!--        <e-views>-->
-<!--          <e-view option='Day'></e-view>-->
-<!--          <e-view option='Week'></e-view>-->
-<!--          <e-view option='Month'></e-view>-->
-<!--          <e-view option='MonthAgenda'></e-view>-->
-<!--        </e-views>-->
-<!--      </ejs-schedule>-->
-<!--    </ng-template>-->
-<!--  </mat-tab>-->
-<!--  <mat-tab label="Presentation List">-->
-<!--    <ng-template matTabContent>-->
-<!--      <app-presentation-list [scheduleId]="scheduleId"></app-presentation-list>-->
-<!--    </ng-template>-->
-<!--  </mat-tab>-->
-<!--  <mat-tab label="Evaluation Form">-->
-<!--    <ng-template matTabContent>-->
-<!--    </ng-template>-->
-<!--  </mat-tab>-->
-<!--  <mat-tab label="Evaluation Report">-->
-<!--    <ng-template matTabContent>-->
-<!--    </ng-template>-->
-<!--  </mat-tab>-->
-<!--  <mat-tab label="Details">-->
-<!--    <ng-template matTabContent>-->
-<!--    </ng-template>-->
-<!--  </mat-tab>-->
-<!--</mat-tab-group>-->
 

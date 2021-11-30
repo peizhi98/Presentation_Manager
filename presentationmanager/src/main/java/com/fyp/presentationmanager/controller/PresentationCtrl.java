@@ -1,8 +1,9 @@
 package com.fyp.presentationmanager.controller;
 
-import com.fyp.presentationmanager.model.PresentationModel;
+import com.fyp.presentationmanager.model.presentation.PresentationModel;
 import com.fyp.presentationmanager.model.ResponseModel;
-import com.fyp.presentationmanager.service.PresentationService;
+import com.fyp.presentationmanager.model.presentation.PresentationScheduleModel;
+import com.fyp.presentationmanager.service.presentation.PresentationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,19 @@ public class PresentationCtrl {
         ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
         try {
             responseModel.success(presentationService.getPresentationList(scheduleId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
+
+    }
+
+    @PostMapping(value = "/schedule-presentations")
+    private ResponseModel<List<PresentationScheduleModel>> schedulePresentations(@RequestBody List<PresentationScheduleModel> presentationModelList) {
+        ResponseModel<List<PresentationScheduleModel>> responseModel = new ResponseModel();
+        try {
+            responseModel.success(presentationService.schedulePresentations(presentationModelList));
         } catch (Exception e) {
             e.printStackTrace();
             responseModel.failed();

@@ -24,5 +24,9 @@
   </button>
 </mat-toolbar>
 <mat-progress-bar [mode]="progressBarMode" value="0"></mat-progress-bar>
-<router-outlet></router-outlet>
 
+<p class="pt-1 pr-1" align="right">
+  <button mat-raised-button color="primary" (click)="test()">Test Feature</button>
+</p>
+
+<router-outlet></router-outlet>

@@ -1,8 +1,6 @@
 package com.fyp.presentationmanager.service;
 
-import com.fyp.presentationmanager.model.PresentationModel;
 import com.fyp.presentationmanager.model.ScheduleModel;
-import com.fyp.presentationmanager.entity.PresentationBean;
 import com.fyp.presentationmanager.entity.ScheduleBean;
 import com.fyp.presentationmanager.model.auth.CustomUserDetails;
 import com.fyp.presentationmanager.repo.ScheduleRepo;
@@ -24,7 +22,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleModel addOrEditSchedule(ScheduleModel scheduleModel) {
-        CustomUserDetails customUserDetails=authService.getAuthUser();
+        CustomUserDetails customUserDetails=authService.getAuthUserDetails();
         ScheduleBean scheduleBean = new ScheduleBean(scheduleModel);
         scheduleBean.setCoordinatorId(customUserDetails.getId());
         scheduleRepo.save(scheduleBean);
@@ -34,7 +32,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleModel> findSchedulesByUser() {
-        CustomUserDetails customUserDetails=authService.getAuthUser();
+        CustomUserDetails customUserDetails=authService.getAuthUserDetails();
         List<ScheduleModel> scheduleModelList = new ArrayList<>();
         List<ScheduleBean> scheduleBeanList = this.scheduleRepo.findScheduleBeansByCoordinatorId(customUserDetails.getId());
         if (scheduleBeanList != null) {
@@ -51,7 +49,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         ScheduleModel scheduleModel = new ScheduleModel();
         if (scheduleBean != null) {
             scheduleModel.setId(scheduleBean.getId());
-            scheduleModel.setCoordinatorId(scheduleBean.getCoordinatorId());
             scheduleModel.setYear(scheduleBean.getYear());
             scheduleModel.setSem(scheduleBean.getSem());
             scheduleModel.setDuration(scheduleBean.getDuration());

@@ -1,6 +1,6 @@
 package com.fyp.presentationmanager.entity;
 
-import com.fyp.presentationmanager.enums.PresentationType;
+import com.fyp.presentationmanager.enums.PresentationMode;
 import com.fyp.presentationmanager.enums.ScheduleType;
 import com.fyp.presentationmanager.model.ScheduleModel;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "scheule")
+@Table(name = "schedule")
 public class ScheduleBean implements Serializable {
     public static final String ID = "id";
     public static final String COORDINATOR_ID = "coordinator_id";
@@ -49,7 +49,7 @@ public class ScheduleBean implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = PRESENTATION_TYPE)
-    private PresentationType presentationType;
+    private PresentationMode presentationMode;
 
     @Column(name = DURATION)
     private Integer duration;
@@ -74,11 +74,10 @@ public class ScheduleBean implements Serializable {
     }
 
     public ScheduleBean(ScheduleModel scheduleModel) {
-        this.coordinatorId = scheduleModel.getCoordinatorId();
         this.year = scheduleModel.getYear();
         this.sem = scheduleModel.getSem();
         this.title = scheduleModel.getTitle();
-        this.presentationType = scheduleModel.getPresentationType();
+        this.presentationMode = scheduleModel.getPresentationMode();
         this.scheduleType = scheduleModel.getScheduleType();
         this.duration = scheduleModel.getDuration();
     }
@@ -139,12 +138,12 @@ public class ScheduleBean implements Serializable {
         this.scheduleType = scheduleType;
     }
 
-    public PresentationType getPresentationType() {
-        return presentationType;
+    public PresentationMode getPresentationType() {
+        return presentationMode;
     }
 
-    public void setPresentationType(PresentationType presentationType) {
-        this.presentationType = presentationType;
+    public void setPresentationType(PresentationMode presentationMode) {
+        this.presentationMode = presentationMode;
     }
 
     public Date getCreateDate() {

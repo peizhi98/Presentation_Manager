@@ -31,16 +31,6 @@ console.log('availability');
   ],
   exports: [
     AvailabilityComponent
-  ],
-  providers: [
-    DayService,
-    WeekService,
-    WorkWeekService,
-    MonthService,
-    YearService,
-    MonthAgendaService,
-    DragAndDropService,
-    ResizeService
   ]
 })
 export class AvailabilityModule {

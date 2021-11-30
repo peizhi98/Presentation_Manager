@@ -1,0 +1,57 @@
+<div class="mt-1 mr-1" style="height: 50px;">
+  <div class="spacer"></div>
+  <div>
+    <button mat-raised-button (click)="save()" style="float: right;" color="primary">Save</button>
+  </div>
+</div>
+
+<mat-sidenav-container style="background-color: white">
+  <mat-sidenav style="
+  width: 15%; border: none"
+               mode="side" position="end" disableClose opened>
+    <div cdkDropList [cdkDropListData]="presentationModels" class="example-list" (cdkDropListDropped)="drop($event)">
+      <div class="example-box" *ngFor="let presentation of presentationModels;let i=index;" cdkDrag
+           (cdkDragStarted)="onCdkDragStart(presentation,i)">
+        <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+        {{presentation.title}}
+        <div *cdkDragPreview>
+          <div class="example-box">
+            <div>{{presentation.title}}</div>
+            <div>Supervisor: {{presentation.supervisorModel.name}}</div>
+            <ng-container *ngIf="presentation.panelModels">
+              <div>Panel:</div>
+              <ng-container *ngFor="let panel of presentation.panelModels">
+                <div>{{panel.name}}</div>
+              </ng-container>
+            </ng-container>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content style="
+  width: 84%;">
+    <ejs-schedule #scheduleObj cssClass='adaptive-rows' height='650px' [rowAutoHeight]='rowAutoHeight'
+                  [currentView]="currentView" [selectedDate]="selectedDate"
+                  [group]="group"
+                  [eventSettings]="eventSettings" cdkDropList [cdkDropListData]="scheduledPresentations"
+                  (cdkDropListDropped)="drop($event)" (dragStart)="onSchedulerDragStart($event)"
+                  (resizeStart)="onResizeStart($event)"
+                  (cellDoubleClick)="disablePopupOpen($event)" (cellClick)="disablePopupOpen($event)">
+
+
+      <e-resources>
+        <e-resource field='roomId' title='Room Type' [dataSource]='resourceDataSource' [allowMultiple]='allowMultiple'
+                    name='MeetingRoom' textField='text' idField='id' colorField='color'>
+        </e-resource>
+      </e-resources>
+      <e-views>
+        <e-view option="TimelineDay"></e-view>
+        <e-view option="TimelineWeek"></e-view>
+      </e-views>
+    </ejs-schedule>
+  </mat-sidenav-content>
+
+
+</mat-sidenav-container>

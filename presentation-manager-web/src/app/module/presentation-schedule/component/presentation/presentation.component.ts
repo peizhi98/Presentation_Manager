@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {PresentationService} from '../../../../service/presentation.service';
-import {Select, Store} from '@ngxs/store';
-import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
+import {Store} from '@ngxs/store';
 import {PresentationModel} from '../../../../model/presentation/presentation.model';
+import {SetCurrentPresentation} from '../../../../store/presentation/presentation.action';
+import {ActivatedRoute} from '@angular/router';
+import {Constant} from '../../../../../assets/constant/app.constant';
 
 @Component({
   selector: 'app-presentation',
@@ -13,27 +14,24 @@ import {PresentationModel} from '../../../../model/presentation/presentation.mod
 export class PresentationComponent implements OnInit {
   presentationId: number;
   presentationModel: PresentationModel;
+  timeFormat=Constant.TIME_FORMAT;
 
-
-  @Select(ScheduleState.getPresentationId)
-  presentationId$: Observable<number>;
-
-  constructor(private presentationService: PresentationService, private store: Store) {
+  constructor(private presentationService: PresentationService, private store: Store, private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    this.presentationId$.subscribe(id => {
-      if (id) {
+    this.activatedRoute.params.subscribe(params => {
+      if (params) {
+        this.presentationId = params.id;
+        this.store.dispatch(new SetCurrentPresentation(this.presentationId));
         this.presentationService
-          .getPresentation(id)
+          .getPresentation(this.presentationId)
           .subscribe(resp => {
             this.presentationModel = resp.data;
             console.log(resp);
           });
       }
-      console.log(id);
     });
-    console.log(this.presentationId);
 
   }
 

@@ -1,32 +1,55 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PresentationModel} from '../../../../model/presentation/presentation.model';
 import {PresentationService} from '../../../../service/presentation.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {PanelModel} from '../../../../model/role/panel.model';
-import {Select} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
 import {Observable} from 'rxjs';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
+import {XlsxUtil} from '../../../../util/xlsx.util';
+import {SupervisorModel} from '../../../../model/role/supervisor.model';
+import {PatchLecturerFromBackend} from '../../../../store/user/user.action';
+import {UserState} from '../../../../store/user/user.store';
+import {LecturerModel} from '../../../../model/role/lecturer.model';
 
 @Component({
   selector: 'app-add-presentation',
   templateUrl: './add-presentation.component.html',
   styleUrls: ['./add-presentation.component.css']
 })
-export class AddPresentationComponent implements OnInit {
+export class AddPresentationComponent implements OnInit, OnDestroy {
   presentationModels: PresentationModel[] = [];
   scheduleId: number;
+  readingExcel = false;
+  current = '';
+  lecturers: LecturerModel[] = [];
+  filteredLecturers: LecturerModel[] = [];
+  @Select(UserState.getLecturer)
+  lecturers$: Observable<LecturerModel[]>;
 
   @Select(ScheduleState.getScheduleId)
   scheduleId$: Observable<number>;
 
-  constructor(private presentationService: PresentationService, private loadingUtil: LoadingDialogUtil, private matSnackBar: MatSnackBar) {
+  constructor(private presentationService: PresentationService,
+              private store: Store,
+              private loadingUtil: LoadingDialogUtil,
+              private matSnackBar: MatSnackBar,
+              private xlsxUtil: XlsxUtil) {
+  }
+
+  ngOnDestroy(): void {
+    this.presentationModels = [];
   }
 
   ngOnInit(): void {
     this.scheduleId$.subscribe(id => {
       this.scheduleId = id;
+    });
+    this.store.dispatch(new PatchLecturerFromBackend());
+    this.lecturers$.subscribe(lec => {
+      this.lecturers = lec;
     });
     this.addForm();
   }
@@ -35,6 +58,7 @@ export class AddPresentationComponent implements OnInit {
     const presentationModel = new PresentationModel();
     presentationModel.scheduleId = this.scheduleId;
     presentationModel.panelModels = [];
+    presentationModel.panelModels.push(new PanelModel());
     presentationModel.panelModels.push(new PanelModel());
     this.presentationModels.push(presentationModel);
   }
@@ -86,19 +110,59 @@ export class AddPresentationComponent implements OnInit {
   }
 
 
-  DataFromEventEmitter(data): void {
-    const presentationModelList: PresentationModel[] = [];
-    console.log(data);
-    data.forEach(d => {
-      const presentation = new PresentationModel();
-      presentation.scheduleId = this.scheduleId;
-      presentation.supervisorId = d['Supervisor Um Mail'];
-      presentation.title = d['Project Title'];
-      presentation.studentEmail = d['Student Siswamail'];
-      presentation.panelModels = [];
-      presentationModelList.push(presentation);
+  readXlsx(event): void {
+    // const excelLoading = this.loadingUtil.openLoadingDialog('Reading File...');
+    this.readingExcel = true;
+    const file: File = event.target.files[0];
+    this.xlsxUtil.readFile(file).subscribe(data => {
+      const presentationModelList: PresentationModel[] = [];
+      data.forEach(d => {
+        const presentation = new PresentationModel();
+        presentation.scheduleId = this.scheduleId;
+        const sv = new SupervisorModel();
+        sv.email = d['Supervisor Email'];
+        presentation.supervisorModel = sv;
+        presentation.title = d['Project Title'];
+        presentation.studentEmail = d['Student Email'];
+        presentation.studentName = d['Student Name'];
+        presentation.panelModels = [];
+        presentation.panelModels.push(new PanelModel());
+        presentation.panelModels.push(new PanelModel());
+        presentationModelList.push(presentation);
+      });
+
+      this.presentationModels = presentationModelList;
+      console.log('done');
+      this.readingExcel = false;
+      // excelLoading.close();
+
+      // this.webWorkerService.getPresentationDetailsFromData(data, this.scheduleId).subscribe(presentations => {
+      //   this.presentationModels = presentations;
+      // });
     });
-    this.presentationModels = presentationModelList;
   }
 
+  applyFilter(event: Event): void {
+    const inputValue = (event.target as HTMLInputElement).value;
+    this.filteredLecturers = inputValue ? this.filterLecturers(inputValue) : this.lecturers.slice();
+  }
+
+  private filterLecturers(value: string): LecturerModel[] {
+    const filterValue = value.trim().toLowerCase();
+    const filteredLec = [];
+    this.lecturers.forEach(lec => {
+      const searchSpace = (lec.name) ? (lec.name + lec.email) : lec.email;
+      if (searchSpace.trim().toLowerCase().includes(filterValue)) {
+        filteredLec.push(lec);
+      }
+    });
+    return filteredLec;
+    // return this.lecturers.filter(lecturer => {
+    //   if (!lecturer.name) {
+    //     lecturer.name = '';
+    //   }
+    //   console.log(lecturer.name.toLowerCase().includes(filterValue));
+    //   lecturer.name.toLowerCase().includes(filterValue);
+    // });
+  }
 }

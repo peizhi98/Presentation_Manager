@@ -1,9 +1,10 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from './util/auth.guard';
+import {NotFoundComponent} from './component/not-found/not-found.component';
 
 const routes: Routes = [
-  // {path: 'home', component: HomeComponent},
+  // {path: 'home', component: SchedulesViewComponent},
   {
     path: 'auth',
     loadChildren: () => import('./module/auth/auth.module').then(mod => mod.AuthModule)
@@ -18,6 +19,7 @@ const routes: Routes = [
     loadChildren: () => import('./module/availability/availability.module').then(mod => mod.AvailabilityModule),
     canActivate: [AuthGuard]
   },
+  { path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({

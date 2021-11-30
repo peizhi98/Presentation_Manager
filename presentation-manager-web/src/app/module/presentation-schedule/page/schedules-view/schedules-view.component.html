@@ -1,0 +1,42 @@
+<p align="right">
+  <button mat-raised-button color="primary" [routerLink]="routeConstant.CREATE_SCHEDULE_ROUTE">Create New Schedule</button>
+</p>
+<ng-container *ngIf="scheduleList">
+  <div>
+    <table mat-table matSort class="w-100" [dataSource]="dataSource">
+      <!-- Number Column -->
+      <ng-container [matColumnDef]=displayedColumns[0]>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
+        <td mat-cell *matCellDef="let row">{{dataSource.data.indexOf(row) + 1}}</td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container [matColumnDef]=displayedColumns[1]>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+        <td mat-cell *matCellDef="let row">{{row.title}}</td>
+      </ng-container>
+
+      <!-- Year Column -->
+      <ng-container [matColumnDef]=displayedColumns[2]>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Academic Year</th>
+        <td mat-cell *matCellDef="let row">{{row.year}}</td>
+      </ng-container>
+
+      <!-- Sem Column -->
+      <ng-container [matColumnDef]=displayedColumns[3]>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Sem</th>
+        <td mat-cell *matCellDef="let row">{{row.sem}}</td>
+      </ng-container>
+
+      <!-- coordinator Column -->
+      <ng-container [matColumnDef]=displayedColumns[4]>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Coordinator</th>
+        <td mat-cell *matCellDef="let row">{{row.coordinator.name}}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="routeToSchedule(row.id)"></tr>
+
+    </table>
+    <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" aria-label="Select page of presentation"></mat-paginator>
+  </div>
+</ng-container>

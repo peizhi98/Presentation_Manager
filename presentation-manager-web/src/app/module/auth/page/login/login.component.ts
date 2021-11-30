@@ -9,6 +9,7 @@ import {Login} from '../../../../store/auth/auth.action';
 import {Observable} from 'rxjs';
 import {ProgressBarLoading, ProgressBarStopLoading, ShowSnackBar} from '../../../../store/app/app.action';
 import {UserService} from '../../../../service/user.service';
+import {UserModel} from '../../../../model/user.model';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit {
 
   username: string;
   password: string;
+  name: string;
   confirmPassword: string;
 
   @Select(AuthState.isAuth)
@@ -46,7 +48,11 @@ export class LoginComponent implements OnInit {
     if (this.password === this.confirmPassword) {
       console.log('resp');
       this.store.dispatch(new ProgressBarLoading());
-      this.userService.register(this.username, this.password).subscribe((resp) => {
+      const userModel = new UserModel();
+      userModel.email = this.username;
+      userModel.password = this.password;
+      userModel.name = this.name;
+      this.userService.register(userModel).subscribe((resp) => {
         console.log(resp);
         if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
           console.log(resp);
@@ -80,6 +86,7 @@ export class LoginComponent implements OnInit {
     this.username = null;
     this.password = null;
     this.confirmPassword = null;
+    this.name = null;
   }
 
 

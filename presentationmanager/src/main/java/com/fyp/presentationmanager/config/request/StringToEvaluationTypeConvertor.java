@@ -8,6 +8,7 @@ public class StringToEvaluationTypeConvertor implements Converter<String, Evalua
     public EvaluationType convert(String source) {
         try {
             return EvaluationType.valueOf(source.toUpperCase());
+//            return EvaluationType.convert(source);
         } catch (IllegalArgumentException e) {
             return null;
         }

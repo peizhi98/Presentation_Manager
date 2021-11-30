@@ -1,0 +1,73 @@
+<mat-card>
+  <mat-card-content>
+    <p class="pt-1 pr-1" align="right">
+      <button mat-raised-button color="primary" [routerLink]="routeConstant.ADD_PRESENTATION">Add New Presentations
+      </button>
+    </p>
+    <mat-form-field appearance="standard">
+      <mat-label>Search</mat-label>
+      <input matInput (keyup)="applyFilter($event)">
+    </mat-form-field>
+    <div>
+      <table mat-table matSort class="w-100" [dataSource]="dataSource">
+        <!-- Number Column -->
+        <ng-container [matColumnDef]=displayedColumns[0]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
+          <td mat-cell *matCellDef="let row">{{dataSource.data.indexOf(row) + 1}}</td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container [matColumnDef]=displayedColumns[1]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name</th>
+          <td mat-cell *matCellDef="let row">{{row.studentName}}</td>
+        </ng-container>
+
+        <!-- Title Column -->
+        <ng-container [matColumnDef]=displayedColumns[2]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+          <td mat-cell *matCellDef="let row">{{row.title}}</td>
+        </ng-container>
+
+        <!-- SV Column -->
+        <ng-container [matColumnDef]=displayedColumns[3]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Supervisor</th>
+          <td mat-cell *matCellDef="let row">{{row.supervisorModel.name}}</td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container [matColumnDef]=displayedColumns[4]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+          <td mat-cell *matCellDef="let row">
+            <a [routerLink]="row.id" matTooltip="Open" mat-icon-button color="primary">
+              <mat-icon>launch</mat-icon>
+            </a>
+            <button [matMenuTriggerFor]="evaluation_menu" matTooltip="Evaluate" mat-icon-button color="primary">
+              <mat-icon>assignment</mat-icon>
+            </button>
+            <mat-menu #evaluation_menu="matMenu">
+              <button mat-menu-item>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
+
+            <button [matMenuTriggerFor]="more_menu" matTooltip="More" mat-icon-button color="primary">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #more_menu="matMenu">
+              <button mat-menu-item>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+      <mat-paginator [pageSizeOptions]="getPaginatorOptions()" aria-label="Select page of presentation"></mat-paginator>
+
+    </div>
+
+  </mat-card-content>
+</mat-card>

@@ -30,7 +30,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
-        if (request.getServletPath().startsWith("/auth/")||request.getServletPath().equals("/user/register")) {
+        if (request.getServletPath().startsWith("/auth/login")||request.getServletPath().equals("/user/register")) {
             filterChain.doFilter(request, response);
         } else {
             try {

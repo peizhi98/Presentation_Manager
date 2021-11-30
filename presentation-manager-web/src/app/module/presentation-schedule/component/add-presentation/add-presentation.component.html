@@ -1,87 +1,113 @@
-<div class="pl-2">
-  <input
-    type="file"
-    appReadexcel
-    (eventEmitter)="DataFromEventEmitter($event)"
-  />
-</div>
-
-<ng-container *ngIf="presentationModels.length">
-  <mat-card style="
-  width: 95%;
-  display: block;
-  margin-left:auto;
-  margin-right:auto;
-margin-top: 5px;" *ngFor="let presentation of presentationModels;let i = index">
-    <mat-card-content>
-      <div>
-        <div>
-
-          <label>Project Title: </label>
-          <mat-form-field class="w-50" appearance="fill">
-            <mat-label>Presentation Title</mat-label>
-            <input matInput [(ngModel)]="presentation.title">
-          </mat-form-field>
-
-          <button style="float: right" mat-raised-button color="primary" (click)="removeForm(i)">Remove</button>
-          <div><label>Supervisor: </label>
-            <mat-form-field class="w-50" appearance="fill">
-              <mat-label>Supervisor Um Mail</mat-label>
-              <input matInput [(ngModel)]="presentation.supervisorModel.email">
-            </mat-form-field>
-          </div>
-
-          <div>
-            <label>Student Name: </label>
-            <mat-form-field class="w-50" appearance="fill">
-              <mat-label>Student Name</mat-label>
-              <input matInput [(ngModel)]="presentation.studentName">
-            </mat-form-field>
-          </div>
-
-          <div>
-            <label>Student Email: </label>
-            <mat-form-field class="w-50" appearance="fill">
-              <mat-label>Student Email</mat-label>
-              <input matInput [(ngModel)]="presentation.studentEmail">
-            </mat-form-field>
-          </div>
-
-          <div *ngFor="let panel of presentation.panelModels;let i=index;">
-            <label>Panel {{i + 1}}: </label>
-            <mat-form-field class="w-50" appearance="fill">
-              <mat-label>Panel UM Mail</mat-label>
-              <input matInput [(ngModel)]="panel.email">
-            </mat-form-field>
-            <button style="margin-left: 10px; margin-bottom: 10px;" mat-raised-button color="primary"
-                    (click)="removePanel(presentation.panelModels,i)">
-              <mat-icon>remove_circle</mat-icon>
-            </button>
-          </div>
-          <button mat-raised-button color="primary"
-                  (click)="addPanel(presentation)">
-            Add a Panel
-          </button>
-
+<mat-sidenav-container style="background-color: transparent;">
+  <mat-sidenav style="
+  width: 15%;background-color: transparent; border: none" fixedInViewport fixedTopGap="250" fixedBottomGap="250"
+               mode="side" position="end" disableClose opened>
+    <mat-card>
+      <mat-card-content>
+        <div align="center" class="mt-1"><input #csvInput hidden="true" type="file" onclick="this.value=null"
+                                                (change)="readXlsx($event)"/>
+          <button mat-flat-button color="primary" (click)="csvInput.click()">Input by Excel File</button>
         </div>
-      </div>
-    </mat-card-content>
+        <div *ngIf="readingExcel">
+          <div align="center">Reading File...</div>
+          <div align="center">
+            <mat-progress-bar style="width:130px;"
+                              [mode]="'indeterminate'">
 
-  </mat-card>
-  <mat-card style="margin-top: 10px;">
-    <p align="center">
-      <button mat-raised-button color="primary" (click)="addForm()">Add Another Presentation</button>
-    </p>
-  </mat-card>
+            </mat-progress-bar>
+          </div>
+        </div>
+
+        <div align="center" class="mt-1">
+          <button mat-raised-button color="primary" (click)="addForm()">Add Presentation</button>
+        </div>
+        <div align="center" class="mt-1">
+          <button mat-raised-button color="primary" (click)="save()">Confirm and Save</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </mat-sidenav>
+  <mat-sidenav-content style="
+  width: 84%;">
+    <ng-container *ngIf="presentationModels.length">
+      <mat-card class="mt-1" *ngFor="let presentation of presentationModels;let i = index">
+        <mat-card-content>
+          <div>
+            <div>
+              <label>Project Title: </label>
+              <mat-form-field class="w-50">
+                <mat-label>Presentation Title</mat-label>
+                <input matInput [(ngModel)]="presentation.title">
+              </mat-form-field>
+
+              <button style="float: right" [matMenuTriggerFor]="menu" mat-icon-button color="primary">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="addPanel(presentation)">
+                  <span>Add Panel</span>
+                </button>
+              </mat-menu>
+
+              <button style="float: right" mat-icon-button color="primary" (click)="removeForm(i)">
+                <mat-icon>delete_forever</mat-icon>
+              </button>
+
+              <div><label>Supervisor: </label>
+                <mat-form-field class="w-50">
+                  <mat-label>Supervisor Username (Email)</mat-label>
+                  <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)"
+                         [(ngModel)]="presentation.supervisorModel.email">
+
+                </mat-form-field>
+              </div>
+
+              <div>
+                <label>Student Name: </label>
+                <mat-form-field class="w-50">
+                  <mat-label>Student Name</mat-label>
+                  <input matInput [(ngModel)]="presentation.studentName">
+                </mat-form-field>
+              </div>
+
+              <div>
+                <label>Student Email: </label>
+                <mat-form-field class="w-50">
+                  <mat-label>Student Email</mat-label>
+                  <input matInput [(ngModel)]="presentation.studentEmail">
+                </mat-form-field>
+              </div>
+
+              <div *ngFor="let panel of presentation.panelModels;let i=index;">
+                <label>Panel {{i + 1}}: </label>
+                <mat-form-field class="w-50">
+                  <mat-label>Panel Email</mat-label>
+                  <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)" [(ngModel)]="panel.email">
+                </mat-form-field>
+                <button mat-icon-button color="primary"
+                        (click)="removePanel(presentation.panelModels,i)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </mat-card-content>
+
+      </mat-card>
+    </ng-container>
+  </mat-sidenav-content>
 
 
-  <p p class="pt-1 pr-2" align="right">
-    <button mat-raised-button color="primary" (click)="save()">Confirm and Save</button>
-  </p>
+</mat-sidenav-container>
 
-
-</ng-container>
-
+<mat-autocomplete #auto="matAutocomplete">
+  <mat-option *ngFor="let lecturer of filteredLecturers" [value]="lecturer.email">
+    <span>{{lecturer.name|| 'Name not registered'}}</span> |
+    <small>{{lecturer.email}}</small>
+  </mat-option>
+</mat-autocomplete>
 
 
 

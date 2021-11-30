@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {PresentationType, ScheduleModel, ScheduleType} from '../../../../model/schedule.model';
+import {PresentationMode, ScheduleModel, ScheduleType} from '../../../../model/schedule.model';
 import {ScheduleService} from '../../../../service/schedule.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {Store} from '@ngxs/store';
@@ -19,7 +19,7 @@ export class CreateScheduleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.presentationTypeList.push(PresentationType.F2F, PresentationType.ONLINE);
+    this.presentationTypeList.push(PresentationMode.PHYSICAL, PresentationMode.ONLINE);
     this.scheduleTypeList.push(ScheduleType.FYP, ScheduleType.MASTER_DISSERTATION);
   }
 

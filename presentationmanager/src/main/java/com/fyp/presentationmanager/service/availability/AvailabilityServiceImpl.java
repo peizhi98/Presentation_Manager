@@ -20,7 +20,7 @@ public class AvailabilityServiceImpl implements AvailabilityService {
 
     @Override
     public List<AvailabilityModel> getAuthUserAvailabilities() {
-        CustomUserDetails authUserDetails = authService.getAuthUser();
+        CustomUserDetails authUserDetails = authService.getAuthUserDetails();
         List<AvailabilityBean> availabilityBeans = this.availabilityRepo.findAvailabilityBeansByUserId(authUserDetails.getId());
         List<AvailabilityModel> availabilityModels = new ArrayList<>();
         if (availabilityBeans != null) {
@@ -37,7 +37,7 @@ public class AvailabilityServiceImpl implements AvailabilityService {
 
     @Override
     public List<AvailabilityModel> addEditAndDeleteAuthUserAvailabilities(List<AvailabilityModel> updatedAvailabilities) {
-        CustomUserDetails authUserDetails = authService.getAuthUser();
+        CustomUserDetails authUserDetails = authService.getAuthUserDetails();
         List<AvailabilityBean> existingAvailabilities = this.availabilityRepo.findAvailabilityBeansByUserId(authUserDetails.getId());
 
         if (updatedAvailabilities != null) {

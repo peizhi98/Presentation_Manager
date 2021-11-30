@@ -21,6 +21,12 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 const Material = [
   MatCheckboxModule,
@@ -47,6 +53,12 @@ const Material = [
   MatTabsModule,
   MatPaginatorModule,
   MatSortModule,
+  MatAutocompleteModule,
+  DragDropModule,
+  MatStepperModule,
+  MatExpansionModule,
+  MatRadioModule,
+  MatTooltipModule
 ];
 
 @NgModule({

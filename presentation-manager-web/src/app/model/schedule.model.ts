@@ -3,7 +3,6 @@ import {CoordinatorModel} from './role/coordinator.model';
 
 export class ScheduleModel {
   id: number;
-  coordinatorId: string;
   year: number;
   sem: number;
   title: string;
@@ -12,7 +11,7 @@ export class ScheduleModel {
   dateTo: Date;
   // timeFrom: Time;
   scheduleType: ScheduleType;
-  presentationType: PresentationType;
+  presentationType: PresentationMode;
   coordinator: CoordinatorModel;
   presentationModels: PresentationModel[];
 
@@ -27,7 +26,7 @@ export enum ScheduleType {
   MASTER_DISSERTATION = 'MASTER_DISSERTATION'
 }
 
-export enum PresentationType {
+export enum PresentationMode {
   ONLINE = 'ONLINE',
-  F2F = 'F2F'
+  PHYSICAL = 'PHYSICAL'
 }

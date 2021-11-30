@@ -1,3 +1,5 @@
+import {UserModel} from './user.model';
+
 export class AuthenticationRequest {
   username: string;
   password: string;

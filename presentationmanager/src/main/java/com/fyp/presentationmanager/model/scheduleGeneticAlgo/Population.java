@@ -51,9 +51,9 @@ public class Population {
 
     public Population sortByFitness() {
         scheduleList.sort((schedule1, schedule2) -> {
-            if (schedule1.getFitness() > schedule2.getFitness()) {
+            if (schedule1.getFitness().ofFeasibility() > schedule2.getFitness().ofFeasibility()) {
                 return -1;
-            } else if (schedule1.getFitness() < schedule2.getFitness()) {
+            } else if (schedule1.getFitness().ofFeasibility() < schedule2.getFitness().ofFeasibility()) {
                 return 1;
             }
             return 0;

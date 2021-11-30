@@ -1,6 +1,7 @@
 package com.fyp.presentationmanager.entity;
 
-import com.fyp.presentationmanager.model.PresentationModel;
+import com.fyp.presentationmanager.enums.PresentationMode;
+import com.fyp.presentationmanager.model.presentation.PresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,7 +22,8 @@ public class PresentationBean implements Serializable {
     public static final String RESULT_STATUS = "result_status";
     public static final String START_TIME = "start_time";
     public static final String END_TIME = "end_time";
-    public static final String VENUE_ID = "venue_id";
+    public static final String ROOM_ID = "room_id";
+    public static final String MODE = "mode";
     private static final long serialVersionUID = -5901102986374700267L;
 
     @Id
@@ -59,12 +61,20 @@ public class PresentationBean implements Serializable {
     @Column(name = END_TIME)
     private Date endTime;
 
-    @Column(name = VENUE_ID)
-    private Date venueId;
+    @Column(name = ROOM_ID)
+    private Integer roomId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = MODE)
+    private PresentationMode mode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = SCHEDULE_ID, referencedColumnName = ScheduleBean.ID, insertable = false, updatable = false)
     private ScheduleBean scheduleBean;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = ROOM_ID, referencedColumnName = PresentationRoomBean.ID, insertable = false, updatable = false)
+    private PresentationRoomBean presentationRoomBean;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = SUPERVISOR_ID, referencedColumnName = UserBean.ID, insertable = false, updatable = false)
@@ -148,14 +158,21 @@ public class PresentationBean implements Serializable {
         this.endTime = endTime;
     }
 
-    public Date getVenueId() {
-        return venueId;
+    public Integer getRoomId() {
+        return roomId;
     }
 
-    public void setVenueId(Date venueId) {
-        this.venueId = venueId;
+    public void setRoomId(Integer venueId) {
+        this.roomId = venueId;
     }
 
+    public PresentationMode getMode() {
+        return mode;
+    }
+
+    public void setMode(PresentationMode mode) {
+        this.mode = mode;
+    }
 
     public ScheduleBean getScheduleBean() {
         return scheduleBean;
@@ -203,6 +220,14 @@ public class PresentationBean implements Serializable {
 
     public void setPresentationPanelBeans(List<PresentationPanelBean> presentationPanelBeans) {
         this.presentationPanelBeans = presentationPanelBeans;
+    }
+
+    public PresentationRoomBean getPresentationRoomBean() {
+        return presentationRoomBean;
+    }
+
+    public void setPresentationRoomBean(PresentationRoomBean presentationRoomBean) {
+        this.presentationRoomBean = presentationRoomBean;
     }
 
     public UserBean getSupervisorBean() {

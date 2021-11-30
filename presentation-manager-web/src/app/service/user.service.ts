@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Constant} from '../../assets/constant/app.constant';
 import {ResponseModel} from '../model/response.model';
+import {LecturerModel} from '../model/role/lecturer.model';
+import {UserModel} from '../model/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +18,11 @@ export class UserService {
   private userUrl = '/user/';
 
 
-  register(email: string, password: string): Observable<ResponseModel<number>> {
-    const params = new HttpParams().set('email', email).set('password', password);
-    return this.http.get<ResponseModel<number>>(this.serverUrl + this.userUrl + 'register', {params});
+  register(userModel: UserModel): Observable<ResponseModel<number>> {
+    return this.http.post<ResponseModel<number>>(this.serverUrl + this.userUrl + 'register', userModel);
   }
 
+  getAllLecturers(): Observable<ResponseModel<LecturerModel[]>> {
+    return this.http.get <ResponseModel<LecturerModel[]>>(this.serverUrl + this.userUrl + 'get-all-lecturers');
+  }
 }

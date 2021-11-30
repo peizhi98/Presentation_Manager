@@ -3,47 +3,44 @@ import {CommonModule} from '@angular/common';
 
 import {PresentationScheduleRoutingModule} from './presentation-schedule-routing.module';
 import {SharedModule} from '../shared.module';
-import {HomeComponent} from './page/home/home.component';
+import {SchedulesViewComponent} from './page/schedules-view/schedules-view.component';
 import {CreateScheduleComponent} from './page/create-schedule/create-schedule.component';
 import {ScheduleComponent} from './page/schedule/schedule.component';
 import {AddPresentationComponent} from './component/add-presentation/add-presentation.component';
-import {ReadexcelDirective} from '../../../assets/directive/read-excel.directive';
-import {EvaluationCriteriaComponent} from '../../component/evaluation-criteria/evaluation-criteria.component';
+import {ReadExcelDirective} from '../../../assets/directive/read-excel.directive';
+import {EvaluationCriteriaComponent} from './component/evaluation-criteria/evaluation-criteria.component';
 import {PresentationComponent} from './component/presentation/presentation.component';
-import {PresentationListComponent} from './component/presentation-list/presentation-list.component';
+import {PresentationsViewComponent} from './component/presentations-view/presentations-view.component';
 import {
-  DayService,
-  DragAndDropService,
-  MonthAgendaService,
-  MonthService,
-  ResizeService,
-  ScheduleAllModule,
-  WeekService,
-  WorkWeekService,
-  YearService
+  ScheduleAllModule
 } from '@syncfusion/ej2-angular-schedule';
+import { TimetableComponent } from './component/timetable/timetable.component';
+import { EvaluationFormFypComponent } from './component/evaluation-form-fyp/evaluation-form-fyp.component';
+import { EvaluationFormMasterComponent } from './component/evaluation-form-master/evaluation-form-master.component';
 
-console.log('schedule');
 @NgModule({
   declarations: [
-    HomeComponent,
+    SchedulesViewComponent,
     CreateScheduleComponent,
     ScheduleComponent,
     AddPresentationComponent,
-    ReadexcelDirective,
+    ReadExcelDirective,
     EvaluationCriteriaComponent,
     PresentationComponent,
-    PresentationListComponent
+    PresentationsViewComponent,
+    TimetableComponent,
+    EvaluationFormFypComponent,
+    EvaluationFormMasterComponent,
   ],
   exports: [
-    HomeComponent,
+    SchedulesViewComponent,
     CreateScheduleComponent,
     ScheduleComponent,
     AddPresentationComponent,
-    ReadexcelDirective,
+    ReadExcelDirective,
     EvaluationCriteriaComponent,
     PresentationComponent,
-    PresentationListComponent
+    PresentationsViewComponent,
   ],
   imports: [
     CommonModule,
@@ -51,16 +48,6 @@ console.log('schedule');
     SharedModule,
     ScheduleAllModule,
   ],
-  providers:[
-    DayService,
-    WeekService,
-    WorkWeekService,
-    MonthService,
-    YearService,
-    MonthAgendaService,
-    DragAndDropService,
-    ResizeService
-  ]
 })
 export class PresentationScheduleModule {
 }

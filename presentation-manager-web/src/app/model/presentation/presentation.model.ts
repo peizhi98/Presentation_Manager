@@ -20,3 +20,15 @@ export class PresentationModel {
     this.supervisorModel = new SupervisorModel();
   }
 }
+
+export class PresentationScheduleModel {
+  id: number;
+  startTime: Date;
+  endTime: Date;
+
+}
+
+export class SchedulerPresentationModel extends PresentationModel {
+  schedulerId: number | string;
+  roomId: number;
+}

@@ -1,0 +1,21 @@
+<mat-card>
+  <mat-card-content>
+
+    <p align="right">
+      <button mat-raised-button *ngIf="isViewMode()" color="primary" (click)="enterEditMode()" class="pr-2">Edit</button>
+      <button mat-raised-button  *ngIf="isEditMode()" color="primary" (click)="enterViewMode()" class="pr-2">Back to View</button>
+      <mat-form-field appearance="fill" class="ml-2 pr-2">
+        <mat-label>Evaluation Type</mat-label>
+
+        <mat-select [(ngModel)]="selectedEvaluationType">
+          <mat-option *ngFor="let type of fypEvaluationType" [value]="type"
+                      (click)="loadEvaluationForm(type)">{{type.valueOf()}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </p>
+    <app-evaluation-form-fyp></app-evaluation-form-fyp>
+
+  </mat-card-content>
+</mat-card>
+
+

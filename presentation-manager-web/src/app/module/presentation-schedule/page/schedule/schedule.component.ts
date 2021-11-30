@@ -5,7 +5,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ScheduleModel} from '../../../../model/schedule.model';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
-import {SetScheduleId} from '../../../../store/schedule/schedule.action';
+import {SetCurrentSchedule} from '../../../../store/schedule/schedule.action';
+import {AuthState} from '../../../../store/auth/auth.store';
 
 @Component({
   selector: 'app-schedule',
@@ -25,43 +26,45 @@ export class ScheduleComponent implements OnInit {
     this.navLinks = [
       {
         label: 'Presentation',
-        link: RouteConstant.PRESENTATION,
+        link: RouteConstant.PRESENTATION_VIEW,
         index: 0
       }, {
         label: 'Timetable',
         link: RouteConstant.TIMETABLE,
         index: 1
       }, {
-        label: 'Evaluation Form',
-        link: './form',
+        label: 'Evaluation',
+        link: 'RouteConstant.CRITERIA',
         index: 2
       },
       {
-        label: 'Evaluation Report',
-        link: './report',
+        label: 'Evaluation Criteria',
+        link: RouteConstant.CRITERIA,
         index: 3
+      },
+      {
+        label: 'Evaluation Report',
+        link: 'RouteConstant.CRITERIA',
+        index: 4
       },
       {
         label: 'Details',
         link: './details',
-        index: 4
-      },
-      {
-        label: 'Add',
-        link: RouteConstant.ADD_PRESENTATION,
         index: 5
       },
     ];
   }
 
   ngOnInit(): void {
-    this.router.events.subscribe((res) => {
-      this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
-    });
+    // this.router.events.subscribe((res) => {
+    //   this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
+    // });
+    console.log(
+      this.store.selectSnapshot(AuthState.getUser));
     this.activatedRoute.params.subscribe(params => {
       if (params) {
         this.scheduleId = params.id;
-        this.store.dispatch(new SetScheduleId(this.scheduleId));
+        this.store.dispatch(new SetCurrentSchedule(this.scheduleId));
         this.scheduleService.getSchedule(this.scheduleId).subscribe(resp => {
           if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
             this.scheduleModel = resp.data;

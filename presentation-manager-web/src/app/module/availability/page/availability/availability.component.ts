@@ -3,16 +3,24 @@ import {
   ActionEventArgs,
   CellClickEventArgs,
   CurrentAction,
+  DayService,
+  DragAndDropService,
   DragEventArgs,
   EventClickArgs,
   EventRenderedArgs,
   EventSettingsModel,
+  MonthAgendaService,
+  MonthService,
   ResizeEventArgs,
+  ResizeService,
   ScheduleComponent,
-  View
+  View,
+  WeekService,
+  WorkWeekService,
+  YearService
 } from '@syncfusion/ej2-angular-schedule';
 import {isNullOrUndefined} from '@syncfusion/ej2-base';
-import {AvailabilityDisplayModel, AvailabilityModel} from '../../../../model/availability.model';
+import {SchedulerAvailabilityModel, AvailabilityModel} from '../../../../model/availability.model';
 import {AvailabilityService} from '../../../../service/availability.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {Store} from '@ngxs/store';
@@ -21,7 +29,17 @@ import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 @Component({
   selector: 'app-availability',
   templateUrl: './availability.component.html',
-  styleUrls: ['./availability.component.css']
+  styleUrls: ['./availability.component.css'],
+  providers: [
+    DayService,
+    WeekService,
+    WorkWeekService,
+    MonthService,
+    YearService,
+    MonthAgendaService,
+    DragAndDropService,
+    ResizeService
+  ]
 })
 export class AvailabilityComponent implements OnInit {
   @ViewChild('scheduleObj') public scheduleObj: ScheduleComponent;
@@ -29,31 +47,20 @@ export class AvailabilityComponent implements OnInit {
   public endHour = '18:00';
   public setView: View = 'Week';
   public showQuickInfo = false;
-  public availabilityModels: AvailabilityDisplayModel[] = [];
+  public availabilityModels: SchedulerAvailabilityModel[] = [];
   public selectedDate: Date = new Date();
   public dataSource: Record<string, any>[] = [];
   public eventSettings: EventSettingsModel;
-  public slotData: AvailabilityDisplayModel = new AvailabilityDisplayModel(new AvailabilityModel());
+  public slotData: SchedulerAvailabilityModel = new SchedulerAvailabilityModel(new AvailabilityModel());
 
   constructor(private availabilityService: AvailabilityService, private store: Store, private dialogUtil: LoadingDialogUtil) {
   }
 
   ngOnInit(): void {
-    // for (let i = 0; i < 3; i++) {
-    //   const availabilityModel = new AvailabilityDisplayModel(new AvailabilityModel());
-    //   availabilityModel.id = i;
-    //   availabilityModel.startTime = new Date(2021, 9, 4 + i, 13, 0);
-    //   availabilityModel.endTime = new Date(2021, 9, 4 + i, 16, 0);
-    //   this.availabilityModels.push(availabilityModel);
-    // }
-    // this.eventSettings.dataSource = this.availabilityModels;
-    // console.log(this.eventSettings.dataSource);
-    console.log('sdfase');
-
     this.availabilityService.getAvailabilities().subscribe(resp => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
         resp.data.forEach(a => {
-          const displayModel = new AvailabilityDisplayModel(a as AvailabilityModel);
+          const displayModel = new SchedulerAvailabilityModel(a as AvailabilityModel);
           // displayModel.startTime = new Date(2021, 9, 4, 13, 0);
           // displayModel.endTime = new Date(2021, 9, 4, 16, 0);
           this.availabilityModels.push(displayModel);
@@ -89,24 +96,24 @@ export class AvailabilityComponent implements OnInit {
     args.interval = 5;
   }
 
-  startDateParser(data): Date {
-    if (!isNullOrUndefined(data)) {
-      return new Date(data);
-    } else if (!isNullOrUndefined(this.slotData.startTime)) {
-      return new Date(this.slotData.startTime);
-    }
-  }
-
-  endDateParser(data): Date {
-    if (!isNullOrUndefined(data)) {
-      return new Date(data);
-    } else if (!isNullOrUndefined(this.slotData.endTime)) {
-      return new Date(this.slotData.endTime);
-    }
-  }
+  // startDateParser(data): Date {
+  //   if (!isNullOrUndefined(data)) {
+  //     return new Date(data);
+  //   } else if (!isNullOrUndefined(this.slotData.startTime)) {
+  //     return new Date(this.slotData.startTime);
+  //   }
+  // }
+  //
+  // endDateParser(data): Date {
+  //   if (!isNullOrUndefined(data)) {
+  //     return new Date(data);
+  //   } else if (!isNullOrUndefined(this.slotData.endTime)) {
+  //     return new Date(this.slotData.endTime);
+  //   }
+  // }
 
   onEventClick(args: EventClickArgs): void {
-    this.slotData = args.event as AvailabilityDisplayModel;
+    this.slotData = args.event as SchedulerAvailabilityModel;
   }
 
   addSlotData(): void {
@@ -131,6 +138,7 @@ export class AvailabilityComponent implements OnInit {
   }
 
   onCellClick(args: CellClickEventArgs): void {
+    this.slotData = new SchedulerAvailabilityModel(new AvailabilityModel());
     this.slotData.startTime = args.startTime;
     this.slotData.endTime = args.endTime;
   }
@@ -147,7 +155,7 @@ export class AvailabilityComponent implements OnInit {
   }
 
   onPopupClose(): void {
-    this.slotData = new AvailabilityDisplayModel(new AvailabilityModel());
+    this.slotData = new SchedulerAvailabilityModel(new AvailabilityModel());
   }
 
   // public onDateChange(args: ChangeEventArgs): void {

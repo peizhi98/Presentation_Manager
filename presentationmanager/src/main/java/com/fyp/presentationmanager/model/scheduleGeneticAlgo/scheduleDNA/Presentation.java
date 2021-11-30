@@ -3,6 +3,7 @@ package com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA;
 import com.fyp.presentationmanager.util.DateTimeUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class Presentation implements Cloneable {
+public class Presentation implements Cloneable, Comparable<Presentation> {
     private Integer id;
     private Date startTime;
     private Date endTime;
@@ -23,7 +24,7 @@ public class Presentation implements Cloneable {
         }
     }
 
-    public int calculatePanelAvailableTimeConflict() {
+    public int calculateNumberOfPanelNotAvailable() {
         int conflict = 0;
         for (Panel panel : this.panelList) {
             if (!panel.isAvailableOnTimeRange(this.startTime, this.endTime)) {
@@ -57,5 +58,14 @@ public class Presentation implements Cloneable {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @Override
+    public int compareTo(@NotNull Presentation o) {
+        if(this.startTime.after(o.getStartTime()))
+            return 1;
+        else if(this.startTime.before(o.getStartTime()))
+            return -1;
+        return 0;
     }
 }

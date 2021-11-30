@@ -19,7 +19,7 @@ public class UserBean implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = EMAIL, unique = true)
+    @Column(name = EMAIL, unique = true, nullable = false)
     private String email;
 
     @Column(name = NAME)
@@ -32,10 +32,20 @@ public class UserBean implements Serializable {
     public UserBean() {
     }
 
-    public UserBean(UserModel userModel) {
+    private UserBean(UserModel userModel) {
         this.email = userModel.getEmail();
         this.password = userModel.getPassword();
         this.name = userModel.getName();
+    }
+
+    public static UserBean build(UserModel userModel) {
+        return new UserBean(userModel);
+    }
+
+    public static UserBean build(String username) {
+        UserBean userBean = new UserBean();
+        userBean.setEmail(username);
+        return userBean;
     }
 
     public Integer getId() {

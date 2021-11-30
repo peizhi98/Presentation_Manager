@@ -1,22 +1,51 @@
 <mat-card>
 
   <mat-card-content>
-    <div>
-          Title: {{presentationModel.title}}
-    </div>
-    <div>
-        Supervisor: {{presentationModel.supervisorId}}
-    </div>
-    <div>
-      Student: {{presentationModel.studentEmail}}
-    </div>
-    <div>Panel: <ng-container *ngIf="!presentationModel.panelModels">
-      -
-    </ng-container></div>
+    <ng-container *ngIf="presentationModel">
+      <p align="right">
+        <button [matMenuTriggerFor]="evaluation_menu" mat-raised-button color="primary">Evaluate</button>
+        <mat-menu #evaluation_menu="matMenu">
+          <button mat-menu-item>
+            <span>Presentation</span>
+          </button>
+        </mat-menu>
+      </p>
+      <ng-template #detailDisplay let-title="title" let-data="data">
+        <div style="display: inline-block; width: 10%">
+          {{title}}
+        </div>
+        <div style="display: inline-block;width: 90%">
+          : {{(data) ? data : '-'}}
+        </div>
+      </ng-template>
+      <ng-container
+        *ngTemplateOutlet="detailDisplay;context:{title: 'Title',data:presentationModel.title}"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="detailDisplay;context:{title: 'Student',data:presentationModel.studentName}"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="detailDisplay;context:{title: 'Student Email',data:presentationModel.studentEmail}"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:presentationModel.supervisorModel.name}"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor Email',data:presentationModel.supervisorModel.email}"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="detailDisplay;context:{title: 'Start Time',data:presentationModel.startTime|date:timeFormat}"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="detailDisplay;context:{title: 'End Time',data:presentationModel.endTime|date:timeFormat}"></ng-container>
+      <ng-container
+        *ngTemplateOutlet="detailDisplay;context:{title: 'Status',data:''}"></ng-container>
 
-    <div *ngFor="let panel of presentationModel.panelModels; let i = index">
-      Panel {{i+1}}: {{panel.email}}
-    </div>
+      <div>Panel:
+        <ng-container *ngIf="!presentationModel.panelModels">
+          -
+        </ng-container>
+      </div>
+
+      <div *ngFor="let panel of presentationModel.panelModels; let i = index">
+        Panel {{i + 1}}: {{panel.email}}
+      </div>
+    </ng-container>
+
   </mat-card-content>
 
 </mat-card>

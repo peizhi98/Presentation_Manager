@@ -44,5 +44,8 @@ public class DateTimeUtil {
     public static long hoursToMillis(double hours) {
         return (long) hours * 60 * 60 * 1000;
     }
+    public static boolean timeAfterIncl(Date time1, Date time2) {
+        return time1.after(time2) || time1.compareTo(time2) == 0;
+    }
 
 }
