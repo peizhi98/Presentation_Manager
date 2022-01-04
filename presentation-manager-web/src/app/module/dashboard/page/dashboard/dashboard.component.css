@@ -1,0 +1,9 @@
+.center {
+  width: 90%;
+  margin: auto;
+}
+
+.main-div {
+  display: flex;
+  align-items: center;
+}

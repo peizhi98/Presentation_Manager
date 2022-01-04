@@ -1,8 +1,8 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {EvaluationFormService} from '../../../../service/evluation-form.service';
-import {EvaluationFormMode, EvaluationFormModel, EvaluationType} from '../../../../model/evaluation-form.model';
+import {EvaluationFormMode, EvaluationFormModel, EvaluationType} from '../../../../model/evaluation/evaluation-form.model';
 import {Constant} from '../../../../../assets/constant/app.constant';
-import {CriteriaModel} from '../../../../model/criteria.model';
+import {CriterionModel} from '../../../../model/evaluation/criterion.model';
 import {MatTable} from '@angular/material/table';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Select, Store} from '@ngxs/store';
@@ -19,10 +19,10 @@ import {EvaluationState} from '../../../../store/evaluation/evaluation.store';
 })
 export class EvaluationCriteriaComponent implements OnInit {
   displayedColumns: string[] = ['position', 'criteria', 'weightage', 'max', 'delete'];
-  @ViewChild(MatTable) table: MatTable<CriteriaModel>;
+  @ViewChild(MatTable) table: MatTable<CriterionModel>;
   @Input() scheduleId: number;
   evaluationFormModel: EvaluationFormModel;
-  criteriaModels: CriteriaModel[] = [];
+  criteriaModels: CriterionModel[] = [];
   fypEvaluationType = [EvaluationType.PRESENTATION, EvaluationType.REPORT];
   selectedEvaluationType = this.fypEvaluationType[0];
   scaleOptions = [1, 2, 3, 4, 5];
@@ -38,10 +38,14 @@ export class EvaluationCriteriaComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(new ChangeEvaluationFormMode(EvaluationFormMode.VIEW));
     this.scheduleId$.subscribe(id => {
-      this.scheduleId = id;
-      this.store.dispatch(new ChangeEvaluationType(this.fypEvaluationType[0]));
-      // this.loadEvaluationForm(this.fypEvaluationType[0]);
+      if (id) {
+        this.scheduleId = id;
+        this.store.dispatch(new ChangeEvaluationType(this.fypEvaluationType[0]));
+        // this.loadEvaluationForm(this.fypEvaluationType[0]);
+      }
+
     });
     this.evaluationFormMode$.subscribe(mode => {
       this.evaluationFormMode = mode;
@@ -69,7 +73,7 @@ export class EvaluationCriteriaComponent implements OnInit {
 
   calculateTotalWeightage(): void {
     this.totalWeightage = 0;
-    this.evaluationFormModel.criteriaModels.forEach(c => {
+    this.evaluationFormModel.criterionModels.forEach(c => {
       if (c.weightage) {
         this.totalWeightage += c.weightage;
       }
@@ -77,8 +81,8 @@ export class EvaluationCriteriaComponent implements OnInit {
   }
 
   addCriteria(): void {
-    const criteriaModel = new CriteriaModel();
-    criteriaModel.criteriaOrder = this.criteriaModels.length + 1;
+    const criteriaModel = new CriterionModel();
+    criteriaModel.position = this.criteriaModels.length + 1;
     this.criteriaModels.push(criteriaModel);
     // this.table.renderRows();
     console.log(this.criteriaModels);

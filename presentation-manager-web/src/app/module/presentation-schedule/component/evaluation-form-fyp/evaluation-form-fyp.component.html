@@ -1,80 +1,119 @@
-<ng-container *ngIf="evaluationFormModel">
-  <div *ngIf="isEditMode()">
-    <span *ngIf="isFypPresentation()">
-              Maximum Gap between panels:
-      <mat-form-field style="width: 5%" appearance="fill">
-        <mat-label>Gap</mat-label>
-        <input type="number" matInput [(ngModel)]="evaluationFormModel.maxGap">
-      </mat-form-field>
-    </span>
-    <span align="right">
-      Total Weightage: {{totalWeightage}}
-    </span>
-  </div>
+<ng-container *ngIf="currentForm">
+  <form [formGroup]="currentForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="isFypPresentation()&&(isEditMode()||isViewMode())">
+      Max Evaluation Gap between panels:
+      <span *ngIf="isEditMode();else maxGap">
+          <mat-form-field style="width: 5%" appearance="fill">
+            <mat-label>Gap</mat-label>
+            <input type="number" matInput [formControl]="currentForm.get(MAX_GAP)">
+          </mat-form-field>
+        </span>
+      <ng-template #maxGap>
+        {{(currentForm.get(MAX_GAP).value) ? currentForm.get(MAX_GAP).value : '-'}}
+      </ng-template>
+    </div>
+    <div *ngIf="isEvaluateMode();else weightage">
+      Total Mark: {{calculateTotalMark()|number}}/{{calculateTotalWeightage()}}
+    </div>
+    <ng-template #weightage>
+      Total Weightage: {{calculateTotalWeightage()}}
+    </ng-template>
+    <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
 
-  <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-    <div class="example-box" [ngStyle]="!isEditMode()&&{'padding-top': '10px'}"
-         *ngFor="let criteria of criteriaModels;let i = index;" cdkDrag>
-      <p class="example-handle" style="text-align: center;" [hidden]="!isEditMode()" cdkDragHandle>
-        <mat-icon> drag_handle</mat-icon>
-      </p>
+      <div formArrayName="criteriaEvaluation" *ngIf="criteriaEvaluation.controls">
+        <div class="example-box" [ngStyle]="!isEditMode()&&{'padding-top': '10px'}"
+             *ngFor="let criteria of criteriaEvaluation.controls;let i = index;" cdkDrag>
+          <p class="example-handle" style="text-align: center;" [hidden]="!isEditMode()" cdkDragHandle>
+            <mat-icon> drag_handle</mat-icon>
+          </p>
 
-      <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-      <div class="w-100">
-        <h3 style="width: 2%; display: inline-block;">{{i + 1}}</h3>
+          <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+          <div class="w-100">
+            <h3 style="width: 2%; display: inline-block;">{{i + 1}}</h3>
+            <!--Criteria name-->
+            <mat-form-field style="width: 87%" *ngIf="isEditMode();else criteriaName" appearance="fill">
+              <mat-label>Criteria</mat-label>
+              <input matInput [formControl]="criteria.get(NAME)">
+              <mat-error *ngIf="criteria.get(NAME).invalid&&criteria.get(NAME).touched">Criteria cannot be empty.
+              </mat-error>
+            </mat-form-field>
+            <ng-template #criteriaName>
+              <div style="width: 87%; display: inline-block">
+                {{criteria.get(NAME).value}}
+              </div>
+            </ng-template>
 
-        <mat-form-field style="width: 85%" *ngIf="isEditMode();else criteriaName" appearance="fill">
-          <mat-label>Criteria</mat-label>
-          <input matInput [(ngModel)]="criteria.name">
-        </mat-form-field>
-        <ng-template #criteriaName>
-          <div style="width: 85%; display: inline-block">
-            {{criteria.name}}
+
+            <div style="width: 5%; display: inline-block"></div>
+            <!--weightage-->
+            <mat-form-field style="width: 6%" class="right" appearance="fill" *ngIf="isEditMode();else weightage">
+              <mat-label>Weightage</mat-label>
+              <input matInput type="number" [formControl]="criteria.get(WEIGHTAGE)">
+              <mat-error *ngIf="criteria.get(WEIGHTAGE).invalid&&criteria.get(WEIGHTAGE).touched">Weightage cannot be
+                empty.
+              </mat-error>
+              <!--                   (ngModelChange)="calculateTotalWeightage()"-->
+            </mat-form-field>
+            <ng-template #weightage>
+              <div style="float: right;display: inline-block">
+                {{criteria.get(WEIGHTAGE).value}}%
+              </div>
+            </ng-template>
+
+            <button *ngIf="isEditMode()" type="button" style="float: right" mat-icon-button color="primary"
+                    (click)="removeCriterion(i)">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
           </div>
-        </ng-template>
-
-
-        <div style="width: 5%; display: inline-block"></div>
-
-        <mat-form-field style="width: 6%" class="right" appearance="fill" *ngIf="isEditMode();else weightage">
-          <mat-label>Weightage</mat-label>
-          <input matInput type="number" [(ngModel)]="criteria.weightage"
-                 (ngModelChange)="calculateTotalWeightage()">
-        </mat-form-field>
-        <ng-template #weightage>
-          <div style="width: 6%; display: inline-block">
-            {{criteria.weightage}}%
+          <!--score input-->
+          <div style="margin: auto;width: 15%;">
+            <ng-container *ngIf="isPresentation();else reportInput">
+              <mat-radio-group class="radio-label-above radio-label-content-center"
+                               [formControl]="criteria.get(RATING)">
+                <mat-radio-button *ngFor="let scale of scaleOptions" class="ml-2 radio-label-content-center"
+                                  [value]="scale">{{scale}}</mat-radio-button>
+                <mat-error style="margin-left: 45px;"
+                           *ngIf="criteria.get(RATING).invalid&&criteria.get(RATING).touched">Please
+                  select a score.
+                </mat-error>
+              </mat-radio-group>
+            </ng-container>
+            <ng-template #reportInput>
+              <mat-form-field class="right" appearance="fill">
+                <mat-label>Score</mat-label>
+                <input matInput type="number" [formControl]="criteria.get(RATING)">
+                <mat-error *ngIf="criteria.get(RATING).invalid&&criteria.get(RATING).touched">Please enter a valid
+                  score.
+                </mat-error>
+              </mat-form-field>
+            </ng-template>
           </div>
-        </ng-template>
+          <!--comment-->
+          <mat-form-field style="width: 100%" class="mt-2" appearance="outline">
+            <mat-label>Comment Section</mat-label>
+            <textarea matInput [formControl]="criteria.get(COMMENT)"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
 
-        <button *ngIf="isEditMode()" style="float: right" mat-icon-button color="primary" (click)="removeCriteria(i)">
-          <mat-icon>delete_forever</mat-icon>
+
+      <div class="example-box" *ngIf="isEditMode()" style="background-color: #ccc; padding-top: 20px">
+        <p style="text-align: center;">
+          <button mat-raised-button type="button" color="primary" (click)="addCriterion()">Add New Criterion</button>
+        </p>
+      </div>
+    </div>
+    <div class="mt-1 mb-1">
+      <p align="right">
+        <!--        <button *ngIf="isEditMode()" mat-raised-button color="primary" (click)="save()">Save</button>-->
+        <!--        <button *ngIf="isEvaluateMode()" mat-raised-button color="primary" type="submit"-->
+        <!--        >Submit-->
+        <!--        </button>-->
+        <button *ngIf="!isViewMode()" mat-raised-button color="primary" type="submit"
+        >{{(isEditMode()) ? 'Save' : 'Submit'}}
         </button>
-      </div>
-
-      <div style="margin: auto;width: 15%;">
-        <mat-radio-group class="radio-label-above radio-label-content-center" [disabled]="isEditMode()"
-                         [(ngModel)]="criteria.scale">
-          <mat-radio-button *ngFor="let scale of scaleOptions" class="ml-2 radio-label-content-center"
-                            [value]="scale">{{scale}}</mat-radio-button>
-        </mat-radio-group>
-      </div>
-
-      <mat-form-field style="width: 100%" class="mt-2" appearance="outline">
-        <mat-label>Comment Section</mat-label>
-        <textarea matInput [(ngModel)]="criteria.comment" [disabled]="isEditMode()"></textarea>
-      </mat-form-field>
-    </div>
-    <div class="example-box" *ngIf="isEditMode()" style="background-color: #ccc; padding-top: 20px">
-      <p style="text-align: center;">
-        <button mat-raised-button color="primary" (click)="addCriteria()">Add New Criteria</button>
       </p>
     </div>
-  </div>
-
+  </form>
 </ng-container>
-<div class="mt-1 mb-1">
-  <p align="right" *ngIf="isEditMode()">
-    <button mat-raised-button color="primary" (click)="save()">Save</button>
-  </p>
-</div>
+

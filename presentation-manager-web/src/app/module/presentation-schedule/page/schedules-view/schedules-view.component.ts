@@ -9,6 +9,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
+import {SystemRole} from '../../../../model/user.model';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,6 @@ import {RouteConstant} from '../../../../../assets/constant/route.contant';
   styleUrls: ['./schedules-view.component.css']
 })
 export class SchedulesViewComponent implements OnInit {
-  dialog = false;
   scheduleList: ScheduleModel[] = [];
   routeConstant = RouteConstant;
 
@@ -85,6 +85,10 @@ export class SchedulesViewComponent implements OnInit {
 
   routeToSchedule(id: number): void {
     this.router.navigate(['schedule/' + id + '/presentation']);
+  }
+
+  get SystemRole(){
+    return SystemRole;
   }
 
 }

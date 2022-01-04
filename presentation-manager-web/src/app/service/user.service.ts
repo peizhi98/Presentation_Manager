@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Constant} from '../../assets/constant/app.constant';
 import {ResponseModel} from '../model/response.model';
@@ -24,5 +24,22 @@ export class UserService {
 
   getAllLecturers(): Observable<ResponseModel<LecturerModel[]>> {
     return this.http.get <ResponseModel<LecturerModel[]>>(this.serverUrl + this.userUrl + 'get-all-lecturers');
+  }
+
+  getAllUsers(): Observable<ResponseModel<UserModel[]>> {
+    return this.http.get <ResponseModel<UserModel[]>>(this.serverUrl + this.userUrl + 'get-all-users');
+  }
+
+  editUser(userModel: UserModel): Observable<ResponseModel<UserModel[]>> {
+    return this.http.post <ResponseModel<UserModel[]>>(this.serverUrl + this.userUrl + 'edit-user', userModel);
+  }
+
+  deleteUser(id: number): Observable<ResponseModel<boolean>> {
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.delete <ResponseModel<boolean>>(this.serverUrl + this.userUrl + 'delete-user', {params});
+  }
+
+  createUsers(newUsers: UserModel[]): Observable<ResponseModel<UserModel[]>> {
+    return this.http.post<ResponseModel<UserModel[]>>(this.serverUrl + this.userUrl + 'create-users', newUsers);
   }
 }

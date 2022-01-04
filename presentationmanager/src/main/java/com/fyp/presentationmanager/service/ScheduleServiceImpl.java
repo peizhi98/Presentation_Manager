@@ -1,8 +1,9 @@
 package com.fyp.presentationmanager.service;
 
-import com.fyp.presentationmanager.model.ScheduleModel;
 import com.fyp.presentationmanager.entity.ScheduleBean;
+import com.fyp.presentationmanager.model.ScheduleModel;
 import com.fyp.presentationmanager.model.auth.CustomUserDetails;
+import com.fyp.presentationmanager.model.role.CoordinatorModel;
 import com.fyp.presentationmanager.repo.ScheduleRepo;
 import com.fyp.presentationmanager.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,25 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleModel addOrEditSchedule(ScheduleModel scheduleModel) {
-        CustomUserDetails customUserDetails=authService.getAuthUserDetails();
-        ScheduleBean scheduleBean = new ScheduleBean(scheduleModel);
-        scheduleBean.setCoordinatorId(customUserDetails.getId());
-        scheduleRepo.save(scheduleBean);
-        scheduleModel.setId(scheduleBean.getId());
+
+        ScheduleBean scheduleBean;
+        if (scheduleModel.getId() != null) {
+            this.scheduleRepo.getById(scheduleModel.getId());
+        } else {
+            CustomUserDetails customUserDetails = authService.getAuthUserDetails();
+            scheduleBean = new ScheduleBean(scheduleModel);
+            scheduleBean.setCoordinatorId(customUserDetails.getId());
+            scheduleRepo.save(scheduleBean);
+            scheduleModel.setId(scheduleBean.getId());
+        }
+
+
         return scheduleModel;
     }
 
     @Override
     public List<ScheduleModel> findSchedulesByUser() {
-        CustomUserDetails customUserDetails=authService.getAuthUserDetails();
+        CustomUserDetails customUserDetails = authService.getAuthUserDetails();
         List<ScheduleModel> scheduleModelList = new ArrayList<>();
         List<ScheduleBean> scheduleBeanList = this.scheduleRepo.findScheduleBeansByCoordinatorId(customUserDetails.getId());
         if (scheduleBeanList != null) {
@@ -54,6 +63,8 @@ public class ScheduleServiceImpl implements ScheduleService {
             scheduleModel.setDuration(scheduleBean.getDuration());
             scheduleModel.setCreateDate(scheduleBean.getCreateDate());
             scheduleModel.setTitle(scheduleBean.getTitle());
+            CoordinatorModel coordinatorModel = CoordinatorModel.build(scheduleBean.getCoordinator());
+            scheduleModel.setCoordinator(coordinatorModel);
 //            if (scheduleBean.getPresentationBeans() != null) {
 //                List<PresentationModel> presentationModelList = new ArrayList<>();
 //                for (PresentationBean presentationBean : scheduleBean.getPresentationBeans()) {

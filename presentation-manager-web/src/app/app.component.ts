@@ -9,7 +9,7 @@ import {RouteConstant} from '../assets/constant/route.contant';
 import {AppState} from './store/app/app.store';
 import {Observable} from 'rxjs';
 import {Constant} from '../assets/constant/app.constant';
-import {UserModel} from './model/user.model';
+import {SystemRole, UserModel} from './model/user.model';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +20,8 @@ export class AppComponent implements OnInit {
   title = 'presentation-manager-web';
   routeConstant = RouteConstant;
   progressBarMode = 'determinate';
+  user: UserModel;
+  constant = Constant;
 
   @Select(AppState.getProgressBarStatus)
   isLoading$: Observable<boolean>;
@@ -42,20 +44,20 @@ export class AppComponent implements OnInit {
       }
 
     });
-    if (this.isAuth()) {
-      this.authService.getAuthUser().subscribe(resp => {
-        if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
-          console.log('got user');
-          this.store.dispatch(new SetUser(resp.data));
-        } else {
-          console.log('expired');
-          this.logout();
-        }
-      });
-      this.user$.subscribe(r => {
-        console.log(r);
-      });
-    }
+    this.user$.subscribe(user => {
+      this.user = user;
+      if (this.user === null && this.isAuth()) {
+        this.authService.getAuthUser().subscribe(resp => {
+          if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
+            this.user = resp.data;
+            this.store.dispatch(new SetUser(resp.data));
+          } else {
+            this.logout();
+          }
+        });
+
+      }
+    });
   }
 
   isAuth(): boolean {
@@ -70,6 +72,10 @@ export class AppComponent implements OnInit {
 
   test(): void {
     this.testService.test().subscribe();
+  }
+
+  get SystemRole() {
+    return SystemRole;
   }
 }
 

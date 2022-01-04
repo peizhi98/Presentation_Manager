@@ -29,7 +29,7 @@ public class PresentationCtrl {
     }
 
     @GetMapping(value = "/get-presentation")
-    private ResponseModel<PresentationModel> addPresentationList(@RequestParam Integer id) {
+    private ResponseModel<PresentationModel> getPresentation(@RequestParam Integer id) {
         ResponseModel<PresentationModel> responseModel = new ResponseModel();
         try {
             responseModel.success(presentationService.getPresentation(id));
@@ -54,6 +54,30 @@ public class PresentationCtrl {
 
     }
 
+    @GetMapping(value = "/get-presentations-panel")
+    private ResponseModel<List<PresentationModel>> getPresentationsAsPanel() {
+        ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
+        try {
+            responseModel.success(presentationService.getPresentationListAsPanel());
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
+    }
+
+    @GetMapping(value = "/get-presentations-supervisor")
+    private ResponseModel<List<PresentationModel>> getPresentationsAsSupervisor() {
+        ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
+        try {
+            responseModel.success(presentationService.getPresentationListAsSupervisor());
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
+    }
+
     @PostMapping(value = "/schedule-presentations")
     private ResponseModel<List<PresentationScheduleModel>> schedulePresentations(@RequestBody List<PresentationScheduleModel> presentationModelList) {
         ResponseModel<List<PresentationScheduleModel>> responseModel = new ResponseModel();
@@ -64,6 +88,5 @@ public class PresentationCtrl {
             responseModel.failed();
         }
         return responseModel;
-
     }
 }

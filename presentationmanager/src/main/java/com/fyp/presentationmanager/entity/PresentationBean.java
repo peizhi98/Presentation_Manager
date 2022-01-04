@@ -23,6 +23,7 @@ public class PresentationBean implements Serializable {
     public static final String START_TIME = "start_time";
     public static final String END_TIME = "end_time";
     public static final String ROOM_ID = "room_id";
+    public static final String VENUE = "venue";
     public static final String MODE = "mode";
     private static final long serialVersionUID = -5901102986374700267L;
 
@@ -63,6 +64,9 @@ public class PresentationBean implements Serializable {
 
     @Column(name = ROOM_ID)
     private Integer roomId;
+
+    @Column(name = VENUE)
+    private String venue;
 
     @Enumerated(EnumType.STRING)
     @Column(name = MODE)
@@ -236,5 +240,13 @@ public class PresentationBean implements Serializable {
 
     public void setSupervisorBean(UserBean supervisorBean) {
         this.supervisorBean = supervisorBean;
+    }
+
+    public String getVenue() {
+        return venue;
+    }
+
+    public void setVenue(String venue) {
+        this.venue = venue;
     }
 }

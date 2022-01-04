@@ -27,7 +27,7 @@ console.log('availability');
     AvailabilityRoutingModule,
     ScheduleAllModule,
     SharedModule,
-    DateTimePickerModule
+    DateTimePickerModule,
   ],
   exports: [
     AvailabilityComponent

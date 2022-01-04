@@ -17,8 +17,6 @@ public class RequestHeaderConfig implements WebMvcConfigurer {
         registry.addConverter(new StringToPresentationTypeConvertor());
         registry.addConverter(new StringToScheduleTypeConvertor());
         registry.addConverter(new StringToEvaluationTypeConvertor());
-
+        registry.addConverter(new StringToSystemRoleConvertor());
     }
-
-
 }

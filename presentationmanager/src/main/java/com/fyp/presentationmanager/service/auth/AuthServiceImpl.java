@@ -1,9 +1,12 @@
 package com.fyp.presentationmanager.service.auth;
 
-import com.fyp.presentationmanager.model.auth.AuthUserModel;
+import com.fyp.presentationmanager.model.auth.AuthenticationRequest;
+import com.fyp.presentationmanager.model.auth.AuthenticationResponse;
 import com.fyp.presentationmanager.model.auth.CustomUserDetails;
 import com.fyp.presentationmanager.model.user.UserModel;
+import com.fyp.presentationmanager.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -12,14 +15,26 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     public UserModel getAuthUserModel() {
         CustomUserDetails customUserDetails = this.getAuthUserDetails();
-        UserModel authUserModel = new UserModel();
-        authUserModel.setId(customUserDetails.getId());
-        authUserModel.setName(customUserDetails.getName());
+        UserModel authUserModel = UserModel.build(customUserDetails);
         return authUserModel;
+    }
+
+    @Override
+    public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+        final CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        final String jwt = jwtUtil.generateToken(userDetails);
+        UserModel authUserModel = UserModel.build(userDetails);
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse(jwt, authUserModel);
+        return authenticationResponse;
     }
 
     @Override

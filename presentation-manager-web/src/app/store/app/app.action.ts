@@ -13,3 +13,7 @@ export class ShowSnackBar {
   }
 }
 
+export class ReloadData {
+  static readonly type = '[App] Reload Data';
+}
+

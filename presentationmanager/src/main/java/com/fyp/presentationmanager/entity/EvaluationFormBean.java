@@ -4,6 +4,8 @@ import com.fyp.presentationmanager.enums.EvaluationType;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -39,7 +41,7 @@ public class EvaluationFormBean implements Serializable {
     private ScheduleBean scheduleBean;
 
     @OneToMany(mappedBy = "evaluationFormBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<CriteriaBean> criteriaBeans;
+    private List<CriterionBean> criterionBeans;
 
     public EvaluationFormBean() {
     }
@@ -92,11 +94,20 @@ public class EvaluationFormBean implements Serializable {
         this.maxGap = maxGap;
     }
 
-    public List<CriteriaBean> getCriteriaBeans() {
-        return criteriaBeans;
+    public List<CriterionBean> getCriterionBeans() {
+        Collections.sort(this.criterionBeans, new Comparator<CriterionBean>() {
+            @Override
+            public int compare(CriterionBean o1, CriterionBean o2) {
+                if (o1.getPosition() == o2.getPosition()) {
+                    return 0;
+                }
+                return o1.getPosition() > o2.getPosition() ? 1 : -1;
+            }
+        });
+        return criterionBeans;
     }
 
-    public void setCriteriaBeans(List<CriteriaBean> criteriaBeans) {
-        this.criteriaBeans = criteriaBeans;
+    public void setCriterionBeans(List<CriterionBean> criterionBeans) {
+        this.criterionBeans = criterionBeans;
     }
 }

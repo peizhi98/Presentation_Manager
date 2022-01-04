@@ -125,9 +125,16 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
         presentation.title = d['Project Title'];
         presentation.studentEmail = d['Student Email'];
         presentation.studentName = d['Student Name'];
+
+        const panel: PanelModel = new PanelModel();
+        // panel.email = d['Panel'];
+
+        const panel1: PanelModel = new PanelModel();
+        // panel1.email = d['Panel'];
+
         presentation.panelModels = [];
-        presentation.panelModels.push(new PanelModel());
-        presentation.panelModels.push(new PanelModel());
+        presentation.panelModels.push(panel);
+        presentation.panelModels.push(panel1);
         presentationModelList.push(presentation);
       });
 

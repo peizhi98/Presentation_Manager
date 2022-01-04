@@ -12,5 +12,9 @@ public interface PresentationService {
 
     List<PresentationModel> getPresentationList(Integer scheduleId);
 
+    List<PresentationModel> getPresentationListAsPanel();
+
+    List<PresentationModel> getPresentationListAsSupervisor();
+
     List<PresentationScheduleModel> schedulePresentations(List<PresentationScheduleModel> presentationScheduleModels);
 }

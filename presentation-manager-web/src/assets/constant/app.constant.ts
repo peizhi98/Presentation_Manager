@@ -9,7 +9,15 @@ export class Constant {
   // ui
   public static readonly THEME_COLOR = '#4056A1';
 
-  //date
+  // date
   public static readonly TIME_FORMAT = 'dd MMM yyyy hh:mm a';
+
+  // role
+  // schedule
+  public static readonly ROLE_SCHEDULE_COORDINATOR = 'SCHEDULE_COORDINATOR';
+  // presentation
+  public static readonly ROLE_PANEL = 'PANEL';
+  public static readonly ROLE_SUPERVISOR = 'SUPERVISOR';
+  public static readonly ROLE_CHAIRPERSON = 'CHAIRPERSON';
 
 }

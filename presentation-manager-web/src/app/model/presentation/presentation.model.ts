@@ -12,7 +12,8 @@ export class PresentationModel {
   resultStatus: string;
   startTime: Date;
   endTime: Date;
-  venueId: number;
+  roomId: number;
+  venue: string;
   supervisorModel: SupervisorModel;
   panelModels: PanelModel[];
 
@@ -25,6 +26,7 @@ export class PresentationScheduleModel {
   id: number;
   startTime: Date;
   endTime: Date;
+  roomId: number;
 
 }
 

@@ -1,0 +1,150 @@
+<mat-card class="">
+  <mat-card-content>
+    <h1 class="pl-2 pt-1">Presentations</h1>
+    <mat-accordion multi>
+      <mat-expansion-panel (opened)="loadSupervisingPresentations()">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Supervising
+          </mat-panel-title>
+          <!--          <mat-panel-description>-->
+          <!--            You are the supervisor of these presentations-->
+          <!--          </mat-panel-description>-->
+        </mat-expansion-panel-header>
+        <app-presentations-table *ngIf="supervisingPresentations" [presentations]="supervisingPresentations"></app-presentations-table>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel (opened)="loadPanelingPresentations()">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Paneling
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-presentations-table *ngIf="panelingPresentations" [presentations]="panelingPresentations"></app-presentations-table>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Presiding
+          </mat-panel-title>
+          <!--          <mat-panel-description>-->
+          <!--            You are the chairperson of these presentations-->
+          <!--          </mat-panel-description>-->
+        </mat-expansion-panel-header>
+        <p>This is the primary content of the panel.</p>
+      </mat-expansion-panel>
+
+    </mat-accordion>
+  </mat-card-content>
+</mat-card>
+
+
+<!--<h1 class="pl-2 pt-1">Dashboard</h1>-->
+<!--<mat-drawer-container style="background-color: #f2f3f6; border: none" class="mt-2">-->
+<!--  <mat-drawer class="ml-1" style="background-color: #f2f3f6; border: none;width: 20%;" mode="side" opened>-->
+<!--    <mat-card>-->
+<!--      <mat-card-content>-->
+<!--        <ng-container-->
+<!--          *ngTemplateOutlet="detailDisplay;context:{title: 'Title',data:presentationModel.title}"></ng-container>-->
+<!--      </mat-card-content>-->
+<!--    </mat-card>-->
+<!--  </mat-drawer>-->
+<!--  <mat-drawer-content style="width: 80%;">-->
+<!--    <div class="main-div">-->
+<!--      <mat-card class="center">-->
+<!--        <mat-card-content>-->
+<!--          <h1 class="pl-2 pt-1">Presentations</h1>-->
+<!--          <mat-accordion multi>-->
+<!--            <mat-expansion-panel>-->
+<!--              <mat-expansion-panel-header>-->
+<!--                <mat-panel-title>-->
+<!--                  Supervising-->
+<!--                </mat-panel-title>-->
+<!--                &lt;!&ndash;          <mat-panel-description>&ndash;&gt;-->
+<!--                &lt;!&ndash;            You are the supervisor of these presentations&ndash;&gt;-->
+<!--                &lt;!&ndash;          </mat-panel-description>&ndash;&gt;-->
+<!--              </mat-expansion-panel-header>-->
+<!--            </mat-expansion-panel>-->
+
+<!--            <mat-expansion-panel (opened)="loadPresentationAsPanel()">-->
+<!--              <mat-expansion-panel-header>-->
+<!--                <mat-panel-title>-->
+<!--                  Paneling-->
+<!--                </mat-panel-title>-->
+<!--              </mat-expansion-panel-header>-->
+<!--              <mat-form-field appearance="standard">-->
+<!--                <mat-label>Search</mat-label>-->
+<!--                <input matInput (keyup)="applyFilter($event)">-->
+<!--              </mat-form-field>-->
+<!--              <table mat-table matSort class="w-100" [dataSource]="dataSource">-->
+<!--                &lt;!&ndash; Number Column &ndash;&gt;-->
+<!--                <ng-container [matColumnDef]=displayedColumns[0]>-->
+<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>-->
+<!--                  <td mat-cell *matCellDef="let row">{{dataSource.data.indexOf(row) + 1}}</td>-->
+<!--                </ng-container>-->
+
+<!--                &lt;!&ndash; Name Column &ndash;&gt;-->
+<!--                <ng-container [matColumnDef]=displayedColumns[1]>-->
+<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name</th>-->
+<!--                  <td mat-cell *matCellDef="let row">{{row.studentName}}</td>-->
+<!--                </ng-container>-->
+
+<!--                &lt;!&ndash; Title Column &ndash;&gt;-->
+<!--                <ng-container [matColumnDef]=displayedColumns[2]>-->
+<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>-->
+<!--                  <td mat-cell *matCellDef="let row">{{row.title}}</td>-->
+<!--                </ng-container>-->
+
+<!--                &lt;!&ndash; SV Column &ndash;&gt;-->
+<!--                <ng-container [matColumnDef]=displayedColumns[3]>-->
+<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Supervisor</th>-->
+<!--                  <td mat-cell *matCellDef="let row">{{row.supervisorModel.name}}</td>-->
+<!--                </ng-container>-->
+
+<!--                &lt;!&ndash; Action Column &ndash;&gt;-->
+<!--                <ng-container [matColumnDef]=displayedColumns[4]>-->
+<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>-->
+<!--                  <td mat-cell *matCellDef="let row">-->
+<!--                    <a [routerLink]="row.id" matTooltip="Open" mat-icon-button color="primary">-->
+<!--                      <mat-icon>launch</mat-icon>-->
+<!--                    </a>-->
+<!--                  </td>-->
+<!--                </ng-container>-->
+
+<!--                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
+<!--                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
+
+<!--              </table>-->
+<!--              <mat-paginator [pageSizeOptions]="getPaginatorOptions()"-->
+<!--                             aria-label="Select page of presentation"></mat-paginator>-->
+<!--            </mat-expansion-panel>-->
+
+<!--            <mat-expansion-panel>-->
+<!--              <mat-expansion-panel-header>-->
+<!--                <mat-panel-title>-->
+<!--                  Presiding-->
+<!--                </mat-panel-title>-->
+<!--                &lt;!&ndash;          <mat-panel-description>&ndash;&gt;-->
+<!--                &lt;!&ndash;            You are the chairperson of these presentations&ndash;&gt;-->
+<!--                &lt;!&ndash;          </mat-panel-description>&ndash;&gt;-->
+<!--              </mat-expansion-panel-header>-->
+<!--              <p>This is the primary content of the panel.</p>-->
+<!--            </mat-expansion-panel>-->
+
+<!--          </mat-accordion>-->
+<!--        </mat-card-content>-->
+<!--      </mat-card>-->
+<!--    </div>-->
+
+<!--  </mat-drawer-content>-->
+<!--</mat-drawer-container>-->
+
+<ng-template #detailDisplay let-title="title" let-data="data">
+  <div style="display: inline-block; width: 10%">
+    {{title}}
+  </div>
+  <div style="display: inline-block;width: 90%">
+    : {{(data) ? data : '-'}}
+  </div>
+</ng-template>

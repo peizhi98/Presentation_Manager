@@ -16,12 +16,19 @@ import {ErrorHandlingInterceptor} from './util/error-handling.interceptor';
 import {UserState} from './store/user/user.store';
 import {NotFoundComponent} from './component/not-found/not-found.component';
 import {EvaluationState} from './store/evaluation/evaluation.store';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {PresentationState} from './store/presentation/presentation.store';
+import {NgxPermissionsModule} from 'ngx-permissions';
+import {UnauthorizedComponent} from './component/unauthorized/unauthorized.component';
+import {UserRoleState} from './store/user-role/user-role.store';
+import {DecimalPipe} from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoadingDialogComponent,
     NotFoundComponent,
+    UnauthorizedComponent
   ],
   imports: [
     SharedModule,
@@ -29,7 +36,10 @@ import {EvaluationState} from './store/evaluation/evaluation.store';
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    NgxsModule.forRoot([ScheduleState, AuthState, AppState, UserState, EvaluationState]),
+    FormsModule,
+    ReactiveFormsModule,
+    NgxPermissionsModule.forRoot(),
+    NgxsModule.forRoot([ScheduleState, AuthState, AppState, UserState, EvaluationState, PresentationState, UserRoleState]),
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

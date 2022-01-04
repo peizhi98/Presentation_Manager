@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EvaluationFormRepo extends JpaRepository<EvaluationFormBean, Integer> {
     EvaluationFormBean getEvaluationFormBeanByScheduleIdAndEvaluationType(Integer scheduleId, EvaluationType evaluationType);
+    EvaluationFormBean getEvaluationFormBeanByEvaluationTypeAndScheduleId(EvaluationType evaluationType,Integer scheduleId);
 }

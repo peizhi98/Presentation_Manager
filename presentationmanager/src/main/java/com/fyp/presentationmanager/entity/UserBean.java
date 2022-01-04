@@ -1,9 +1,12 @@
 package com.fyp.presentationmanager.entity;
 
+import com.fyp.presentationmanager.enums.SystemRole;
 import com.fyp.presentationmanager.model.user.UserModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -22,12 +25,14 @@ public class UserBean implements Serializable {
     @Column(name = EMAIL, unique = true, nullable = false)
     private String email;
 
-    @Column(name = NAME)
+    @Column(name = NAME, nullable = false)
     private String name;
 
-    @Column(name = PASSWORD)
+    @Column(name = PASSWORD, nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "userBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<UserRoleBean> userRoleBeans;
 
     public UserBean() {
     }
@@ -78,5 +83,23 @@ public class UserBean implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<UserRoleBean> getUserRoleBeans() {
+        return userRoleBeans;
+    }
+
+    public void setUserRoleBeans(List<UserRoleBean> userRoleBeans) {
+        this.userRoleBeans = userRoleBeans;
+    }
+
+    public List<SystemRole> getSystemRoleList() {
+        List<SystemRole> systemRoles = new ArrayList<>();
+        if (this.userRoleBeans != null) {
+            for (UserRoleBean userRoleBean : this.userRoleBeans) {
+                systemRoles.add(userRoleBean.getSystemRole());
+            }
+        }
+        return systemRoles;
     }
 }

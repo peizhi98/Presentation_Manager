@@ -1,6 +1,15 @@
 export class UserModel {
-  id: string;
+  id: number;
   email: string;
   name: string;
   password: string;
+  systemRoles: SystemRole[];
 }
+
+export enum SystemRole {
+  ADMIN = 'ADMIN',
+  COORDINATOR = 'COORDINATOR',
+  LECTURER = 'LECTURER',
+  OFFICE = 'OFFICE'
+}
+

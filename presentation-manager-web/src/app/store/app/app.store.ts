@@ -1,6 +1,6 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {ProgressBarLoading, ProgressBarStopLoading, ShowSnackBar} from './app.action';
+import {ProgressBarLoading, ProgressBarStopLoading, ReloadData, ShowSnackBar} from './app.action';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 export class AppStateModel {
@@ -49,5 +49,11 @@ export class AppState {
     });
   }
 
+  @Action(ReloadData)
+  reloadData(ctx: StateContext<AppStateModel>): void {
+    ctx.patchState({
+      progressBarLoading: false
+    });
+  }
 
 }

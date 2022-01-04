@@ -11,6 +11,7 @@ import {Select} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
+import {SystemRole} from '../../../../model/user.model';
 
 @Component({
   selector: 'app-presentation-list',
@@ -106,5 +107,9 @@ export class PresentationsViewComponent implements OnInit {
       options.push(this.dataSource.data.length);
     }
     return options;
+  }
+
+  get SystemRole(){
+    return SystemRole;
   }
 }

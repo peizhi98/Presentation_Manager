@@ -1,0 +1,134 @@
+<form [formGroup]="usersForm" *ngIf="usersForm" (ngSubmit)="save()">
+  <mat-sidenav-container style="background-color: transparent;">
+    <mat-sidenav style="
+  width: 17%;background-color: transparent; border: none" fixedInViewport fixedTopGap="80"
+                 mode="side" position="end" disableClose opened>
+      <mat-card>
+        <mat-card-content>
+          <div align="center" class="mt-1"><input #csvInput hidden="true" type="file" onclick="this.value=null"
+                                                  (change)="readXlsx($event)"/>
+            <button class="button-group" mat-flat-button color="primary" type="button" (click)="csvInput.click()">Input by Excel File
+            </button>
+          </div>
+          <div *ngIf="readingExcel">
+            <div align="center">Reading File...</div>
+            <div align="center">
+              <mat-progress-bar style="width:130px;"
+                                [mode]="'indeterminate'">
+
+              </mat-progress-bar>
+            </div>
+          </div>
+          <div align="center" class="mt-1">
+            <button class="button-group" mat-raised-button type="button" color="primary" (click)="addUserControl()">Add Another User</button>
+          </div>
+
+          <div align="center" class="mt-1">
+            <button *ngIf="passwordInvisible();else hidePasswordButton" class="button-group" mat-raised-button type="button" color="primary" (click)="showPassword()">Show Password</button>
+            <ng-template #hidePasswordButton>
+              <button class="button-group" mat-raised-button type="button" color="primary" (click)="hidePassword()">Hide Password</button>
+            </ng-template>
+          </div>
+
+          <div align="center" class="mt-1">
+            <button class="button-group" [matMenuTriggerFor]="checkMenu" mat-raised-button type="button" color="primary">
+              Check All Role
+            </button>
+            <mat-menu #checkMenu="matMenu">
+              <button mat-menu-item (click)="checkAll(ADMIN)">
+                <span>Admin</span>
+              </button>
+              <button mat-menu-item (click)="checkAll(COORDINATOR)">
+                <span>Coordinator</span>
+              </button>
+              <button mat-menu-item (click)="checkAll(LECTURER)">
+                <span>Lecturer</span>
+              </button>
+              <button mat-menu-item (click)="checkAll(OFFICE_STAFF)">
+                <span>Office Staff</span>
+              </button>
+            </mat-menu>
+          </div>
+
+          <div align="center" class="mt-1">
+            <button class="button-group" [matMenuTriggerFor]="uncheckMenu" mat-raised-button type="button" color="primary">
+              Uncheck All Role
+            </button>
+            <mat-menu #uncheckMenu="matMenu">
+              <button mat-menu-item (click)="unCheckAll(ADMIN)">
+                <span>Admin</span>
+              </button>
+              <button mat-menu-item (click)="unCheckAll(COORDINATOR)">
+                <span>Coordinator</span>
+              </button>
+              <button mat-menu-item (click)="unCheckAll(LECTURER)">
+                <span>Lecturer</span>
+              </button>
+              <button mat-menu-item (click)="unCheckAll(OFFICE_STAFF)">
+                <span>Office Staff</span>
+              </button>
+            </mat-menu>
+          </div>
+
+
+          <div align="center" class="mt-1">
+            <button class="button-group" mat-raised-button type="submit" color="primary">Confirm and Save</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </mat-sidenav>
+    <mat-sidenav-content style="
+  width: 82%;">
+      <ng-container *ngIf="users.controls">
+        <h1 class="pl-2 pt-1"
+        >Add Users</h1>
+        <mat-card class="mt-1" *ngFor="let user of users.controls;let i = index">
+          <mat-card-content>
+            <div>
+              <mat-form-field class="input" [appearance]="formFieldAppearance">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" [formControl]="user.get(EMAIL)">
+                <mat-error *ngIf="user.get(EMAIL).touched&&user.get(EMAIL).invalid">
+                  Please enter a valid email
+                </mat-error>
+              </mat-form-field>
+              <button style="float: right" mat-icon-button color="primary" (click)="removeUser(i)">
+                <mat-icon>delete_forever</mat-icon>
+              </button>
+
+              <mat-form-field class="input ml-2" [appearance]="formFieldAppearance">
+                <mat-label>Name</mat-label>
+                <input matInput type="text" [formControl]="user.get(NAME)">
+                <mat-error *ngIf="user.get(NAME).invalid&&user.get(NAME).touched">
+                  Name cannot be empty.
+                </mat-error>
+              </mat-form-field>
+
+
+              <mat-form-field class="input" [appearance]="formFieldAppearance">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="passwordInputType" [formControl]="user.get(PASSWORD)">
+                <mat-error *ngIf="user.get(PASSWORD).invalid&&user.get(PASSWORD).touched">
+                  Please enter password with minimum 8 characters
+                </mat-error>
+              </mat-form-field>
+
+              <div style="display: inline-block" class="ml-2" [formGroup]="user.get(ROLES)">Roles:
+                <mat-checkbox class="ml-1" [formControl]="user.get(ROLES).get(ADMIN)">Admin</mat-checkbox>
+                <mat-checkbox class="ml-1" [formControl]="user.get(ROLES).get(COORDINATOR)">Coordinator</mat-checkbox>
+                <mat-checkbox class="ml-1" [formControl]="user.get(ROLES).get(LECTURER)">Lecturer</mat-checkbox>
+                <mat-checkbox class="ml-1" [formControl]="user.get(ROLES).get(OFFICE_STAFF)">Office Staff</mat-checkbox>
+                <mat-error *ngIf="user.get(ROLES).invalid&&user.get(ROLES).touched">
+                  Please assign at least one role.
+                </mat-error>
+              </div>
+            </div>
+
+
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</form>

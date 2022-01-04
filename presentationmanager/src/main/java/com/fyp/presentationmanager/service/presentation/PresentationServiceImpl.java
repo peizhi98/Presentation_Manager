@@ -3,11 +3,13 @@ package com.fyp.presentationmanager.service.presentation;
 import com.fyp.presentationmanager.entity.PresentationBean;
 import com.fyp.presentationmanager.entity.PresentationPanelBean;
 import com.fyp.presentationmanager.entity.UserBean;
+import com.fyp.presentationmanager.model.auth.CustomUserDetails;
 import com.fyp.presentationmanager.model.presentation.PresentationModel;
 import com.fyp.presentationmanager.model.presentation.PresentationScheduleModel;
 import com.fyp.presentationmanager.model.role.PanelModel;
 import com.fyp.presentationmanager.repo.PanelRepo;
 import com.fyp.presentationmanager.repo.PresentationRepo;
+import com.fyp.presentationmanager.service.auth.AuthService;
 import com.fyp.presentationmanager.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,8 @@ public class PresentationServiceImpl implements PresentationService {
     private PanelRepo panelRepo;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthService authService;
 
     @Override
     public List<PresentationModel> addPresentationList(List<PresentationModel> presentationModelList) {
@@ -75,6 +79,34 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     @Override
+    public List<PresentationModel> getPresentationListAsPanel() {
+        CustomUserDetails authUser = this.authService.getAuthUserDetails();
+        List<PresentationPanelBean> presentationPanelBeans = this.panelRepo.findPresentationPanelBeansByPanelId(authUser.getId());
+        List<PresentationModel> presentationModelList = new ArrayList<>();
+        if (presentationPanelBeans != null) {
+            for (PresentationPanelBean presentationPanelBean : presentationPanelBeans) {
+                PresentationModel presentationModel = PresentationModel.build(presentationPanelBean.getPresentationBean());
+                presentationModelList.add(presentationModel);
+            }
+        }
+        return presentationModelList;
+    }
+
+    @Override
+    public List<PresentationModel> getPresentationListAsSupervisor() {
+        CustomUserDetails authUser = this.authService.getAuthUserDetails();
+        List<PresentationBean> presentationBeans = this.presentationRepo.findPresentationBeansBySupervisorId(authUser.getId());
+        List<PresentationModel> presentationModelList = new ArrayList<>();
+        if (presentationBeans != null) {
+            for (PresentationBean presentationBean : presentationBeans) {
+                PresentationModel presentationModel = PresentationModel.build(presentationBean);
+                presentationModelList.add(presentationModel);
+            }
+        }
+        return presentationModelList;
+    }
+
+    @Override
     public List<PresentationScheduleModel> schedulePresentations(List<PresentationScheduleModel> presentationScheduleModels) {
         if (presentationScheduleModels != null) {
             for (PresentationScheduleModel presentationModel : presentationScheduleModels) {
@@ -82,6 +114,7 @@ public class PresentationServiceImpl implements PresentationService {
                 if (presentationBean != null) {
                     presentationBean.setStartTime(presentationModel.getStartTime());
                     presentationBean.setEndTime(presentationModel.getEndTime());
+                    presentationBean.setRoomId(presentationModel.getRoomId());
                 }
 
             }

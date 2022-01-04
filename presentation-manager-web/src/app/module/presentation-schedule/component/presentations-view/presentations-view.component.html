@@ -1,8 +1,15 @@
 <mat-card>
   <mat-card-content>
     <p class="pt-1 pr-1" align="right">
-      <button mat-raised-button color="primary" [routerLink]="routeConstant.ADD_PRESENTATION">Add New Presentations
+            <span>
+        <button mat-raised-button color="primary" *ngxPermissionsOnly="SystemRole.COORDINATOR">Create Google Calendar Event
+        </button>
+      </span>
+      <span class="ml-1">
+        <button mat-raised-button color="primary" [routerLink]="routeConstant.ADD_PRESENTATION">Add New Presentations
       </button>
+      </span>
+
     </p>
     <mat-form-field appearance="standard">
       <mat-label>Search</mat-label>

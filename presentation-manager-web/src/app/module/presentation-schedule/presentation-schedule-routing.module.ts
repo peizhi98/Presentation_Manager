@@ -9,6 +9,8 @@ import {AddPresentationComponent} from './component/add-presentation/add-present
 import {TimetableComponent} from './component/timetable/timetable.component';
 import {EvaluationCriteriaComponent} from './component/evaluation-criteria/evaluation-criteria.component';
 import {PresentationComponent} from './component/presentation/presentation.component';
+import {EvaluatePresentationComponent} from './component/evaluate-presentation/evaluate-presentation.component';
+import {EvaluationReportComponent} from './component/evaluation-report/evaluation-report.component';
 
 const routes: Routes = [
   {
@@ -23,13 +25,25 @@ const routes: Routes = [
             path: RouteConstant.PRESENTATION_VIEW, component: null,
             children: [
               {path: '', component: PresentationsViewComponent},
-              {path: RouteConstant.PRESENTATION, component: PresentationComponent},
               {path: RouteConstant.ADD_PRESENTATION, component: AddPresentationComponent},
+              {
+                path: RouteConstant.PRESENTATION, component: PresentationComponent,
+                children: [
+                  {path: '', component: null},
+                  {
+                    path: RouteConstant.EVALUATE, component: null,
+                    children: [
+                      {path: RouteConstant.FORM, component: EvaluatePresentationComponent}
+                    ]
+                  },
+                ]
+              },
             ]
           },
 
           {path: RouteConstant.TIMETABLE, component: TimetableComponent},
           {path: RouteConstant.CRITERIA, component: EvaluationCriteriaComponent},
+          {path: RouteConstant.EVALUATION_VIEW, component: EvaluationReportComponent},
         ]
       },
 

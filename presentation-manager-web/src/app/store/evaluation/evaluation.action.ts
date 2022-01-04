@@ -1,4 +1,4 @@
-import {EvaluationFormMode, EvaluationType} from '../../model/evaluation-form.model';
+import {EvaluationFormMode, EvaluationType} from '../../model/evaluation/evaluation-form.model';
 
 export class ChangeEvaluationType {
   static readonly type = '[Evaluation] Change Evaluation Type';

@@ -49,16 +49,14 @@ export class TimetableComponent implements OnInit {
   disableDrag = false;
 
   resourceDataSource: Record<string, any>[] = [
-    {text: 'Room A', id: 1, color: '#98AFC7'},
-    {text: 'Room B', id: 2, color: '#99c68e'},
-    {text: 'Room C', id: 3, color: '#C2B280'},
-    {text: 'Room D', id: 4, color: '#3090C7'},
-    {text: 'Room E', id: 5, color: '#95b9'},
-    {text: 'Room F', id: 6, color: '#95b9c7'},
-    {text: 'Room G', id: 7, color: '#deb887'},
-    {text: 'Room H', id: 8, color: '#3090C7'},
-    {text: 'Room I', id: 9, color: '#98AFC7'},
-    {text: 'Room J', id: 10, color: '#778899'}
+    {text: 'Online', id: 1, color: '#98AFC7'},
+    {text: 'BK1', id: 2, color: '#99c68e'},
+    {text: 'BK2', id: 3, color: '#C2B280'},
+    {text: 'MM2', id: 4, color: '#3090C7'},
+    {text: 'MM3', id: 5, color: '#95b9'},
+    {text: 'MM4', id: 6, color: '#95b9c7'},
+    {text: 'MM5', id: 7, color: '#deb887'},
+    {text: 'MM6', id: 8, color: '#3090C7'},
   ];
 
   eventSettings: EventSettingsModel;
@@ -86,10 +84,11 @@ export class TimetableComponent implements OnInit {
         if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
           (res.data as SchedulerPresentationModel[]).forEach((presentationData, index) => {
             // test!!!!!!!!!!!
-            presentationData.roomId = 1;
+            // presentationData.roomId = 1;
             const schedulerPresentationModel: SchedulerPresentationModel = new SchedulerPresentationModel();
             schedulerPresentationModel.id = presentationData.id;
             schedulerPresentationModel.roomId = presentationData.roomId;
+            console.log(presentationData.roomId);
             schedulerPresentationModel.title = presentationData.title;
             schedulerPresentationModel.panelModels = presentationData.panelModels;
             schedulerPresentationModel.supervisorModel = presentationData.supervisorModel;
@@ -201,6 +200,7 @@ export class TimetableComponent implements OnInit {
         presentationScheduleModel.endTime = sp.endTime;
         presentationScheduleModel.startTime = sp.startTime;
         presentationScheduleModel.id = sp.id;
+        presentationScheduleModel.roomId=sp.roomId;
         presentationSchedules.push(presentationScheduleModel);
       }
     });

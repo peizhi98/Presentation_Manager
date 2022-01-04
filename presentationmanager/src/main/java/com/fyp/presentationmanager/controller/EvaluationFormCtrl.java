@@ -1,9 +1,9 @@
 package com.fyp.presentationmanager.controller;
 
 import com.fyp.presentationmanager.enums.EvaluationType;
-import com.fyp.presentationmanager.model.EvaluationFormModel;
+import com.fyp.presentationmanager.model.evaluation.EvaluationFormModel;
 import com.fyp.presentationmanager.model.ResponseModel;
-import com.fyp.presentationmanager.service.EvaluationFormService;
+import com.fyp.presentationmanager.service.evaluation.EvaluationFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

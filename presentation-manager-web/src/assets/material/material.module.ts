@@ -58,7 +58,7 @@ const Material = [
   MatStepperModule,
   MatExpansionModule,
   MatRadioModule,
-  MatTooltipModule
+  MatTooltipModule,
 ];
 
 @NgModule({

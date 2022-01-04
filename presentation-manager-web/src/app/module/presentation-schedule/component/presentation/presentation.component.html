@@ -3,12 +3,27 @@
   <mat-card-content>
     <ng-container *ngIf="presentationModel">
       <p align="right">
-        <button [matMenuTriggerFor]="evaluation_menu" mat-raised-button color="primary">Evaluate</button>
-        <mat-menu #evaluation_menu="matMenu">
-          <button mat-menu-item>
-            <span>Presentation</span>
-          </button>
-        </mat-menu>
+        <span>
+          <button *ngxPermissionsOnly="SystemRole.COORDINATOR"
+                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PRESENTATION" mat-raised-button
+                  color="primary">
+          Edit
+        </button>
+        </span>
+        <span class="ml-1">
+          <button *ngxPermissionsOnly="constant.ROLE_PANEL"
+                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PRESENTATION" mat-raised-button
+                  color="primary">
+          Evaluate Presentation
+        </button>
+        </span>
+        <span class="ml-1">
+          <button *ngxPermissionsOnly="constant.ROLE_SUPERVISOR"
+                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.REPORT" mat-raised-button
+                  color="primary">Evaluate Report
+        </button>
+        </span>
+
       </p>
       <ng-template #detailDisplay let-title="title" let-data="data">
         <div style="display: inline-block; width: 10%">
@@ -49,3 +64,4 @@
   </mat-card-content>
 
 </mat-card>
+<router-outlet></router-outlet>

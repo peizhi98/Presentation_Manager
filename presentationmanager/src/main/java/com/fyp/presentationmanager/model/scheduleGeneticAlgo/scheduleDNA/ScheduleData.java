@@ -39,11 +39,11 @@ public class ScheduleData {
                 new Date(2021, 1, 1, 13, 0));
         panelAvailableTime.add(timeRange);
         Panel panel = new Panel(1, panelAvailableTime);
-
-        List<TimeRange> panelAvailableTime2 = new ArrayList<>();
-        timeRange = new TimeRange(new Date(2021, 1, 1, 12, 30),
-                new Date(2021, 1, 1, 13, 0));
-        panelAvailableTime2.add(timeRange);
+//
+//        List<TimeRange> panelAvailableTime2 = new ArrayList<>();
+//        timeRange = new TimeRange(new Date(2021, 1, 1, 12, 30),
+//                new Date(2021, 1, 1, 13, 0));
+//        panelAvailableTime2.add(timeRange);
         Panel panel2 = new Panel(2, panelAvailableTime);
 
         List<Panel> panels = new ArrayList<>();

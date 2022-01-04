@@ -16,10 +16,11 @@ import {AuthState} from '../../../../store/auth/auth.store';
 export class ScheduleComponent implements OnInit {
   navLinks = [];
   activeLinkIndex = -1;
-  scheduleModel: ScheduleModel = new ScheduleModel();
+  scheduleModel: ScheduleModel;
   loading = true;
   contentTitle = '';
   scheduleId: number;
+  constant = Constant;
 
   constructor(private scheduleService: ScheduleService,
               private activatedRoute: ActivatedRoute, private store: Store, private router: Router) {
@@ -32,26 +33,27 @@ export class ScheduleComponent implements OnInit {
         label: 'Timetable',
         link: RouteConstant.TIMETABLE,
         index: 1
-      }, {
-        label: 'Evaluation',
-        link: 'RouteConstant.CRITERIA',
-        index: 2
       },
+      // {
+      //   label: 'Evaluation',
+      //   link: 'RouteConstant.CRITERIA',
+      //   index: 2
+      // },
       {
         label: 'Evaluation Criteria',
         link: RouteConstant.CRITERIA,
-        index: 3
+        index: 2
       },
       {
         label: 'Evaluation Report',
-        link: 'RouteConstant.CRITERIA',
-        index: 4
+        link: RouteConstant.EVALUATION_VIEW,
+        index: 3
       },
-      {
-        label: 'Details',
-        link: './details',
-        index: 5
-      },
+      // {
+      //   label: 'Details',
+      //   link: './details',
+      //   index: 5
+      // },
     ];
   }
 
@@ -64,9 +66,9 @@ export class ScheduleComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       if (params) {
         this.scheduleId = params.id;
-        this.store.dispatch(new SetCurrentSchedule(this.scheduleId));
         this.scheduleService.getSchedule(this.scheduleId).subscribe(resp => {
           if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
+            this.store.dispatch(new SetCurrentSchedule(this.scheduleId, resp.data.coordinator));
             this.scheduleModel = resp.data;
             console.log(resp.data);
             this.loading = false;

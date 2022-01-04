@@ -13,4 +13,5 @@ public class PresentationScheduleModel {
     private Integer id;
     private Date startTime;
     private Date endTime;
+    private Integer roomId;
 }

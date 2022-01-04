@@ -1,6 +1,6 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {EvaluationFormMode, EvaluationType} from '../../model/evaluation-form.model';
+import {EvaluationFormMode, EvaluationType} from '../../model/evaluation/evaluation-form.model';
 import {ChangeEvaluationFormMode, ChangeEvaluationType, ResetEvaluationState} from './evaluation.action';
 
 export class EvaluationStateModel {

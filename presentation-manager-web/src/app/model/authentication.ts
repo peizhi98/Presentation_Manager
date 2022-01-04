@@ -7,5 +7,6 @@ export class AuthenticationRequest {
 
 export class AuthenticationResponse {
   jwt: string;
+  authUserModel: UserModel;
 }
 

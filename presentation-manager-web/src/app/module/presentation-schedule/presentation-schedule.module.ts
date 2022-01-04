@@ -17,6 +17,8 @@ import {
 import { TimetableComponent } from './component/timetable/timetable.component';
 import { EvaluationFormFypComponent } from './component/evaluation-form-fyp/evaluation-form-fyp.component';
 import { EvaluationFormMasterComponent } from './component/evaluation-form-master/evaluation-form-master.component';
+import { EvaluatePresentationComponent } from './component/evaluate-presentation/evaluate-presentation.component';
+import { EvaluationReportComponent } from './component/evaluation-report/evaluation-report.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import { EvaluationFormMasterComponent } from './component/evaluation-form-maste
     TimetableComponent,
     EvaluationFormFypComponent,
     EvaluationFormMasterComponent,
+    EvaluatePresentationComponent,
+    EvaluationReportComponent,
   ],
   exports: [
     SchedulesViewComponent,

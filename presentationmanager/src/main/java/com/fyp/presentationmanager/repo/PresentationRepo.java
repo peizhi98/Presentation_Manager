@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PresentationRepo extends JpaRepository<PresentationBean, Integer> {
     List<PresentationBean> findPresentationBeansByScheduleId(Integer scheduleId);
+    List<PresentationBean> findPresentationBeansBySupervisorId(Integer supervisorId);
 }

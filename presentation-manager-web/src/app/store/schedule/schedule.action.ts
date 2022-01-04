@@ -1,7 +1,9 @@
+import {CoordinatorModel} from '../../model/role/coordinator.model';
+
 export class SetCurrentSchedule {
   static readonly type = '[Schedule] Set current schedule';
 
-  constructor(public id: number) {
+  constructor(public id: number, public coordinatorModel: CoordinatorModel) {
   }
 }
 

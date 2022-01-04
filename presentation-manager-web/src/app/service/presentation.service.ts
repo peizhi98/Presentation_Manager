@@ -34,6 +34,16 @@ export class PresentationService {
       .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations', {params});
   }
 
+  getPresentationsAsPanel(): Observable<ResponseModel<PresentationModel[]>> {
+    return this.http
+      .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations-panel');
+  }
+
+  getPresentationsAsSupervisor(): Observable<ResponseModel<PresentationModel[]>> {
+    return this.http
+      .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations-supervisor');
+  }
+
   schedulePresentations(presentationList: PresentationScheduleModel[]): Observable<ResponseModel<PresentationScheduleModel[]>>{
     return this.http
       .post<ResponseModel<PresentationScheduleModel[]>>(this.serverUrl + this.presentationUrl + 'schedule-presentations', presentationList);

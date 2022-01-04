@@ -13,7 +13,7 @@ console.log('auth');
   imports: [
     CommonModule,
     AuthRoutingModule,
-    SharedModule
+    SharedModule,
   ],
   exports: [
     LoginComponent,
