@@ -1,5 +1,6 @@
 import {PanelModel} from '../role/panel.model';
 import {SupervisorModel} from '../role/supervisor.model';
+import {ScheduleModel} from '../schedule/schedule.model';
 
 export class PresentationModel {
   id: number;
@@ -14,6 +15,7 @@ export class PresentationModel {
   endTime: Date;
   roomId: number;
   venue: string;
+  scheduleModel: ScheduleModel;
   supervisorModel: SupervisorModel;
   panelModels: PanelModel[];
 
@@ -33,4 +35,5 @@ export class PresentationScheduleModel {
 export class SchedulerPresentationModel extends PresentationModel {
   schedulerId: number | string;
   roomId: number;
+  scheduleSaved: boolean;
 }

@@ -14,9 +14,16 @@ export class PresentationsTableComponent implements OnInit {
   routeConstant = RouteConstant;
 
   dataSource: MatTableDataSource<PresentationModel>;
-  displayedColumns = ['number', 'studentName', 'title', 'sv', 'action'];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  displayedColumns = ['number', 'studentName', 'title', 'schedule', 'year', 'sem', 'action'];
+
+  @ViewChild(MatPaginator, {static: false}) set paginator(matPaginator: MatPaginator) {
+    this.dataSource.paginator = matPaginator;
+  }
+
+  @ViewChild(MatSort, {static: false}) set sort(sort: MatSort) {
+    this.dataSource.sort = sort;
+  }
+
   @Input() presentations: PresentationModel[];
 
   constructor() {
@@ -30,8 +37,6 @@ export class PresentationsTableComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.presentations);
     this.setFilterPredicate();
     this.initSortingAccessor();
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   setFilterPredicate(): void {
@@ -52,7 +57,11 @@ export class PresentationsTableComponent implements OnInit {
         case this.displayedColumns[2]:
           return item.title;
         case this.displayedColumns[3]:
-          return item.supervisorModel.name;
+          return item.scheduleModel.title;
+        case this.displayedColumns[4]:
+          return item.scheduleModel.year;
+        case this.displayedColumns[5]:
+          return item.scheduleModel.sem;
         default:
           return item[property];
       }

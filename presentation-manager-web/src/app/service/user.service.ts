@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Constant} from '../../assets/constant/app.constant';
-import {ResponseModel} from '../model/response.model';
+import {ResponseModel} from '../model/auth/response.model';
 import {LecturerModel} from '../model/role/lecturer.model';
-import {UserModel} from '../model/user.model';
+import {UserModel} from '../model/user/user.model';
 
 @Injectable({
   providedIn: 'root'

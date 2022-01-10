@@ -1,6 +1,7 @@
 package com.fyp.presentationmanager.entity;
 
 import com.fyp.presentationmanager.enums.SystemRole;
+import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.TimeRange;
 import com.fyp.presentationmanager.model.user.UserModel;
 
 import javax.persistence.*;
@@ -33,6 +34,9 @@ public class UserBean implements Serializable {
 
     @OneToMany(mappedBy = "userBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UserRoleBean> userRoleBeans;
+
+    @OneToMany(mappedBy = "userBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<AvailabilityBean> availabilityBeans;
 
     public UserBean() {
     }
@@ -102,4 +106,27 @@ public class UserBean implements Serializable {
         }
         return systemRoles;
     }
+
+    public List<AvailabilityBean> getAvailabilityBeans() {
+        return availabilityBeans;
+    }
+
+    public void setAvailabilityBeans(List<AvailabilityBean> availabilityBeans) {
+        this.availabilityBeans = availabilityBeans;
+    }
+
+    public List<TimeRange> getAvailableTimeRangesBetween(List<TimeRange> timeRanges) {
+        if (this.availabilityBeans != null) {
+            List<TimeRange> availabilities = new ArrayList<>();
+            for (AvailabilityBean availabilityBean : this.availabilityBeans) {
+                if (availabilityBean.containedIn(timeRanges)) {
+                    availabilities.add(availabilityBean.toTimeRange());
+                }
+
+            }
+            return availabilities;
+        }
+        return null;
+    }
+
 }

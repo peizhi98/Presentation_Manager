@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {SetCurrentPresentation} from './presentation.action';
 import {PanelModel} from '../../model/role/panel.model';
 import {SupervisorModel} from '../../model/role/supervisor.model';
-import {UserModel} from '../../model/user.model';
+import {UserModel} from '../../model/user/user.model';
 import {AuthState} from '../auth/auth.store';
 import {Constant} from '../../../assets/constant/app.constant';
 import {ChangePresentationRole} from '../user-role/user-role.action';

@@ -11,6 +11,8 @@ public interface UserService {
 
     UserBean getUserById(Integer id);
 
+    UserBean getUserByEmail(String email);
+
     UserBean getUserOrCreateWithEmptyPwIfNotExist(String username);
 
     List<LecturerModel> getAllLecturers();

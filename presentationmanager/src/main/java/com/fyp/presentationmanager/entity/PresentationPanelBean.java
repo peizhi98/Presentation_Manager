@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Table(name = "presentation_panel")
 public class PresentationPanelBean implements Serializable {
     public static final String ID = "id";
-    public static final String PANEL_ID = "panel_email";
+    public static final String PANEL_ID = "panel_id";
     public static final String PRESENTATION_ID = "presentation_id";
     private static final long serialVersionUID = 925785039632596700L;
 

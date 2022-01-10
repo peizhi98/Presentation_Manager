@@ -4,9 +4,12 @@ import java.util.Date;
 
 public class DateTimeUtil {
     public static boolean timeRangesOverlapped(Date start1, Date end1, Date start2, Date end2) {
-        if (timeRangesAreEqual(start1, end1, start2, end2)
-                || dateExclusivelyBetweenRange(start1, start2, end2)
-                || dateExclusivelyBetweenRange(end1, start2, end2))
+        if (
+//                timeRangesAreEqual(start1, end1, start2, end2)
+                start1.compareTo(start2) == 0
+                        || end1.compareTo(end2) == 0
+                        || dateExclusivelyBetweenRange(start1, start2, end2)
+                        || dateExclusivelyBetweenRange(end1, start2, end2))
             return true;
         return false;
     }
@@ -17,7 +20,7 @@ public class DateTimeUtil {
         return false;
     }
 
-    public static boolean timeRangeIsBetweenTimeRange(Date start1, Date end1, Date start2, Date end2) {
+    public static boolean timeRange1IsBetweenTimeRange2(Date start1, Date end1, Date start2, Date end2) {
         if (timeInclusivelyBetweenRange(start1, start2, end2) && timeInclusivelyBetweenRange(end1, start2, end2))
             return true;
         return false;
@@ -44,6 +47,7 @@ public class DateTimeUtil {
     public static long hoursToMillis(double hours) {
         return (long) hours * 60 * 60 * 1000;
     }
+
     public static boolean timeAfterIncl(Date time1, Date time2) {
         return time1.after(time2) || time1.compareTo(time2) == 0;
     }

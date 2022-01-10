@@ -231,7 +231,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
   addCriterionEditingControl(criterionModel: CriterionModel): void {
     (this.evaluationFormEditingForm.get(this.CRITERIA_EVALUATION) as FormArray).push(this.formBuilder.group({
       name: this.formBuilder.control(criterionModel.name, Validators.required),
-      weightage: this.formBuilder.control(criterionModel.weightage, Validators.required),
+      weightage: this.formBuilder.control(criterionModel.weightage, [Validators.required, Validators.pattern("^[0-9]*$")]),
       rating: this.formBuilder.control({value: '', disabled: true}),
       comment: this.formBuilder.control({value: '', disabled: true}),
       criterionId: this.formBuilder.control(criterionModel.id)

@@ -1,5 +1,5 @@
-import {PresentationModel} from './presentation/presentation.model';
-import {CoordinatorModel} from './role/coordinator.model';
+import {PresentationModel} from '../presentation/presentation.model';
+import {CoordinatorModel} from '../role/coordinator.model';
 
 export class ScheduleModel {
   id: number;

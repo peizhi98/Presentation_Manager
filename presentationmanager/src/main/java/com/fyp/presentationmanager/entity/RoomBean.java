@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "presentation_room")
-public class PresentationRoomBean implements Serializable {
+@Table(name = "room")
+public class RoomBean implements Serializable {
     public static final String ID = "id";
     public static final String NAME = "name";
     private static final long serialVersionUID = -7771990716877154698L;

@@ -5,7 +5,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {XlsxUtil} from '../../../../util/xlsx.util';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../../service/user.service';
-import {SystemRole, UserModel} from '../../../../model/user.model';
+import {SystemRole, UserModel} from '../../../../model/user/user.model';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {Router} from '@angular/router';
 

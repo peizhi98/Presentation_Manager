@@ -3,7 +3,7 @@ import {ResetScheduleState, SetCurrentSchedule} from './schedule.action';
 import {Injectable} from '@angular/core';
 import {CoordinatorModel} from '../../model/role/coordinator.model';
 import {AuthState} from '../auth/auth.store';
-import {UserModel} from '../../model/user.model';
+import {UserModel} from '../../model/user/user.model';
 import {ChangeScheduleRole} from '../user-role/user-role.action';
 import {Constant} from '../../../assets/constant/app.constant';
 

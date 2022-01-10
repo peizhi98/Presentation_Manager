@@ -2,6 +2,7 @@ package com.fyp.presentationmanager.model.presentation;
 
 import com.fyp.presentationmanager.entity.PresentationBean;
 import com.fyp.presentationmanager.entity.PresentationPanelBean;
+import com.fyp.presentationmanager.model.ScheduleModel;
 import com.fyp.presentationmanager.model.role.PanelModel;
 import com.fyp.presentationmanager.model.role.SupervisorModel;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PresentationModel {
     private Integer id;
+    private String studentMatrixNo;
     private String studentName;
     private String studentEmail;
     private Integer scheduleId;
@@ -26,7 +28,7 @@ public class PresentationModel {
     private Date startTime;
     private Date endTime;
     private Integer roomId;
-    private String venue;
+    private ScheduleModel scheduleModel;
     private SupervisorModel supervisorModel;
     private List<PanelModel> panelModels;
 
@@ -36,13 +38,14 @@ public class PresentationModel {
         presentationModel.setScheduleId(presentationBean.getScheduleId());
         presentationModel.setTitle(presentationBean.getTitle());
         presentationModel.setScheduleId(presentationBean.getScheduleId());
+        presentationModel.setScheduleModel(new ScheduleModel(presentationBean.getScheduleBean()));
         presentationModel.setStudentEmail(presentationBean.getStudentEmail());
+        presentationModel.setStudentMatrixNo(presentationBean.getStudentMatrixNo());
         presentationModel.setStudentName(presentationBean.getStudentName());
         presentationModel.setSupervisorModel(SupervisorModel.build(presentationBean.getSupervisorBean()));
         presentationModel.setStartTime(presentationBean.getStartTime());
         presentationModel.setEndTime(presentationBean.getEndTime());
         presentationModel.setRoomId(presentationBean.getRoomId());
-        presentationModel.setVenue(presentationBean.getVenue());
         List<PanelModel> panelModels = new ArrayList<>();
         if (presentationBean.getPanelBeans() != null) {
             for (PresentationPanelBean presentationPanelBean : presentationBean.getPanelBeans()) {

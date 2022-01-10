@@ -9,22 +9,6 @@ export class EvaluationModel {
   comment: string;
   rating: number;
   criterionEvaluationModelList: CriterionEvaluationModel[];
-
 }
 
-export class FYPEvaluationReportModel {
-  presentationId: number;
-  studentName: string;
-  title: string;
-  mark: number;
-  reportEvaluation: EvaluationModel;
-  presentationEvaluations: EvaluationModel[];
-}
 
-export class EvaluationReportModel {
-  evaluationId: number;
-  mark: number;
-  evaluationType: EvaluationType;
-  evaluatorId: number;
-  evaluatorName: string;
-}

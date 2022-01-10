@@ -4,6 +4,7 @@ import {
   CellClickEventArgs,
   DragAndDropService,
   DragEventArgs,
+  EventRenderedArgs,
   EventSettingsModel,
   GroupModel,
   ResizeEventArgs,
@@ -49,15 +50,26 @@ export class TimetableComponent implements OnInit {
   disableDrag = false;
 
   resourceDataSource: Record<string, any>[] = [
-    {text: 'Online', id: 1, color: '#98AFC7'},
-    {text: 'BK1', id: 2, color: '#99c68e'},
-    {text: 'BK2', id: 3, color: '#C2B280'},
-    {text: 'MM2', id: 4, color: '#3090C7'},
-    {text: 'MM3', id: 5, color: '#95b9'},
-    {text: 'MM4', id: 6, color: '#95b9c7'},
-    {text: 'MM5', id: 7, color: '#deb887'},
-    {text: 'MM6', id: 8, color: '#3090C7'},
+    {text: 'Online', id: 1},
+    {text: 'BK1', id: 2},
+    {text: 'BK2', id: 3},
+    {text: 'MM2', id: 4},
+    {text: 'MM3', id: 5},
+    {text: 'MM4', id: 6},
+    {text: 'MM5', id: 7},
+    {text: 'MM6', id: 8},
   ];
+  // resourceDataSource: Record<string, any>[] = [
+  //   {text: 'Online', id: 1, color: '#98AFC7'},
+  //   {text: 'BK1', id: 2, color: '#99c68e'},
+  //   {text: 'BK2', id: 3, color: '#C2B280'},
+  //   {text: 'MM2', id: 4, color: '#3090C7'},
+  //   {text: 'MM3', id: 5, color: '#95b9'},
+  //   {text: 'MM4', id: 6, color: '#95b9c7'},
+  //   {text: 'MM5', id: 7, color: '#deb887'},
+  //   {text: 'MM6', id: 8, color: '#3090C7'},
+  // ];
+  test = 1;
 
   eventSettings: EventSettingsModel;
   presentationModels: SchedulerPresentationModel[] = [];
@@ -88,16 +100,18 @@ export class TimetableComponent implements OnInit {
             const schedulerPresentationModel: SchedulerPresentationModel = new SchedulerPresentationModel();
             schedulerPresentationModel.id = presentationData.id;
             schedulerPresentationModel.roomId = presentationData.roomId;
-            console.log(presentationData.roomId);
             schedulerPresentationModel.title = presentationData.title;
+            schedulerPresentationModel.studentName = presentationData.studentName;
             schedulerPresentationModel.panelModels = presentationData.panelModels;
             schedulerPresentationModel.supervisorModel = presentationData.supervisorModel;
             schedulerPresentationModel.startTime = presentationData.startTime;
             schedulerPresentationModel.endTime = presentationData.endTime;
             if (presentationData.startTime && presentationData.endTime) {
               this.scheduledPresentations.push(schedulerPresentationModel);
+              schedulerPresentationModel.scheduleSaved = true;
             } else {
               this.presentationModels.push(schedulerPresentationModel);
+              schedulerPresentationModel.scheduleSaved = false;
             }
           });
           this.eventSettings = {
@@ -159,13 +173,36 @@ export class TimetableComponent implements OnInit {
     }
   }
 
+  oneventRendered(args: EventRenderedArgs): void {
+    const scheduledSaved: boolean = args.data.scheduleSaved as boolean;
+    if (!args.element) {
+      return;
+    }
+    if (scheduledSaved) {
+      args.element.style.backgroundColor = 'rgb(54, 162, 235)';
+    } else {
+      args.element.style.backgroundColor = 'rgb(75, 192, 192)';
+    }
+  }
+
   onSchedulerDragStart(args: DragEventArgs): void {
     args.interval = 5;
     args.navigation.enable = true;
   }
 
+  onSchedulerDragStop(args: DragEventArgs): void {
+    args.data.scheduleSaved = false;
+  }
+
   onResizeStart(args: ResizeEventArgs): void {
     args.interval = 5;
+    args.data.scheduleSaved = false;
+    console.log(args.data);
+  }
+
+  onResizeStop(args: ResizeEventArgs): void {
+    args.data.scheduleSaved = false;
+    args.element.style.backgroundColor = 'rgb(75, 192, 192)';
   }
 
   onCdkDragStart(presentation, index): void {
@@ -200,15 +237,18 @@ export class TimetableComponent implements OnInit {
         presentationScheduleModel.endTime = sp.endTime;
         presentationScheduleModel.startTime = sp.startTime;
         presentationScheduleModel.id = sp.id;
-        presentationScheduleModel.roomId=sp.roomId;
+        presentationScheduleModel.roomId = sp.roomId;
         presentationSchedules.push(presentationScheduleModel);
       }
     });
     this.presentationService.schedulePresentations(presentationSchedules).subscribe((resp) => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
-
+        this.presentationModels = [];
+        this.scheduledPresentations = [];
+        this.ngOnInit();
       }
       loadingDialog.close();
     });
   }
+
 }

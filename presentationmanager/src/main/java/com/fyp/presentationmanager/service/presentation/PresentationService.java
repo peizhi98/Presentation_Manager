@@ -1,5 +1,6 @@
 package com.fyp.presentationmanager.service.presentation;
 
+import com.fyp.presentationmanager.model.presentation.AutoSchedulingModel;
 import com.fyp.presentationmanager.model.presentation.PresentationModel;
 import com.fyp.presentationmanager.model.presentation.PresentationScheduleModel;
 
@@ -17,4 +18,6 @@ public interface PresentationService {
     List<PresentationModel> getPresentationListAsSupervisor();
 
     List<PresentationScheduleModel> schedulePresentations(List<PresentationScheduleModel> presentationScheduleModels);
+
+    List<PresentationModel> autoScheduling(AutoSchedulingModel autoSchedulingModel);
 }

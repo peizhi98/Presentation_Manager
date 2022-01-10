@@ -1,4 +1,4 @@
-import {UserModel} from './user.model';
+import {UserModel} from '../user/user.model';
 
 export class AuthenticationRequest {
   username: string;

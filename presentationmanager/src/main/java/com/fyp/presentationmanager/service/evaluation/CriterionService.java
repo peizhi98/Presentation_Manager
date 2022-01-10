@@ -1,4 +1,4 @@
-package com.fyp.presentationmanager.service;
+package com.fyp.presentationmanager.service.evaluation;
 
 import com.fyp.presentationmanager.entity.CriterionBean;
 import com.fyp.presentationmanager.model.evaluation.CriterionModel;

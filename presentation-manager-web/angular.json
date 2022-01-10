@@ -14,7 +14,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "xlsx"
+              "xlsx","chart.js"
             ],
             "outputPath": "dist/presentation-manager-web",
             "index": "src/index.html",

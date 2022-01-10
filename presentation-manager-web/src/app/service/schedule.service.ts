@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {Constant} from '../../assets/constant/app.constant';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {ResponseModel} from '../model/response.model';
-import {ScheduleModel} from '../model/schedule.model';
+import {ResponseModel} from '../model/auth/response.model';
+import {ScheduleModel} from '../model/schedule/schedule.model';
 import {AuthService} from './auth.service';
 
 @Injectable({

@@ -1,4 +1,4 @@
-package com.fyp.presentationmanager.service;
+package com.fyp.presentationmanager.service.schedule;
 
 import com.fyp.presentationmanager.entity.ScheduleBean;
 import com.fyp.presentationmanager.model.ScheduleModel;

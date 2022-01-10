@@ -15,6 +15,7 @@ public class PresentationBean implements Serializable {
     public static final String SCHEDULE_ID = "schedule_id";
     public static final String SUPERVISOR_ID = "supervisor_id";
     public static final String CHAIRPERSON_ID = "chairperson_id";
+    public static final String STUDENT_MATRIX_NO = "student_matrix_no";
     public static final String STUDENT_NAME = "student_name";
     public static final String STUDENT_EMAIL = "student_email";
     public static final String TITLE = "title";
@@ -23,7 +24,6 @@ public class PresentationBean implements Serializable {
     public static final String START_TIME = "start_time";
     public static final String END_TIME = "end_time";
     public static final String ROOM_ID = "room_id";
-    public static final String VENUE = "venue";
     public static final String MODE = "mode";
     private static final long serialVersionUID = -5901102986374700267L;
 
@@ -40,6 +40,9 @@ public class PresentationBean implements Serializable {
 
     @Column(name = SCHEDULE_ID, nullable = false)
     private Integer scheduleId;
+
+    @Column(name = STUDENT_MATRIX_NO, nullable = true)
+    private String studentMatrixNo;
 
     @Column(name = STUDENT_NAME, nullable = false)
     private String studentName;
@@ -65,9 +68,6 @@ public class PresentationBean implements Serializable {
     @Column(name = ROOM_ID)
     private Integer roomId;
 
-    @Column(name = VENUE)
-    private String venue;
-
     @Enumerated(EnumType.STRING)
     @Column(name = MODE)
     private PresentationMode mode;
@@ -77,8 +77,8 @@ public class PresentationBean implements Serializable {
     private ScheduleBean scheduleBean;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = ROOM_ID, referencedColumnName = PresentationRoomBean.ID, insertable = false, updatable = false)
-    private PresentationRoomBean presentationRoomBean;
+    @JoinColumn(name = ROOM_ID, referencedColumnName = RoomBean.ID, insertable = false, updatable = false)
+    private RoomBean roomBean;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = SUPERVISOR_ID, referencedColumnName = UserBean.ID, insertable = false, updatable = false)
@@ -92,8 +92,9 @@ public class PresentationBean implements Serializable {
 
     public PresentationBean(PresentationModel presentationModel) {
         this.scheduleId = presentationModel.getScheduleId();
+        this.studentMatrixNo = presentationModel.getStudentMatrixNo();
         this.studentEmail = presentationModel.getStudentEmail();
-        this.studentName=presentationModel.getStudentName();
+        this.studentName = presentationModel.getStudentName();
         this.title = presentationModel.getTitle();
 
     }
@@ -226,12 +227,12 @@ public class PresentationBean implements Serializable {
         this.presentationPanelBeans = presentationPanelBeans;
     }
 
-    public PresentationRoomBean getPresentationRoomBean() {
-        return presentationRoomBean;
+    public RoomBean getPresentationRoomBean() {
+        return roomBean;
     }
 
-    public void setPresentationRoomBean(PresentationRoomBean presentationRoomBean) {
-        this.presentationRoomBean = presentationRoomBean;
+    public void setPresentationRoomBean(RoomBean roomBean) {
+        this.roomBean = roomBean;
     }
 
     public UserBean getSupervisorBean() {
@@ -242,11 +243,22 @@ public class PresentationBean implements Serializable {
         this.supervisorBean = supervisorBean;
     }
 
-    public String getVenue() {
-        return venue;
+    public String getStudentMatrixNo() {
+        return studentMatrixNo;
     }
 
-    public void setVenue(String venue) {
-        this.venue = venue;
+    public void setStudentMatrixNo(String studentMatrixNo) {
+        this.studentMatrixNo = studentMatrixNo;
+    }
+
+    public boolean containIn(List<PresentationModel> presentationModels) {
+        if (presentationModels != null) {
+            for (PresentationModel presentationModel : presentationModels) {
+                if (presentationModel.getId().equals(this.id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {ResponseModel} from '../model/response.model';
+import {ResponseModel} from '../model/auth/response.model';
 
 export class TimeRange {
   startTime: Date;

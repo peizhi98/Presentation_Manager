@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {Constant} from '../../assets/constant/app.constant';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {ResponseModel} from '../model/response.model';
-import {AvailabilityModel} from '../model/availability.model';
+import {ResponseModel} from '../model/auth/response.model';
+import {AvailabilityModel} from '../model/availability/availability.model';
 
 @Injectable({
   providedIn: 'root'

@@ -7,7 +7,7 @@ import {Constant} from '../../../../../assets/constant/app.constant';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
 import {EvaluationType} from '../../../../model/evaluation/evaluation-form.model';
 import {SetCurrentPresentation} from '../../../../store/presentation/presentation.action';
-import {SystemRole} from '../../../../model/user.model';
+import {SystemRole} from '../../../../model/user/user.model';
 
 @Component({
   selector: 'app-presentation',

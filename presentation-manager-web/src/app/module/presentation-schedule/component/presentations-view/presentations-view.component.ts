@@ -11,7 +11,7 @@ import {Select} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
-import {SystemRole} from '../../../../model/user.model';
+import {SystemRole} from '../../../../model/user/user.model';
 
 @Component({
   selector: 'app-presentation-list',
@@ -49,6 +49,7 @@ export class PresentationsViewComponent implements OnInit {
   }
 
   initTable(): void {
+    // no ngIf in table! paginator and sorting will not work
     this.dataSource = new MatTableDataSource(this.presentationModels);
     this.setFilterPredicate();
     this.initSortingAccessor();
@@ -109,7 +110,7 @@ export class PresentationsViewComponent implements OnInit {
     return options;
   }
 
-  get SystemRole(){
+  get SystemRole() {
     return SystemRole;
   }
 }

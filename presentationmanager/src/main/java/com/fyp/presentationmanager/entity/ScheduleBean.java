@@ -1,5 +1,6 @@
 package com.fyp.presentationmanager.entity;
 
+import com.fyp.presentationmanager.enums.EvaluationType;
 import com.fyp.presentationmanager.enums.PresentationMode;
 import com.fyp.presentationmanager.enums.ScheduleType;
 import com.fyp.presentationmanager.model.ScheduleModel;
@@ -164,12 +165,30 @@ public class ScheduleBean implements Serializable {
     }
 
 
-
     public List<PresentationBean> getPresentationBeans() {
         return presentationBeans;
     }
 
     public void setPresentationBeans(List<PresentationBean> presentationBeans) {
         this.presentationBeans = presentationBeans;
+    }
+
+    public List<EvaluationFormBean> getEvaluationFormBeans() {
+        return evaluationFormBeans;
+    }
+
+    public void setEvaluationFormBeans(List<EvaluationFormBean> evaluationFormBeans) {
+        this.evaluationFormBeans = evaluationFormBeans;
+    }
+
+    public EvaluationFormBean getEvaluationFormBeanOf(EvaluationType evaluationType) {
+        if (this.evaluationFormBeans != null) {
+            for (EvaluationFormBean evaluationFormBean : this.evaluationFormBeans) {
+                if (evaluationFormBean.getEvaluationType().equals(evaluationType)) {
+                    return evaluationFormBean;
+                }
+            }
+        }
+        return null;
     }
 }

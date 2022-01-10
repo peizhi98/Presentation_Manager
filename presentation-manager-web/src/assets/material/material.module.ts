@@ -27,6 +27,8 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
 
 const Material = [
   MatCheckboxModule,
@@ -59,6 +61,7 @@ const Material = [
   MatExpansionModule,
   MatRadioModule,
   MatTooltipModule,
+  MatButtonToggleModule
 ];
 
 @NgModule({

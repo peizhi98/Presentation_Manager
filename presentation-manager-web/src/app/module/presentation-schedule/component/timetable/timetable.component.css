@@ -35,14 +35,14 @@
   border: solid 1px #ccc;
   padding: 20px 10px;
   /*border-bottom: solid 1px #ccc;*/
-  color: black;
+  color: white;
   /*display: flex;*/
   /*flex-direction: row;*/
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
   cursor: move;
-  background: #f9aa33;
+  background: rgb(75, 192, 192);
   font-size: 14px;
 }
 

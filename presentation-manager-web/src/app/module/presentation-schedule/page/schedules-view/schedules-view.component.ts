@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ScheduleService} from '../../../../service/schedule.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
-import {ScheduleModel} from '../../../../model/schedule.model';
+import {ScheduleModel} from '../../../../model/schedule/schedule.model';
 import {Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
@@ -9,7 +9,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
-import {SystemRole} from '../../../../model/user.model';
+import {SystemRole} from '../../../../model/user/user.model';
 
 @Component({
   selector: 'app-home',

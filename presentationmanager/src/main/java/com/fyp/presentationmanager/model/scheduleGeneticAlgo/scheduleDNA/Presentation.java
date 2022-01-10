@@ -1,5 +1,8 @@
 package com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA;
 
+import com.fyp.presentationmanager.entity.PresentationBean;
+import com.fyp.presentationmanager.entity.PresentationPanelBean;
+import com.fyp.presentationmanager.enums.PresentationMode;
 import com.fyp.presentationmanager.util.DateTimeUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Presentation implements Cloneable, Comparable<Presentation> {
     private Integer id;
+    private PresentationMode presentationMode;
     private Date startTime;
     private Date endTime;
     private List<Panel> panelList = new ArrayList<>();
@@ -22,6 +26,28 @@ public class Presentation implements Cloneable, Comparable<Presentation> {
         if (panelList != null) {
             this.panelList = panelList;
         }
+    }
+
+    public static Presentation build(PresentationBean presentationBean, PresentationMode mode, List<TimeRange> timeRangesToSchedule){
+        Presentation presentation = new Presentation();
+        presentation.setId(presentationBean.getId());
+        presentation.setPresentationMode(mode);
+        if (presentationBean.getPanelBeans() != null) {
+            List<Panel> panels = new ArrayList<>();
+            presentation.setPanelList(panels);
+            for (PresentationPanelBean panelBean : presentationBean.getPanelBeans()) {
+                Panel panel = new Panel();
+                panel.setId(panelBean.getPanelId());
+                List<TimeRange> availabilitiesDuringSchedule
+                        = panelBean.getPanelBean().getAvailableTimeRangesBetween(timeRangesToSchedule);
+                if (availabilitiesDuringSchedule == null) {
+                    throw new RuntimeException("Panel does not update availability");
+                }
+                panel.setAvailableTimeList(availabilitiesDuringSchedule);
+                panels.add(panel);
+            }
+        }
+        return presentation;
     }
 
     public int calculateNumberOfPanelNotAvailable() {
@@ -44,7 +70,7 @@ public class Presentation implements Cloneable, Comparable<Presentation> {
     }
 
     public boolean isBetweenTimeRange(TimeRange timeRange) {
-        if (DateTimeUtil.timeRangeIsBetweenTimeRange(
+        if (DateTimeUtil.timeRange1IsBetweenTimeRange2(
                 this.startTime, this.endTime,
                 timeRange.getStartTime(), timeRange.getEndTime()))
             return true;
@@ -62,9 +88,9 @@ public class Presentation implements Cloneable, Comparable<Presentation> {
 
     @Override
     public int compareTo(@NotNull Presentation o) {
-        if(this.startTime.after(o.getStartTime()))
+        if (this.startTime.after(o.getStartTime()))
             return 1;
-        else if(this.startTime.before(o.getStartTime()))
+        else if (this.startTime.before(o.getStartTime()))
             return -1;
         return 0;
     }

@@ -1,8 +1,12 @@
 package com.fyp.presentationmanager.entity;
 
+import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.TimeRange;
+import com.fyp.presentationmanager.util.DateTimeUtil;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "availability")
@@ -69,5 +73,25 @@ public class AvailabilityBean implements Serializable {
 
     public void setUserBean(UserBean userBean) {
         this.userBean = userBean;
+    }
+
+    public boolean containedIn(List<TimeRange> timeRanges) {
+        if (timeRanges != null) {
+            for (TimeRange timeRange : timeRanges) {
+                if (DateTimeUtil.timeRangesOverlapped(
+                        new Date(this.getStartTime().getTime()),
+                        new Date(this.getEndTime().getTime()),
+                        timeRange.getStartTime(),
+                        timeRange.getEndTime())) {
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
+
+    public TimeRange toTimeRange() {
+        return new TimeRange(this.startTime, this.endTime);
     }
 }

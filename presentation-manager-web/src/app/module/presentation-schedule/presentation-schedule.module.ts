@@ -11,14 +11,14 @@ import {ReadExcelDirective} from '../../../assets/directive/read-excel.directive
 import {EvaluationCriteriaComponent} from './component/evaluation-criteria/evaluation-criteria.component';
 import {PresentationComponent} from './component/presentation/presentation.component';
 import {PresentationsViewComponent} from './component/presentations-view/presentations-view.component';
-import {
-  ScheduleAllModule
-} from '@syncfusion/ej2-angular-schedule';
-import { TimetableComponent } from './component/timetable/timetable.component';
-import { EvaluationFormFypComponent } from './component/evaluation-form-fyp/evaluation-form-fyp.component';
-import { EvaluationFormMasterComponent } from './component/evaluation-form-master/evaluation-form-master.component';
-import { EvaluatePresentationComponent } from './component/evaluate-presentation/evaluate-presentation.component';
-import { EvaluationReportComponent } from './component/evaluation-report/evaluation-report.component';
+import {ScheduleAllModule} from '@syncfusion/ej2-angular-schedule';
+import {TimetableComponent} from './component/timetable/timetable.component';
+import {EvaluationFormFypComponent} from './component/evaluation-form-fyp/evaluation-form-fyp.component';
+import {EvaluationFormMasterComponent} from './component/evaluation-form-master/evaluation-form-master.component';
+import {EvaluatePresentationComponent} from './component/evaluate-presentation/evaluate-presentation.component';
+import {EvaluationReportComponent} from './component/evaluation-report/evaluation-report.component';
+import {EvaluationReportFypComponent} from './component/evaluation-report-fyp/evaluation-report-fyp.component';
+import {ChartsModule} from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -35,6 +35,7 @@ import { EvaluationReportComponent } from './component/evaluation-report/evaluat
     EvaluationFormMasterComponent,
     EvaluatePresentationComponent,
     EvaluationReportComponent,
+    EvaluationReportFypComponent,
   ],
   exports: [
     SchedulesViewComponent,
@@ -45,12 +46,15 @@ import { EvaluationReportComponent } from './component/evaluation-report/evaluat
     EvaluationCriteriaComponent,
     PresentationComponent,
     PresentationsViewComponent,
+    EvaluationReportComponent,
+    EvaluationReportFypComponent,
   ],
   imports: [
     CommonModule,
     PresentationScheduleRoutingModule,
     SharedModule,
     ScheduleAllModule,
+    ChartsModule,
   ],
 })
 export class PresentationScheduleModule {

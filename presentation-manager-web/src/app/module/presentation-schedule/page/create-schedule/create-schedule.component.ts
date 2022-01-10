@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {PresentationMode, ScheduleModel, ScheduleType} from '../../../../model/schedule.model';
+import {PresentationMode, ScheduleModel, ScheduleType} from '../../../../model/schedule/schedule.model';
 import {ScheduleService} from '../../../../service/schedule.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {Store} from '@ngxs/store';
@@ -14,11 +14,16 @@ export class CreateScheduleComponent implements OnInit {
   scheduleModel: ScheduleModel = new ScheduleModel();
   presentationTypeList = [];
   scheduleTypeList = [];
+  currentYear = (new Date()).getFullYear();
+  academicYearsSelection = [];
 
   constructor(private scheduleService: ScheduleService, private store: Store) {
   }
 
   ngOnInit(): void {
+    for (let i = -1; i < 9; i++) {
+      this.academicYearsSelection.push(this.currentYear + i);
+    }
     this.presentationTypeList.push(PresentationMode.PHYSICAL, PresentationMode.ONLINE);
     this.scheduleTypeList.push(ScheduleType.FYP, ScheduleType.MASTER_DISSERTATION);
   }
@@ -34,5 +39,8 @@ export class CreateScheduleComponent implements OnInit {
     });
   }
 
+  get ScheduleType() {
+    return ScheduleType;
+  }
 
 }

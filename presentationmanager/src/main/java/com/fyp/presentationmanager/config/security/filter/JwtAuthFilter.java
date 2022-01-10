@@ -16,7 +16,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.io.IOException;
 
 @Component
@@ -31,7 +30,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
-        if (request.getServletPath().startsWith("/auth/login")||request.getServletPath().equals("/user/register")) {
+        if (request.getServletPath().startsWith("/auth/login") || request.getServletPath().equals("/user/register")) {
             filterChain.doFilter(request, response);
         } else {
             try {
@@ -53,8 +52,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write(e.getMessage());
+                if (e instanceof ExpiredJwtException) {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                }
             }
         }
 

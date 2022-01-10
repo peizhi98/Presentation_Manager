@@ -1,0 +1,40 @@
+<form *ngIf="userEditForm" [formGroup]="userEditForm" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <div>Email: {{userModel.email}}</div>
+    <div class="mt-1">Name:
+      <span>
+        <mat-form-field appearance="fill">
+        <input type="text" matInput [formControl]="userEditForm.get(NAME)">
+        <mat-error *ngIf="userEditForm.get(NAME).invalid&&userEditForm.get(NAME).touched">
+          Name cannot be empty.
+        </mat-error>
+        </mat-form-field>
+      </span>
+    </div>
+    <div>
+      Roles:
+      <span>
+      <mat-form-field appearance="fill">
+        <mat-select [formControl]="userEditForm.get(SYSTEM_ROLES)" multiple>
+        <mat-select-trigger>
+          {{userEditForm.get(SYSTEM_ROLES).value ? userEditForm.get(SYSTEM_ROLES).value[0] : ''}}
+          <span *ngIf="userEditForm.get(SYSTEM_ROLES).value?.length > 1" class="example-additional-selection">
+            (+{{userEditForm.get(SYSTEM_ROLES).value.length - 1}} {{userEditForm.get(SYSTEM_ROLES).value?.length === 2 ? 'other' : 'others'}}
+            )
+          </span>
+          </mat-select-trigger>
+          <mat-option *ngFor="let role of allRoles" [value]="role">{{role}}</mat-option>
+          </mat-select>
+        <mat-error *ngIf="userEditForm.get(SYSTEM_ROLES).invalid&&userEditForm.get(SYSTEM_ROLES).touched">
+          Roles cannot be empty.
+        </mat-error>
+        </mat-form-field>
+      </span>
+    </div>
+  </div>
+  <mat-dialog-actions align="end">
+      <button type="submit" mat-raised-button color="primary">Save</button>
+  </mat-dialog-actions>
+</form>
+
+

@@ -107,6 +107,16 @@ public class EvaluationFormBean implements Serializable {
         return criterionBeans;
     }
 
+    public Integer calculateWeightage() {
+        Integer total = 0;
+        if (this.criterionBeans != null) {
+            for (CriterionBean criterionBean : this.criterionBeans) {
+                total += criterionBean.getWeightage();
+            }
+        }
+        return total;
+    }
+
     public void setCriterionBeans(List<CriterionBean> criterionBeans) {
         this.criterionBeans = criterionBeans;
     }

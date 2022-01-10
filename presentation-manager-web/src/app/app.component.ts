@@ -9,7 +9,7 @@ import {RouteConstant} from '../assets/constant/route.contant';
 import {AppState} from './store/app/app.store';
 import {Observable} from 'rxjs';
 import {Constant} from '../assets/constant/app.constant';
-import {SystemRole, UserModel} from './model/user.model';
+import {SystemRole, UserModel} from './model/user/user.model';
 
 @Component({
   selector: 'app-root',

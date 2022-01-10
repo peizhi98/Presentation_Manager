@@ -2,7 +2,7 @@ package com.fyp.presentationmanager.controller;
 
 import com.fyp.presentationmanager.model.ResponseModel;
 import com.fyp.presentationmanager.model.ScheduleModel;
-import com.fyp.presentationmanager.service.ScheduleService;
+import com.fyp.presentationmanager.service.schedule.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

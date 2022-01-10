@@ -1,5 +1,7 @@
 package com.fyp.presentationmanager.controller;
 
+import com.fyp.presentationmanager.enums.PresentationMode;
+import com.fyp.presentationmanager.model.presentation.AutoSchedulingModel;
 import com.fyp.presentationmanager.model.presentation.PresentationModel;
 import com.fyp.presentationmanager.model.ResponseModel;
 import com.fyp.presentationmanager.model.presentation.PresentationScheduleModel;
@@ -83,6 +85,18 @@ public class PresentationCtrl {
         ResponseModel<List<PresentationScheduleModel>> responseModel = new ResponseModel();
         try {
             responseModel.success(presentationService.schedulePresentations(presentationModelList));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
+    }
+
+    @PostMapping(value = "/auto-schedule")
+    private ResponseModel<List<PresentationModel>> autoSchedule(@RequestBody AutoSchedulingModel autoSchedulingModel) {
+        ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
+        try {
+            responseModel.success(presentationService.autoScheduling(autoSchedulingModel));
         } catch (Exception e) {
             e.printStackTrace();
             responseModel.failed();

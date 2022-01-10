@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ScheduleService} from '../../../../service/schedule.service';
 import {Store} from '@ngxs/store';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ScheduleModel} from '../../../../model/schedule.model';
+import {ScheduleModel} from '../../../../model/schedule/schedule.model';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
 import {SetCurrentSchedule} from '../../../../store/schedule/schedule.action';

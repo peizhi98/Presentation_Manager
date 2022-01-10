@@ -23,7 +23,7 @@ public class Panel {
 
     public boolean isAvailableOnTimeRange(Date startTime, Date endTime) {
         for (TimeRange availableTime : AvailableTimeList) {
-            if (DateTimeUtil.timeRangeIsBetweenTimeRange(startTime, endTime, availableTime.getStartTime(), availableTime.getEndTime())) {
+            if (DateTimeUtil.timeRange1IsBetweenTimeRange2(startTime, endTime, availableTime.getStartTime(), availableTime.getEndTime())) {
                 return true;
             }
         }

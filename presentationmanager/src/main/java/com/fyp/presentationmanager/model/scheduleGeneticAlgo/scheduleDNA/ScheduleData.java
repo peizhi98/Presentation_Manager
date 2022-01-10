@@ -13,10 +13,11 @@ public class ScheduleData {
     private List<TimeRange> availableScheduleTimeSlots;
     private List<Presentation> presentations;
     private int presentationDuration;
-    private int gapTimeBetweenPresentation;
+//    private int gapTimeBetweenPresentation;
 
     public ScheduleData() {
-        this.initTestData();
+//        this.initTestData();
+
     }
 
     private void initTestData() {

@@ -13,10 +13,11 @@
       <div class="example-box" *ngFor="let presentation of presentationModels;let i=index;" cdkDrag
            (cdkDragStarted)="onCdkDragStart(presentation,i)">
         <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-        {{presentation.title}}
+        {{presentation.studentName}}
         <div *cdkDragPreview>
           <div class="example-box">
             <div>{{presentation.title}}</div>
+            <div>Student Name: {{presentation.studentName}}</div>
             <div>Supervisor: {{presentation.supervisorModel.name}}</div>
             <ng-container *ngIf="presentation.panelModels">
               <div>Panel:</div>
@@ -37,7 +38,9 @@
                   [group]="group"
                   [eventSettings]="eventSettings" cdkDropList [cdkDropListData]="scheduledPresentations"
                   (cdkDropListDropped)="drop($event)" (dragStart)="onSchedulerDragStart($event)"
-                  (resizeStart)="onResizeStart($event)"
+                  (dragStop)="onSchedulerDragStop($event)"
+                  (resizeStart)="onResizeStart($event)" (resizeStop)="onResizeStop($event)"
+                  (eventRendered)="oneventRendered($event)"
                   (cellDoubleClick)="disablePopupOpen($event)" (cellClick)="disablePopupOpen($event)">
 
 

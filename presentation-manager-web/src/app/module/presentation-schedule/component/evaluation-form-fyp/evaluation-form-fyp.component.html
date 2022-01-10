@@ -49,8 +49,7 @@
             <mat-form-field style="width: 6%" class="right" appearance="fill" *ngIf="isEditMode();else weightage">
               <mat-label>Weightage</mat-label>
               <input matInput type="number" [formControl]="criteria.get(WEIGHTAGE)">
-              <mat-error *ngIf="criteria.get(WEIGHTAGE).invalid&&criteria.get(WEIGHTAGE).touched">Weightage cannot be
-                empty.
+              <mat-error *ngIf="criteria.get(WEIGHTAGE).invalid&&criteria.get(WEIGHTAGE).touched">Please enter valid integer
               </mat-error>
               <!--                   (ngModelChange)="calculateTotalWeightage()"-->
             </mat-form-field>

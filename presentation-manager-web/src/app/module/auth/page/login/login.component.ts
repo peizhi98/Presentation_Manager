@@ -9,7 +9,7 @@ import {Login} from '../../../../store/auth/auth.action';
 import {Observable} from 'rxjs';
 import {ProgressBarLoading, ProgressBarStopLoading, ShowSnackBar} from '../../../../store/app/app.action';
 import {UserService} from '../../../../service/user.service';
-import {UserModel} from '../../../../model/user.model';
+import {UserModel} from '../../../../model/user/user.model';
 
 @Component({
   selector: 'app-login',

@@ -20,7 +20,7 @@ import {
   YearService
 } from '@syncfusion/ej2-angular-schedule';
 import {isNullOrUndefined} from '@syncfusion/ej2-base';
-import {SchedulerAvailabilityModel, AvailabilityModel} from '../../../../model/availability.model';
+import {SchedulerAvailabilityModel, AvailabilityModel} from '../../../../model/availability/availability.model';
 import {AvailabilityService} from '../../../../service/availability.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {Store} from '@ngxs/store';

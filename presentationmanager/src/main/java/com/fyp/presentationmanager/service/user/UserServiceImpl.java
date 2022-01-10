@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    private UserBean getUserByEmail(String email) {
+    public UserBean getUserByEmail(String email) {
         return this.userRepo.findUserBeanByEmail(email);
     }
 

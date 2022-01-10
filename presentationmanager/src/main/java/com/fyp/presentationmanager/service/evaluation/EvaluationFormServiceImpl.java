@@ -1,20 +1,12 @@
 package com.fyp.presentationmanager.service.evaluation;
 
-import com.fyp.presentationmanager.entity.CriterionBean;
 import com.fyp.presentationmanager.entity.EvaluationFormBean;
 import com.fyp.presentationmanager.enums.EvaluationType;
-import com.fyp.presentationmanager.model.evaluation.CriterionModel;
 import com.fyp.presentationmanager.model.evaluation.EvaluationFormModel;
 import com.fyp.presentationmanager.repo.EvaluationFormRepo;
-import com.fyp.presentationmanager.service.CriterionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @Component
 @Transactional

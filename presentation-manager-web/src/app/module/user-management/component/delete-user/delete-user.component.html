@@ -1,0 +1,10 @@
+<mat-dialog-content>
+  <div>Are you sure to delete the following user account?</div>
+  <br>
+  <div>Email: {{userModel.email}}</div>
+  <div>Name: {{userModel.name}}</div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button type="button" mat-raised-button color="primary" (click)="close()">No</button>
+  <button type="button" mat-stroked-button color="primary" (click)="deleteUser(userModel.id)">Yes</button>
+</mat-dialog-actions>

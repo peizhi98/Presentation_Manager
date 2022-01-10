@@ -19,9 +19,8 @@
           <mat-form-field appearance="fill">
             <mat-label>Academic Year</mat-label>
             <mat-select [(ngModel)]="scheduleModel.year" name="Academic Year">
-              <mat-option value="2020">2020/2021</mat-option>
-              <mat-option value="2021">2021/2022</mat-option>
-              <mat-option value="2022">2020/2021</mat-option>
+              <mat-option *ngFor="let year of academicYearsSelection" [value]="year">{{year}}
+                /{{(year + 1)}}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -39,33 +38,34 @@
           <mat-form-field appearance="fill">
             <mat-label>Schedule Type</mat-label>
             <mat-select [(ngModel)]="scheduleModel.scheduleType" name="Schedule Type">
-              <mat-option *ngFor="let enum of scheduleTypeList" [value]="enum">{{enum.valueOf()}}</mat-option>
+              <mat-option [value]="ScheduleType.FYP">FYP</mat-option>
+              <mat-option [value]="ScheduleType.MASTER_DISSERTATION">Master</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
-<!--        <div>-->
-<!--          <mat-form-field appearance="fill">-->
-<!--            <mat-label>Presentation Type</mat-label>-->
-<!--            <mat-select [(ngModel)]="scheduleModel.presentationType" name="Presentation Type">-->
-<!--              <mat-option *ngFor="let enum of presentationTypeList" [value]="enum">{{enum.valueOf()}}</mat-option>-->
-<!--            </mat-select>-->
-<!--          </mat-form-field>-->
-<!--        </div>-->
+        <!--        <div>-->
+        <!--          <mat-form-field appearance="fill">-->
+        <!--            <mat-label>Presentation Type</mat-label>-->
+        <!--            <mat-select [(ngModel)]="scheduleModel.presentationType" name="Presentation Type">-->
+        <!--              <mat-option *ngFor="let enum of presentationTypeList" [value]="enum">{{enum.valueOf()}}</mat-option>-->
+        <!--            </mat-select>-->
+        <!--          </mat-form-field>-->
+        <!--        </div>-->
         <div>
-<!--          <mat-form-field appearance="fill">-->
-<!--            <mat-label>Enter schedule date range</mat-label>-->
-<!--            <mat-date-range-input [rangePicker]="picker">-->
-<!--              <input matStartDate [(ngModel)]="scheduleModel.dateFrom" placeholder="Start date">-->
-<!--              <input matEndDate [(ngModel)]="scheduleModel.dateTo" placeholder="End date">-->
-<!--            </mat-date-range-input>-->
-<!--            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
-<!--            <mat-date-range-picker #picker></mat-date-range-picker>-->
-<!--          </mat-form-field>-->
+          <!--          <mat-form-field appearance="fill">-->
+          <!--            <mat-label>Enter schedule date range</mat-label>-->
+          <!--            <mat-date-range-input [rangePicker]="picker">-->
+          <!--              <input matStartDate [(ngModel)]="scheduleModel.dateFrom" placeholder="Start date">-->
+          <!--              <input matEndDate [(ngModel)]="scheduleModel.dateTo" placeholder="End date">-->
+          <!--            </mat-date-range-input>-->
+          <!--            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
+          <!--            <mat-date-range-picker #picker></mat-date-range-picker>-->
+          <!--          </mat-form-field>-->
 
-<!--          <mat-form-field class="pl-1" appearance="fill">-->
-<!--            <mat-label>Presentation Duration (minutes)</mat-label>-->
-<!--            <input matInput [(ngModel)]="scheduleModel.duration" type="number">-->
-<!--          </mat-form-field>-->
+          <!--          <mat-form-field class="pl-1" appearance="fill">-->
+          <!--            <mat-label>Presentation Duration (minutes)</mat-label>-->
+          <!--            <input matInput [(ngModel)]="scheduleModel.duration" type="number">-->
+          <!--          </mat-form-field>-->
         </div>
 
         <button mat-raised-button color="primary" (click)="save()">Save</button>

@@ -22,6 +22,7 @@ import {NgxPermissionsModule} from 'ngx-permissions';
 import {UnauthorizedComponent} from './component/unauthorized/unauthorized.component';
 import {UserRoleState} from './store/user-role/user-role.store';
 import {DecimalPipe} from '@angular/common';
+import {ChartsModule} from 'ng2-charts';
 
 @NgModule({
   declarations: [
