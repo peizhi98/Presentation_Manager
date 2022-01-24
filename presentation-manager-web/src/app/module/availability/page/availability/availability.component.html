@@ -1,99 +1,15 @@
-<div class="mt-1 mr-1" style="height: 50px;">
-  <div class="spacer"></div>
-  <div>
-    <button mat-raised-button (click)="saveAvailabilities()" style="float: right;" color="primary">Save Changes</button>
-  </div>
+<div class="pl-1 pt-1">
+  <mat-form-field appearance="fill">
+    <mat-label>Search user availability</mat-label>
+    <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
 </div>
 
-<ejs-schedule #scheduleObj width='100%' [startHour]='startHour' [endHour]='endHour' [currentView]='setView'
-              (dragStart)="onDragStart($event)" (cellDoubleClick)="disablePopupOpen($event)"
-              (resizeStart)="onResizeStart($event)" (popupClose)="onPopupClose()"
-              (eventClick)="onEventClick($event)"
-              (cellClick)="onCellClick($event)"
-              [selectedDate]='selectedDate' [eventSettings]='eventSettings' (actionComplete)="onActionComplete($event)">
-  <e-views>
-    <e-view option='Day'></e-view>
-    <e-view option='Week'></e-view>
-    <e-view option='Month'></e-view>
-    <e-view option='MonthAgenda'></e-view>
-  </e-views>
-  <!-- Header template -->
-  <ng-template #quickInfoTemplatesHeader let-data>
-    <div class="quick-info-header">
-      <div class="quick-info-header-content">
-        <div class="quick-info-title" style="text-align: center">Available</div>
-      </div>
-    </div>
-  </ng-template>
-  <!-- Content Template -->
-  <ng-template #quickInfoTemplatesContent let-data>
-    <ng-container [ngTemplateOutlet]="data.elementType == 'cell' ? cellContent : eventContent"
-                  [ngTemplateOutletContext]="{data:data}"></ng-container>
-  </ng-template>
-  <ng-template #cellContent let-data="data">
-    <table *ngIf="data != undefined" width="100%" cellpadding="5">
-      <tbody>
-      <tr>
-        <td>From</td>
-        <td colspan="4">
-          <ejs-datetimepicker class="e-field" data-name="StartTime" format="M/dd/yy h:mm a"
-                              [(ngModel)]="slotData.startTime"
-          >
-          </ejs-datetimepicker>
-        </td>
-      </tr>
-      <tr>
-        <td>To</td>
-        <td colspan="4">
-          <ejs-datetimepicker class="e-field" data-name="EndTime" format="M/dd/yy h:mm a"
-                              [(ngModel)]="slotData.endTime">
-          </ejs-datetimepicker>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <div class="quick-info-footer-wrapper">
-      <button mat-raised-button class="mr-1" style="float:right;" color="primary" (click)="addSlotData()">
-        Add
-      </button>
-    </div>
-  </ng-template>
-  <ng-template #eventContent let-data="data">
-    <table *ngIf="data != undefined" width="100%" cellpadding="5">
-      <tbody>
-      <tr>
-        <td>From</td>
-        <td colspan="4">
-          <ejs-datetimepicker class="e-field" data-name="StartTime" format="M/dd/yy h:mm a"
-                              [(ngModel)]="slotData.startTime"
-          >
-          </ejs-datetimepicker>
-        </td>
-      </tr>
-      <tr>
-        <td>To</td>
-        <td colspan="4">
-          <ejs-datetimepicker class="e-field" data-name="EndTime" format="M/dd/yy h:mm a"
-                              [(ngModel)]="slotData.endTime">
-          </ejs-datetimepicker>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <div class="quick-info-footer-wrapper">
-      <button mat-raised-button class="mr-1" style="float:right;" (click)="deleteSelectedEvent()" color="primary">
-        Delete
-      </button>
-    </div>
-
-  </ng-template>
-  <!-- Footer Template -->
-  <!--    footer template does not display on event click-->
-  <ng-template #quickInfoTemplatesFooter let-data>
-  </ng-template>
-  <!--  disable editor template-->
-<!--  <ng-template #editorTemplate>-->
-<!--  </ng-template>-->
-</ejs-schedule>
-
-
+<mat-autocomplete #auto="matAutocomplete">
+  <mat-option *ngFor="let lecturer of filteredLecturers" [value]="lecturer.email" (click)="viewAvailability(lecturer.id)">
+    <span>{{lecturer.name || 'Name not registered'}}</span> |
+    <small>{{lecturer.email}}</small>
+  </mat-option>
+</mat-autocomplete>
+<router-outlet></router-outlet>

@@ -1,8 +1,9 @@
 <mat-card>
 
   <mat-card-content>
-    <ng-container *ngIf="presentationModel">
-      <p align="right">
+    <ng-container *ngIf="isFyp()">
+      <ng-container *ngIf="presentationModel">
+        <p align="right">
         <span>
           <button *ngxPermissionsOnly="SystemRole.COORDINATOR"
                   [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PRESENTATION" mat-raised-button
@@ -10,55 +11,117 @@
           Edit
         </button>
         </span>
-        <span class="ml-1">
+          <span class="ml-1">
           <button *ngxPermissionsOnly="constant.ROLE_PANEL"
                   [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PRESENTATION" mat-raised-button
                   color="primary">
           Evaluate Presentation
         </button>
         </span>
-        <span class="ml-1">
+          <span class="ml-1">
           <button *ngxPermissionsOnly="constant.ROLE_SUPERVISOR"
                   [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.REPORT" mat-raised-button
                   color="primary">Evaluate Report
         </button>
         </span>
 
-      </p>
-      <ng-template #detailDisplay let-title="title" let-data="data">
-        <div style="display: inline-block; width: 10%">
-          {{title}}
-        </div>
-        <div style="display: inline-block;width: 90%">
-          : {{(data) ? data : '-'}}
-        </div>
-      </ng-template>
-      <ng-container
-        *ngTemplateOutlet="detailDisplay;context:{title: 'Title',data:presentationModel.title}"></ng-container>
-      <ng-container
-        *ngTemplateOutlet="detailDisplay;context:{title: 'Student',data:presentationModel.studentName}"></ng-container>
-      <ng-container
-        *ngTemplateOutlet="detailDisplay;context:{title: 'Student Email',data:presentationModel.studentEmail}"></ng-container>
-      <ng-container
-        *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:presentationModel.supervisorModel.name}"></ng-container>
-      <ng-container
-        *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor Email',data:presentationModel.supervisorModel.email}"></ng-container>
-      <ng-container
-        *ngTemplateOutlet="detailDisplay;context:{title: 'Start Time',data:presentationModel.startTime|date:timeFormat}"></ng-container>
-      <ng-container
-        *ngTemplateOutlet="detailDisplay;context:{title: 'End Time',data:presentationModel.endTime|date:timeFormat}"></ng-container>
-      <ng-container
-        *ngTemplateOutlet="detailDisplay;context:{title: 'Status',data:''}"></ng-container>
+        </p>
+        <ng-template #detailDisplay let-title="title" let-data="data">
+          <div style="display: inline-block; width: 10%">
+            {{title}}
+          </div>
+          <div style="display: inline-block;width: 90%">
+            : {{(data) ? data : '-'}}
+          </div>
+        </ng-template>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Title',data:presentationModel.title}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Student',data:presentationModel.studentName}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Student Email',data:presentationModel.studentEmail}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:presentationModel.supervisorModel.name}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor Email',data:presentationModel.supervisorModel.email}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Start Time',data:presentationModel.startTime|date:timeFormat}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'End Time',data:presentationModel.endTime|date:timeFormat}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Status',data:''}"></ng-container>
 
-      <div>Panel:
-        <ng-container *ngIf="!presentationModel.panelModels">
-          -
-        </ng-container>
-      </div>
+        <div>Panel:
+          <ng-container *ngIf="!presentationModel.panelModels">
+            -
+          </ng-container>
+        </div>
 
-      <div *ngFor="let panel of presentationModel.panelModels; let i = index">
-        Panel {{i + 1}}: {{panel.email}}
-      </div>
+        <div *ngFor="let panel of presentationModel.panelModels; let i = index">
+          Panel {{i + 1}}: {{panel.email}}
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="isMaster()">
+      <ng-container *ngIf="presentationModel">
+        <p align="right">
+        <span>
+          <button *ngxPermissionsOnly="SystemRole.COORDINATOR"
+                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PRESENTATION" mat-raised-button
+                  color="primary">
+          Edit
+        </button>
+        </span>
+          <span class="ml-1">
+          <button *ngxPermissionsOnly="constant.ROLE_PANEL"
+                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PANEL" mat-raised-button
+                  color="primary">
+          Evaluate as Panel
+        </button>
+        </span>
+          <span class="ml-1">
+          <button *ngxPermissionsOnly="constant.ROLE_CHAIRPERSON"
+                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.CHAIRPERSON" mat-raised-button
+                  color="primary">Evaluate as Chairperson
+        </button>
+        </span>
+
+        </p>
+        <ng-template #detailDisplay let-title="title" let-data="data">
+          <div style="display: inline-block; width: 10%">
+            {{title}}
+          </div>
+          <div style="display: inline-block;width: 90%">
+            : {{(data) ? data : '-'}}
+          </div>
+        </ng-template>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Title',data:presentationModel.title}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Student',data:presentationModel.studentName}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Student Email',data:presentationModel.studentEmail}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:presentationModel.supervisorModel.name}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor Email',data:presentationModel.supervisorModel.email}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Start Time',data:presentationModel.startTime|date:timeFormat}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'End Time',data:presentationModel.endTime|date:timeFormat}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Status',data:''}"></ng-container>
+
+        <div>Panel:
+          <ng-container *ngIf="!presentationModel.panelModels">
+            -
+          </ng-container>
+        </div>
+
+        <div *ngFor="let panel of presentationModel.panelModels; let i = index">
+          Panel {{i + 1}}: {{panel.email}}
+        </div>
+      </ng-container>
     </ng-container>
 
   </mat-card-content>

@@ -1,8 +1,10 @@
 <div class="mt-1 mr-1" style="height: 50px;">
-  <div class="spacer"></div>
-  <div>
-    <button mat-raised-button (click)="save()" style="float: right;" color="primary">Save</button>
-  </div>
+  <p align="right">
+    <span class="pr-1"><button mat-raised-button (click)="navigateToAutoSchedule()" color="primary">Auto-schedule
+    </button></span>
+    <span><button mat-raised-button (click)="save()" color="primary">Save</button></span>
+
+  </p>
 </div>
 
 <mat-sidenav-container style="background-color: white">
@@ -20,11 +22,18 @@
             <div>Student Name: {{presentation.studentName}}</div>
             <div>Supervisor: {{presentation.supervisorModel.name}}</div>
             <ng-container *ngIf="presentation.panelModels">
-              <div>Panel:</div>
-              <ng-container *ngFor="let panel of presentation.panelModels">
-                <div>{{panel.name}}</div>
+              <ng-container *ngFor="let panel of presentation.panelModels; let i = index">
+                <div>Panel {{(i + 1) + ': ' + panel.name}}</div>
               </ng-container>
             </ng-container>
+            <div>Common availability among panels:</div>
+            <ng-container
+              *ngIf="presentation.commonAvailabilityList&&presentation.commonAvailabilityList.length>0;else noCommon">
+              <ng-container *ngFor="let timeRange of presentation.commonAvailabilityList; let i = index">
+                <div>{{(timeRange.startTime|date:timeFormat) + ' - ' + (timeRange.endTime|date:timeFormat)}}</div>
+              </ng-container>
+            </ng-container>
+
 
           </div>
         </div>
@@ -33,28 +42,47 @@
   </mat-sidenav>
   <mat-sidenav-content style="
   width: 84%;">
-    <ejs-schedule #scheduleObj cssClass='adaptive-rows' height='650px' [rowAutoHeight]='rowAutoHeight'
-                  [currentView]="currentView" [selectedDate]="selectedDate"
-                  [group]="group"
-                  [eventSettings]="eventSettings" cdkDropList [cdkDropListData]="scheduledPresentations"
-                  (cdkDropListDropped)="drop($event)" (dragStart)="onSchedulerDragStart($event)"
-                  (dragStop)="onSchedulerDragStop($event)"
-                  (resizeStart)="onResizeStart($event)" (resizeStop)="onResizeStop($event)"
-                  (eventRendered)="oneventRendered($event)"
-                  (cellDoubleClick)="disablePopupOpen($event)" (cellClick)="disablePopupOpen($event)">
+    <ng-container *ngIf="resourceDataSource&&selectedDate">
+      <ejs-schedule #scheduleObj cssClass='adaptive-rows' height='650px' [rowAutoHeight]='rowAutoHeight'
+                    [currentView]="currentView" [selectedDate]="selectedDate"
+                    [group]="group" (actionBegin)="onActionBegin($event)" (actionComplete)="onActionComplete($event)"
+                    [eventSettings]="eventSettings" cdkDropList [cdkDropListData]="scheduledPresentations"
+                    (cdkDropListDropped)="drop($event)" (dragStart)="onSchedulerDragStart($event)"
+                    (dragStop)="onSchedulerDragStop($event)"
+                    (resizeStart)="onResizeStart($event)" (resizeStop)="onResizeStop($event)"
+                    (eventRendered)="onEventRendered($event)"
+                    (cellDoubleClick)="disablePopupOpen($event)" (cellClick)="disablePopupOpen($event)">
 
 
-      <e-resources>
-        <e-resource field='roomId' title='Room Type' [dataSource]='resourceDataSource' [allowMultiple]='allowMultiple'
-                    name='MeetingRoom' textField='text' idField='id' colorField='color'>
-        </e-resource>
-      </e-resources>
-      <e-views>
-        <e-view option="TimelineDay"></e-view>
-        <e-view option="TimelineWeek"></e-view>
-      </e-views>
-    </ejs-schedule>
+        <e-resources>
+          <e-resource field='roomId' title='Room Type' [dataSource]='resourceDataSource' [allowMultiple]='allowMultiple'
+                      name='MeetingRoom' textField='name' idField='id' colorField='color'>
+          </e-resource>
+        </e-resources>
+        <e-views>
+          <e-view option="TimelineDay"></e-view>
+          <e-view option="TimelineWeek"></e-view>
+        </e-views>
+
+        <ng-template #eventSettingsTooltipTemplate let-data>
+          <div class="tooltip-wrap">
+            <div class="content-area">
+              <ng-container>Common Availability</ng-container>
+              <ng-container
+                *ngIf="data.commonAvailabilityList&&data.commonAvailabilityList.length>0;else noCommon">
+                <ng-container *ngFor="let timeRange of data.commonAvailabilityList; let i = index">
+                  <div>{{(timeRange.startTime|date:timeFormat) + ' - ' + (timeRange.endTime|date:timeFormat)}}</div>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+        </ng-template>
+      </ejs-schedule>
+    </ng-container>
   </mat-sidenav-content>
 
 
 </mat-sidenav-container>
+<ng-template #noCommon>
+  <div>-</div>
+</ng-template>

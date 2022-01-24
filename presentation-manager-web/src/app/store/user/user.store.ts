@@ -1,6 +1,6 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {PatchLecturerFromBackend} from './user.action';
+import {PatchUserFromBackend} from './user.action';
 import {LecturerModel} from '../../model/role/lecturer.model';
 import {UserService} from '../../service/user.service';
 import {Constant} from '../../../assets/constant/app.constant';
@@ -28,7 +28,7 @@ export class UserState {
     return state.lecturers;
   }
 
-  @Action(PatchLecturerFromBackend)
+  @Action(PatchUserFromBackend)
   patchLecturerFromBackend(ctx: StateContext<UserStateModel>): void {
     if (ctx.getState().lecturers.length < 1) {
       this.userService.getAllLecturers().subscribe(resp => {

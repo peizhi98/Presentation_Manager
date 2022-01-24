@@ -12,34 +12,8 @@ public class Population {
 
     public Population(int size, ScheduleData scheduleData) {
         this.scheduleList = new ArrayList<>();
-//        for (int i=0;i<size;i++){
-//            this.scheduleList.add(new Schedule(scheduleData).init());
-//        }
         IntStream.range(0, size).forEach(x -> {
             this.scheduleList.add(new Schedule(scheduleData).init());
-            //testData
-//            for(int i=0;i<4;i++){
-//                if(i==0){
-//                    this.scheduleList.get(x).getPresentationList().get(i).setStartTime(new Date(2021, 1, 1, 12, 0));
-//                    this.scheduleList.get(x).getPresentationList().get(i).setEndTime(new Date(2021, 1, 1, 12, 15));
-//
-//                }
-//                if(i==1){
-//                    this.scheduleList.get(x).getPresentationList().get(i).setStartTime(new Date(2021, 1, 1, 12, 15));
-//                    this.scheduleList.get(x).getPresentationList().get(i).setEndTime(new Date(2021, 1, 1, 12, 30));
-//
-//                }
-//                if(i==2){
-//                    this.scheduleList.get(x).getPresentationList().get(i).setStartTime(new Date(2021, 1, 1, 12, 30));
-//                    this.scheduleList.get(x).getPresentationList().get(i).setEndTime(new Date(2021, 1, 1, 12, 45));
-//
-//                }
-//                if(i==3){
-//                    this.scheduleList.get(x).getPresentationList().get(i).setStartTime(new Date(2021, 1, 1, 12, 45));
-//                    this.scheduleList.get(x).getPresentationList().get(i).setEndTime(new Date(2021, 1, 1, 13, 0));
-//
-//                }
-//                }
         });
     }
 

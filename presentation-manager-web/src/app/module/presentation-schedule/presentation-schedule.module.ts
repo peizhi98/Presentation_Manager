@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 import {PresentationScheduleRoutingModule} from './presentation-schedule-routing.module';
@@ -19,6 +19,10 @@ import {EvaluatePresentationComponent} from './component/evaluate-presentation/e
 import {EvaluationReportComponent} from './component/evaluation-report/evaluation-report.component';
 import {EvaluationReportFypComponent} from './component/evaluation-report-fyp/evaluation-report-fyp.component';
 import {ChartsModule} from 'ng2-charts';
+import { AutoSchedulingSettingComponent } from './component/auto-scheduling-setting/auto-scheduling-setting.component';
+import { SchedulerComponent } from './component/scheduler/scheduler.component';
+import {DateTimePickerModule} from '@syncfusion/ej2-angular-calendars';
+import { GoogleIntegrationComponent } from './component/google-integration/google-integration.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +40,9 @@ import {ChartsModule} from 'ng2-charts';
     EvaluatePresentationComponent,
     EvaluationReportComponent,
     EvaluationReportFypComponent,
+    AutoSchedulingSettingComponent,
+    SchedulerComponent,
+    GoogleIntegrationComponent,
   ],
   exports: [
     SchedulesViewComponent,
@@ -55,7 +62,9 @@ import {ChartsModule} from 'ng2-charts';
     SharedModule,
     ScheduleAllModule,
     ChartsModule,
+    DateTimePickerModule,
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PresentationScheduleModule {
 }

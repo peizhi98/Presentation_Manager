@@ -1,9 +1,12 @@
 package com.fyp.presentationmanager.service.availability;
 
 import com.fyp.presentationmanager.entity.AvailabilityBean;
+import com.fyp.presentationmanager.entity.UserBean;
 import com.fyp.presentationmanager.model.auth.CustomUserDetails;
 import com.fyp.presentationmanager.model.availability.AvailabilityModel;
+import com.fyp.presentationmanager.model.availability.UserAvailabilityModel;
 import com.fyp.presentationmanager.repo.AvailabilityRepo;
+import com.fyp.presentationmanager.repo.user.UserRepo;
 import com.fyp.presentationmanager.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,8 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     private AuthService authService;
     @Autowired
     private AvailabilityRepo availabilityRepo;
+    @Autowired
+    private UserRepo userRepo;
 
     @Override
     public List<AvailabilityModel> getAuthUserAvailabilities() {
@@ -25,14 +30,31 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         List<AvailabilityModel> availabilityModels = new ArrayList<>();
         if (availabilityBeans != null) {
             for (AvailabilityBean availabilityBean : availabilityBeans) {
-                AvailabilityModel availabilityModel = new AvailabilityModel();
-                availabilityModel.setId(availabilityBean.getId());
-                availabilityModel.setStartTime(availabilityBean.getStartTime());
-                availabilityModel.setEndTime(availabilityBean.getEndTime());
+                AvailabilityModel availabilityModel = AvailabilityModel.build(availabilityBean);
                 availabilityModels.add(availabilityModel);
             }
         }
         return availabilityModels;
+    }
+
+    @Override
+    public UserAvailabilityModel getUserAvailabilities(Integer userId) {
+        UserBean user = this.userRepo.getById(userId);
+        if (user != null) {
+            UserAvailabilityModel userAvailabilityModel = new UserAvailabilityModel();
+            userAvailabilityModel.setUserId(user.getId());
+            userAvailabilityModel.setNameOfUser(user.getName());
+            List<AvailabilityModel> availabilityModels = new ArrayList<>();
+            userAvailabilityModel.setAvailabilityModels(availabilityModels);
+            if (user.getAvailabilityBeans() != null) {
+                for (AvailabilityBean availabilityBean : user.getAvailabilityBeans()) {
+                    AvailabilityModel availabilityModel = AvailabilityModel.build(availabilityBean);
+                    availabilityModels.add(availabilityModel);
+                }
+            }
+            return userAvailabilityModel;
+        }
+        throw new RuntimeException("User Not Found.");
     }
 
     @Override

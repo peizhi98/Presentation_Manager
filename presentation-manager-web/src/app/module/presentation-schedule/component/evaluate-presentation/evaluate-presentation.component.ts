@@ -1,8 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {ChangeEvaluationFormMode, ChangeEvaluationType} from '../../../../store/evaluation/evaluation.action';
 import {EvaluationFormMode, EvaluationType} from '../../../../model/evaluation/evaluation-form.model';
 import {ActivatedRoute} from '@angular/router';
+import {ScheduleType} from '../../../../model/schedule/schedule.model';
+import {ScheduleState} from '../../../../store/schedule/schedule.store';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-evaluate-presentation',
@@ -23,6 +26,7 @@ export class EvaluatePresentationComponent implements OnInit {
         this.store.dispatch(new ChangeEvaluationType(this.evaluationType));
       }
     });
+
 
   }
 

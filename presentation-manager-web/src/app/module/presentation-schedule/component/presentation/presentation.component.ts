@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PresentationService} from '../../../../service/presentation.service';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {PresentationModel} from '../../../../model/presentation/presentation.model';
 import {ActivatedRoute} from '@angular/router';
 import {Constant} from '../../../../../assets/constant/app.constant';
@@ -8,6 +8,9 @@ import {RouteConstant} from '../../../../../assets/constant/route.contant';
 import {EvaluationType} from '../../../../model/evaluation/evaluation-form.model';
 import {SetCurrentPresentation} from '../../../../store/presentation/presentation.action';
 import {SystemRole} from '../../../../model/user/user.model';
+import {ScheduleType} from '../../../../model/schedule/schedule.model';
+import {ScheduleState} from '../../../../store/schedule/schedule.store';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-presentation',
@@ -20,6 +23,9 @@ export class PresentationComponent implements OnInit, OnDestroy {
   timeFormat = Constant.TIME_FORMAT;
   routeConstant = RouteConstant;
   constant = Constant;
+  scheduleType: ScheduleType;
+  @Select(ScheduleState.getScheduleType)
+  scheduleType$: Observable<ScheduleType>;
 
   constructor(private presentationService: PresentationService, private store: Store, private activatedRoute: ActivatedRoute) {
   }
@@ -43,6 +49,11 @@ export class PresentationComponent implements OnInit, OnDestroy {
           });
       }
     });
+    this.scheduleType$.subscribe(type => {
+      console.log('this.scheduleType');
+      console.log(this.scheduleType);
+      this.scheduleType = type;
+    });
 
   }
 
@@ -54,4 +65,11 @@ export class PresentationComponent implements OnInit, OnDestroy {
     return SystemRole;
   }
 
+  isFyp(): boolean {
+    return this.scheduleType === ScheduleType.FYP;
+  }
+
+  isMaster(): boolean {
+    return this.scheduleType === ScheduleType.MASTER_DISSERTATION;
+  }
 }

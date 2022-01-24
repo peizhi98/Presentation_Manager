@@ -19,7 +19,6 @@ public class ScheduleBean implements Serializable {
     public static final String YEAR = "year";
     public static final String SEM = "sem";
     public static final String TITLE = "title";
-    public static final String DURATION = "duration";
     public static final String SCHEDULE_TYPE = "schedule_type";
     public static final String PRESENTATION_TYPE = "presentation_type";
     public static final String DATE_FROM = "date_from";
@@ -52,10 +51,6 @@ public class ScheduleBean implements Serializable {
     @Column(name = PRESENTATION_TYPE)
     private PresentationMode presentationMode;
 
-    @Column(name = DURATION)
-    private Integer duration;
-
-
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = CREATE_DATE)
@@ -80,7 +75,6 @@ public class ScheduleBean implements Serializable {
         this.title = scheduleModel.getTitle();
         this.presentationMode = scheduleModel.getPresentationMode();
         this.scheduleType = scheduleModel.getScheduleType();
-        this.duration = scheduleModel.getDuration();
     }
 
     public Integer getId() {
@@ -121,14 +115,6 @@ public class ScheduleBean implements Serializable {
 
     public void setTitle(String course) {
         this.title = course;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
     }
 
     public ScheduleType getScheduleType() {

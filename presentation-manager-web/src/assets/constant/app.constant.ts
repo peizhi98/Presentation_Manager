@@ -8,9 +8,12 @@ export class Constant {
 
   // ui
   public static readonly THEME_COLOR = '#4056A1';
+  public static readonly SCHEDULER_COLOR_1 = 'rgb(54, 162, 235)';
+  public static readonly SCHEDULER_COLOR_2 = 'rgb(75, 192, 192)';
 
   // date
   public static readonly TIME_FORMAT = 'dd MMM yyyy hh:mm a';
+  public static readonly DATE_FORMAT = 'dd MMM yyyy';
 
   // role
   // schedule
@@ -19,5 +22,10 @@ export class Constant {
   public static readonly ROLE_PANEL = 'PANEL';
   public static readonly ROLE_SUPERVISOR = 'SUPERVISOR';
   public static readonly ROLE_CHAIRPERSON = 'CHAIRPERSON';
+
+  // presentation mode
+  public static readonly MODE_ONLINE = 'Online';
+  public static readonly MODE_PHYSICAL = 'Physical';
+
 
 }

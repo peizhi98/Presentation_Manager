@@ -11,6 +11,7 @@ import {Observable} from 'rxjs';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ChangeEvaluationFormMode, ChangeEvaluationType} from '../../../../store/evaluation/evaluation.action';
 import {EvaluationState} from '../../../../store/evaluation/evaluation.store';
+import {ScheduleType} from '../../../../model/schedule/schedule.model';
 
 @Component({
   selector: 'app-evaluation-criteria',
@@ -21,16 +22,20 @@ export class EvaluationCriteriaComponent implements OnInit {
   displayedColumns: string[] = ['position', 'criteria', 'weightage', 'max', 'delete'];
   @ViewChild(MatTable) table: MatTable<CriterionModel>;
   @Input() scheduleId: number;
+  @Input() scheduleType: ScheduleType;
   evaluationFormModel: EvaluationFormModel;
   criteriaModels: CriterionModel[] = [];
   fypEvaluationType = [EvaluationType.PRESENTATION, EvaluationType.REPORT];
-  selectedEvaluationType = this.fypEvaluationType[0];
+  masterEvaluationType = [EvaluationType.PANEL, EvaluationType.CHAIRPERSON];
+  selectedEvaluationType = null;
   scaleOptions = [1, 2, 3, 4, 5];
   totalWeightage = 0;
   evaluationFormMode = EvaluationFormMode.VIEW;
 
   @Select(ScheduleState.getScheduleId)
   scheduleId$: Observable<number>;
+  @Select(ScheduleState.getScheduleType)
+  scheduleType$: Observable<ScheduleType>;
   @Select(EvaluationState.getEvaluationFormMode)
   evaluationFormMode$: Observable<EvaluationFormMode>;
 
@@ -42,7 +47,17 @@ export class EvaluationCriteriaComponent implements OnInit {
     this.scheduleId$.subscribe(id => {
       if (id) {
         this.scheduleId = id;
-        this.store.dispatch(new ChangeEvaluationType(this.fypEvaluationType[0]));
+        this.scheduleType$.subscribe(type => {
+          console.log("this.scheduleType");
+          console.log(this.scheduleType);
+          this.scheduleType = type;
+          if (this.scheduleType === ScheduleType.FYP) {
+            this.selectedEvaluationType = this.fypEvaluationType[0];
+          } else {
+            this.selectedEvaluationType = this.masterEvaluationType[0];
+          }
+          this.store.dispatch(new ChangeEvaluationType(this.selectedEvaluationType));
+        });
         // this.loadEvaluationForm(this.fypEvaluationType[0]);
       }
 
@@ -142,6 +157,14 @@ export class EvaluationCriteriaComponent implements OnInit {
 
   isViewMode(): boolean {
     return this.evaluationFormMode === EvaluationFormMode.VIEW;
+  }
+
+  isFyp(): boolean {
+    return this.scheduleType === ScheduleType.FYP;
+  }
+
+  isMaster(): boolean {
+    return this.scheduleType === ScheduleType.MASTER_DISSERTATION;
   }
 
 }

@@ -7,11 +7,13 @@ import {PresentationService} from '../../../../service/presentation.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {ActivatedRoute, Router} from '@angular/router';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
-import {Select} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {SystemRole} from '../../../../model/user/user.model';
+import * as XLSX from 'xlsx';
+import {ScheduleType} from '../../../../model/schedule/schedule.model';
 
 @Component({
   selector: 'app-presentation-list',
@@ -20,23 +22,37 @@ import {SystemRole} from '../../../../model/user/user.model';
 })
 export class PresentationsViewComponent implements OnInit {
   // @Input() scheduleId: number;
+  timeFormat = Constant.TIME_FORMAT;
   routeConstant = RouteConstant;
   presentationModels = [];
   dataSource: MatTableDataSource<PresentationModel>;
+  scheduleId: number;
+  scheduleType: ScheduleType;
   displayedColumns = ['number', 'studentName', 'title', 'sv', 'action'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   @Select(ScheduleState.getScheduleId)
   scheduleId$: Observable<number>;
+  @Select(ScheduleState.getScheduleType)
+  scheduleType$: Observable<ScheduleType>;
+  @Select(ScheduleState.getScheduleTitle)
+  scheduleTitle$: Observable<string>;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private loadingUtil: LoadingDialogUtil, private presentationService: PresentationService) {
+
+  constructor(private router: Router,
+              private activatedRoute: ActivatedRoute,
+              private loadingUtil: LoadingDialogUtil,
+              private presentationService: PresentationService,
+              private store: Store) {
   }
 
   ngOnInit(): void {
-
+    this.scheduleType$.subscribe(t => {
+      this.scheduleType = t;
+    });
     this.scheduleId$.subscribe(id => {
-      console.log(id);
+      this.scheduleId = id;
       const loadingRef = this.loadingUtil.openLoadingDialog();
       this.presentationService.getPresentations(id).subscribe(res => {
         if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
@@ -112,5 +128,28 @@ export class PresentationsViewComponent implements OnInit {
 
   get SystemRole() {
     return SystemRole;
+  }
+
+  exportexcel(): void {
+    /* pass here the table id */
+    let element = document.getElementById('excel-table');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    const fileName = this.store.selectSnapshot(ScheduleState.getScheduleTitle);
+    console.log(fileName);
+    /* save to file */
+    XLSX.writeFile(wb, fileName + '.xlsx');
+
+  }
+
+  isFyp(): boolean {
+    return this.scheduleType === ScheduleType.FYP;
+  }
+
+  isMaster(): boolean {
+    return this.scheduleType === ScheduleType.MASTER_DISSERTATION;
   }
 }

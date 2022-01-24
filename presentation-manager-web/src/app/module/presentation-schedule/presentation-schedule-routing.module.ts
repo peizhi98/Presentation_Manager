@@ -11,6 +11,8 @@ import {EvaluationCriteriaComponent} from './component/evaluation-criteria/evalu
 import {PresentationComponent} from './component/presentation/presentation.component';
 import {EvaluatePresentationComponent} from './component/evaluate-presentation/evaluate-presentation.component';
 import {EvaluationReportComponent} from './component/evaluation-report/evaluation-report.component';
+import {AutoSchedulingSettingComponent} from './component/auto-scheduling-setting/auto-scheduling-setting.component';
+import {GoogleIntegrationComponent} from './component/google-integration/google-integration.component';
 
 const routes: Routes = [
   {
@@ -41,9 +43,14 @@ const routes: Routes = [
             ]
           },
 
-          {path: RouteConstant.TIMETABLE, component: TimetableComponent},
+          {path: RouteConstant.TIMETABLE, component: null,
+            children: [
+              {path: '', component: TimetableComponent},
+              {path: RouteConstant.AUTO_SCHEDULE, component: AutoSchedulingSettingComponent}
+            ]},
           {path: RouteConstant.CRITERIA, component: EvaluationCriteriaComponent},
           {path: RouteConstant.EVALUATION_VIEW, component: EvaluationReportComponent},
+          {path: RouteConstant.GOOGLE_CALENDAR, component: GoogleIntegrationComponent},
         ]
       },
 

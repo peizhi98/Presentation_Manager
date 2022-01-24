@@ -1,10 +1,11 @@
 <mat-card>
   <mat-card-content>
     <p class="pt-1 pr-1" align="right">
-            <span>
-        <button mat-raised-button color="primary" *ngxPermissionsOnly="SystemRole.COORDINATOR">Create Google Calendar Event
-        </button>
-      </span>
+                  <span>
+              <button mat-raised-button color="primary" (click)="exportexcel()"
+                      *ngxPermissionsOnly="SystemRole.COORDINATOR">Export to Excel
+              </button>
+            </span>
       <span class="ml-1">
         <button mat-raised-button color="primary" [routerLink]="routeConstant.ADD_PRESENTATION">Add New Presentations
       </button>
@@ -78,3 +79,45 @@
 
   </mat-card-content>
 </mat-card>
+
+
+<div [hidden]="true">
+  <table id="excel-table">
+    <tr>
+      <th>Student Name</th>
+      <th>Matrix Number</th>
+      <th>Title</th>
+      <th>Supervisor</th>
+      <ng-container *ngIf="isMaster()">
+        <th>Chairperson</th>
+      </ng-container>
+      <th>Panels</th>
+      <th>Presentation Time</th>
+      <th>Room</th>
+      <th>Google Meet Link</th>
+    </tr>
+    <tr *ngFor="let p of presentationModels">
+      <td>{{p.studentName}}</td>
+      <td>{{p.studentMatrixNo}}</td>
+      <td>{{p.title}}</td>
+      <td>{{(p.supervisorModel) ? p.supervisorModel.name : ''}}</td>
+      <ng-container *ngIf="isMaster()">
+        <td>{{(p.chairperson) ? p.chairperson.name : ''}}</td>
+      </ng-container>
+      <td>
+        <ng-container *ngIf="p.panelModels&&p.panelModels.length>0">
+          <ng-container *ngFor="let panel of p.panelModels;let i=index">
+            <ng-container *ngIf="i!==0">,</ng-container>
+            {{panel.name}}
+          </ng-container>
+        </ng-container>
+      </td>
+      <td>{{(p.startTime|date:timeFormat)}}
+        - {{(p.endTime|date:timeFormat)}}</td>
+      <td>{{p.roomName}}</td>
+      <td>{{p.googleMeetLink}}</td>
+    </tr>
+  </table>
+</div>
+
+

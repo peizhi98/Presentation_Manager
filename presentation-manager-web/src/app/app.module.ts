@@ -23,6 +23,7 @@ import {UnauthorizedComponent} from './component/unauthorized/unauthorized.compo
 import {UserRoleState} from './store/user-role/user-role.store';
 import {DecimalPipe} from '@angular/common';
 import {ChartsModule} from 'ng2-charts';
+import {HttpCancelInterceptor} from './util/http-cancel.interceptor';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import {ChartsModule} from 'ng2-charts';
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorHandlingInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: HttpCancelInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
 })

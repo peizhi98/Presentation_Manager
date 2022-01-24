@@ -15,12 +15,16 @@ import {
   YearService
 } from '@syncfusion/ej2-angular-schedule';
 import {SharedModule} from '../shared.module';
+import { ViewUserAvailabilityComponent } from './page/view-user-availability/view-user-availability.component';
+import { ManageAvailabilityComponent } from './page/manage-availability/manage-availability.component';
 
 console.log('availability');
 
 @NgModule({
   declarations: [
-    AvailabilityComponent
+    AvailabilityComponent,
+    ViewUserAvailabilityComponent,
+    ManageAvailabilityComponent
   ],
   imports: [
     CommonModule,

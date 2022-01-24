@@ -3,6 +3,7 @@ package com.fyp.presentationmanager.entity;
 import com.fyp.presentationmanager.enums.SystemRole;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.TimeRange;
 import com.fyp.presentationmanager.model.user.UserModel;
+import com.fyp.presentationmanager.util.DateTimeUtil;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -120,6 +121,20 @@ public class UserBean implements Serializable {
             List<TimeRange> availabilities = new ArrayList<>();
             for (AvailabilityBean availabilityBean : this.availabilityBeans) {
                 if (availabilityBean.containedIn(timeRanges)) {
+                    availabilities.add(availabilityBean.toTimeRange());
+                }
+
+            }
+            return availabilities;
+        }
+        return null;
+    }
+
+    public List<TimeRange> getAvailableTimeRangesAfterNow() {
+        if (this.availabilityBeans != null) {
+            List<TimeRange> availabilities = new ArrayList<>();
+            for (AvailabilityBean availabilityBean : this.availabilityBeans) {
+                if (DateTimeUtil.timeRangesAfterNow(availabilityBean.getStartTime(),availabilityBean.getEndTime())) {
                     availabilities.add(availabilityBean.toTimeRange());
                 }
 

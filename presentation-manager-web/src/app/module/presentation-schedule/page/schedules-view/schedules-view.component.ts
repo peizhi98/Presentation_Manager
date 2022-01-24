@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ScheduleService} from '../../../../service/schedule.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
-import {ScheduleModel} from '../../../../model/schedule/schedule.model';
+import {ScheduleModel, ScheduleType} from '../../../../model/schedule/schedule.model';
 import {Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
@@ -21,7 +21,7 @@ export class SchedulesViewComponent implements OnInit {
   routeConstant = RouteConstant;
 
   dataSource: MatTableDataSource<ScheduleModel>;
-  displayedColumns = ['number', 'title', 'academic year', 'sem', 'coordinator'];
+  displayedColumns = ['number', 'title', 'academic year', 'sem', 'type'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -87,7 +87,11 @@ export class SchedulesViewComponent implements OnInit {
     this.router.navigate(['schedule/' + id + '/presentation']);
   }
 
-  get SystemRole(){
+  getScheduleType(type: ScheduleType): string {
+    return (type === ScheduleType.FYP) ? 'FYP' : 'Master';
+  }
+
+  get SystemRole() {
     return SystemRole;
   }
 

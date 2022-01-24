@@ -40,4 +40,5 @@ public class ScheduleCtrl {
         response.success(this.scheduleService.getSchedule(id));
         return response;
     }
+
 }

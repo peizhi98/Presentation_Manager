@@ -1,18 +1,21 @@
 <ng-container *ngIf="scheduleModel">
-<div class="pl-2 pt-1"
-     style="font: 400 34px/40px Roboto, 'Helvetica Neue', sans-serif;">{{scheduleModel.title}}</div>
-  <ng-container>
-    <nav mat-tab-nav-bar>
-      <a mat-tab-link
-         *ngFor="let link of navLinks"
-         [routerLink]="link.link"
-         routerLinkActive #rla="routerLinkActive"
-         [active]="rla.isActive">
-        {{link.label}}
-      </a>
-    </nav>
-    <router-outlet></router-outlet>
+  <ng-container *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+    <div class="pl-2 pt-1"
+         style="font: 400 34px/40px Roboto, 'Helvetica Neue', sans-serif;">{{scheduleModel.title}}</div>
+
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link
+           *ngFor="let link of navLinks"
+           [routerLink]="link.link"
+           routerLinkActive #rla="routerLinkActive"
+           [active]="rla.isActive">
+          {{link.label}}
+        </a>
+      </nav>
+
+
   </ng-container>
+  <router-outlet></router-outlet>
 </ng-container>
 
 

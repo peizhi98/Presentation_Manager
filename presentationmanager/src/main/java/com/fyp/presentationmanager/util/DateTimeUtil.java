@@ -1,6 +1,8 @@
 package com.fyp.presentationmanager.util;
 
-import java.util.Date;
+import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.TimeRange;
+
+import java.util.*;
 
 public class DateTimeUtil {
     public static boolean timeRangesOverlapped(Date start1, Date end1, Date start2, Date end2) {
@@ -9,13 +11,28 @@ public class DateTimeUtil {
                 start1.compareTo(start2) == 0
                         || end1.compareTo(end2) == 0
                         || dateExclusivelyBetweenRange(start1, start2, end2)
-                        || dateExclusivelyBetweenRange(end1, start2, end2))
+                        || dateExclusivelyBetweenRange(end1, start2, end2)
+                        || dateExclusivelyBetweenRange(start2, start1, end1)
+                        || dateExclusivelyBetweenRange(end2, start1, end1))
+            return true;
+        return false;
+    }
+
+    public static boolean timeRangesContinuous(Date start1, Date end1, Date start2, Date end2) {
+        if (start1.compareTo(end2) == 0 || start2.compareTo(end1) == 0)
             return true;
         return false;
     }
 
     public static boolean timeRangesAreEqual(Date start1, Date end1, Date start2, Date end2) {
         if (start1.compareTo(start2) == 0 && end1.compareTo(end2) == 0)
+            return true;
+        return false;
+    }
+
+    public static boolean timeRangesAfterNow(Date start, Date end) {
+        Date now = new Date();
+        if (end.after(now))
             return true;
         return false;
     }
@@ -52,4 +69,41 @@ public class DateTimeUtil {
         return time1.after(time2) || time1.compareTo(time2) == 0;
     }
 
+    public static void mergeOverlappedOrContinuousTimeRange(List<TimeRange> slot) {
+        Collections.sort(slot, new Comparator<TimeRange>() {
+            @Override
+            public int compare(TimeRange o1, TimeRange o2) {
+                if (o1.getStartTime().compareTo(o2.getStartTime()) == 0) {
+                    return 0;
+                }
+                return o1.getStartTime().after(o2.getStartTime()) ? 1 : -1;
+            }
+        });
+        Iterator<TimeRange> itr = slot.iterator();
+        TimeRange current = null;
+        while (itr.hasNext()) {
+            if (current == null) {
+                current = itr.next();
+            } else {
+                TimeRange next = itr.next();
+                if (DateTimeUtil.timeRangesOverlapped(
+                        current.getStartTime(),
+                        current.getEndTime(),
+                        next.getStartTime(),
+                        next.getEndTime())
+                        || DateTimeUtil.timeRangesContinuous(
+                        current.getStartTime(),
+                        current.getEndTime(),
+                        next.getStartTime(),
+                        next.getEndTime()
+                )) {
+                    current.setEndTime(next.getEndTime());
+                    itr.remove();
+                } else {
+                    current = next;
+                }
+            }
+
+        }
+    }
 }

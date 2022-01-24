@@ -6,6 +6,7 @@ export class AvailabilityModel {
 
 export class UserAvailabilityModel {
   id: number;
+  nameOfUser: string;
   availabilityModels: AvailabilityModel[];
 }
 

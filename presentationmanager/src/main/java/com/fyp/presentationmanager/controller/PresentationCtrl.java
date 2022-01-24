@@ -1,9 +1,8 @@
 package com.fyp.presentationmanager.controller;
 
-import com.fyp.presentationmanager.enums.PresentationMode;
+import com.fyp.presentationmanager.model.ResponseModel;
 import com.fyp.presentationmanager.model.presentation.AutoSchedulingModel;
 import com.fyp.presentationmanager.model.presentation.PresentationModel;
-import com.fyp.presentationmanager.model.ResponseModel;
 import com.fyp.presentationmanager.model.presentation.PresentationScheduleModel;
 import com.fyp.presentationmanager.service.presentation.PresentationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +47,19 @@ public class PresentationCtrl {
         ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
         try {
             responseModel.success(presentationService.getPresentationList(scheduleId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
+
+    }
+
+    @GetMapping(value = "/get-presentations-with-availability")
+    private ResponseModel<List<PresentationModel>> getPresentationsWithAvailability(@RequestParam Integer scheduleId) {
+        ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
+        try {
+            responseModel.success(presentationService.getPresentationListWithCommonAvailability(scheduleId));
         } catch (Exception e) {
             e.printStackTrace();
             responseModel.failed();
@@ -102,5 +114,20 @@ public class PresentationCtrl {
             responseModel.failed();
         }
         return responseModel;
+    }
+
+
+    @GetMapping(value = "sync-google-calendar-all")
+    public ResponseModel<List<PresentationModel>> syncAllPresentationWithGoogleCalendar(@RequestParam Integer scheduleId) {
+        ResponseModel<List<PresentationModel>> response = new ResponseModel<>();
+        response.success(this.presentationService.syncAllPresentationWithGoogleCalendar(scheduleId));
+        return response;
+    }
+
+    @GetMapping(value = "sync-google-calendar")
+    public ResponseModel<PresentationModel> syncPresentationWithGoogleCalendar(@RequestParam Integer presentationId) {
+        ResponseModel<PresentationModel> response = new ResponseModel<>();
+        response.success(this.presentationService.syncPresentationWithGoogleCalendar(presentationId));
+        return response;
     }
 }

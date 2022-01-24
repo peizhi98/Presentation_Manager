@@ -1,0 +1,76 @@
+<mat-card>
+  <mat-card-content>
+    <p class="pt-1 pr-1" align="right">
+      <span>
+        <button mat-raised-button color="primary" (click)="syncAllPresentations()"
+                *ngxPermissionsOnly="SystemRole.COORDINATOR">Sync All Presentation With Calendar
+        </button>
+      </span>
+    </p>
+    <!--    <mat-form-field appearance="standard">-->
+    <!--      <mat-label>Search</mat-label>-->
+    <!--      <input matInput (keyup)="applyFilter($event)">-->
+    <!--    </mat-form-field>-->
+    <div>
+      <table mat-table matSort class="w-100" [dataSource]="dataSource">
+        <!-- name Column -->
+        <ng-container [matColumnDef]=displayedColumns[0]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name.</th>
+          <td mat-cell *matCellDef="let row">{{row.studentName}}</td>
+        </ng-container>
+
+        <!-- schedule Column -->
+        <ng-container [matColumnDef]=displayedColumns[1]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 25%">Scheduled Time</th>
+          <td mat-cell *matCellDef="let row">{{(row.startTime|date:timeFormat)}}
+            - {{(row.endTime|date:timeFormat)}}</td>
+        </ng-container>
+
+        <!-- calendar Column -->
+        <ng-container [matColumnDef]=displayedColumns[2]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 25%">Calendar Event Time</th>
+          <td mat-cell *matCellDef="let row">{{(row.calendarStartTime|date:timeFormat)}}
+            - {{(row.calendarEndTime|date:timeFormat)}}</td>
+        </ng-container>
+
+        <!--        &lt;!&ndash; html link Column &ndash;&gt;-->
+        <!--        <ng-container [matColumnDef]=displayedColumns[3]>-->
+        <!--          <th mat-header-cell *matHeaderCellDef mat-sort-header>Require Sync</th>-->
+        <!--          <td mat-cell *matCellDef="let row">{{requireSync(row)}}</td>-->
+        <!--        </ng-container>-->
+
+        <!-- meet link Column -->
+        <ng-container [matColumnDef]=displayedColumns[3]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Google Meet link</th>
+          <td mat-cell *matCellDef="let row">
+            <ng-container *ngIf="row.googleMeetLink;else dash"><a
+              [href]="'https://'+row.googleMeetLink">{{row.googleMeetLink}}</a></ng-container>
+          </td>
+        </ng-container>
+        <ng-template #dash>-</ng-template>
+        <!-- last sync Column -->
+        <ng-container [matColumnDef]=displayedColumns[4]>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Sync</th>
+          <td mat-cell *matCellDef="let row">{{(row.lastSync|date:timeFormat)}}</td>
+        </ng-container>
+
+        <!-- action Column -->
+        <ng-container [matColumnDef]=displayedColumns[5]>
+          <th mat-header-cell *matHeaderCellDef>Sync</th>
+          <td mat-cell *matCellDef="let row">
+            <button matTooltip="Sync" (click)="syncPresentations(row.id)" mat-icon-button color="primary">
+              <mat-icon>sync</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+      <!--      <mat-paginator [pageSizeOptions]="getPaginatorOptions()" aria-label="Select page of presentation"></mat-paginator>-->
+
+    </div>
+
+  </mat-card-content>
+</mat-card>

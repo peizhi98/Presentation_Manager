@@ -60,8 +60,8 @@ public class ScheduleServiceImpl implements ScheduleService {
             scheduleModel.setId(scheduleBean.getId());
             scheduleModel.setYear(scheduleBean.getYear());
             scheduleModel.setSem(scheduleBean.getSem());
-            scheduleModel.setDuration(scheduleBean.getDuration());
             scheduleModel.setCreateDate(scheduleBean.getCreateDate());
+            scheduleModel.setScheduleType(scheduleBean.getScheduleType());
             scheduleModel.setTitle(scheduleBean.getTitle());
             CoordinatorModel coordinatorModel = CoordinatorModel.build(scheduleBean.getCoordinator());
             scheduleModel.setCoordinator(coordinatorModel);

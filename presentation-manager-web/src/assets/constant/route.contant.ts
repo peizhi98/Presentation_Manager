@@ -29,14 +29,20 @@ export class RouteConstant {
   public static readonly ADD_PRESENTATION = 'add';
   public static readonly ADD_PRESENTATION_ROUTE = RouteConstant.PRESENTATION_VIEW_ROUTE + '/' + RouteConstant.ADD_PRESENTATION;
 
+  // timetable
   public static readonly TIMETABLE = 'timetable';
   public static readonly TIMETABLE_ROUTE = RouteConstant.SCHEDULE_ROUTE + '/' + RouteConstant.TIMETABLE;
+  public static readonly AUTO_SCHEDULE = 'auto';
+  public static readonly AUTO_SCHEDULE_ROUTE = RouteConstant.TIMETABLE_ROUTE + '/' + RouteConstant.AUTO_SCHEDULE;
 
   public static readonly CRITERIA = 'criteria';
   public static readonly CRITERIA_ROUTE = RouteConstant.SCHEDULE_ROUTE + '/' + RouteConstant.CRITERIA;
 
   public static readonly EVALUATION_VIEW = 'evaluation';
   public static readonly EVALUATION_VIEW_ROUTE = RouteConstant.SCHEDULE_ROUTE + '/' + RouteConstant.EVALUATION_VIEW;
+
+  public static readonly GOOGLE_CALENDAR = 'google';
+  public static readonly GOOGLE_CALENDAR_ROUTE = RouteConstant.SCHEDULE_ROUTE + '/' + RouteConstant.GOOGLE_CALENDAR;
 
   public static readonly CREATE = 'create';
   public static readonly CREATE_SCHEDULE_ROUTE = RouteConstant.SCHEDULE_VIEW_ROUTE + '/' + RouteConstant.CREATE;
@@ -45,6 +51,8 @@ export class RouteConstant {
   // availability
   public static readonly AVAILABILITY = 'availability';
   public static readonly AVAILABILITY_ROUTE = '/' + RouteConstant.AVAILABILITY;
+  public static readonly USER_AVAILABILITY = ':id';
+  public static readonly USER_AVAILABILITY_ROUTE = RouteConstant.AVAILABILITY_ROUTE + '/' + RouteConstant.AVAILABILITY;
 
   // user management
   public static readonly USER_MANAGEMENT = 'user-management';

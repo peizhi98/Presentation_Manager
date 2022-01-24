@@ -1,7 +1,9 @@
 package com.fyp.presentationmanager.controller;
 
+import com.fyp.presentationmanager.enums.EvaluationType;
 import com.fyp.presentationmanager.model.ResponseModel;
 import com.fyp.presentationmanager.model.availability.AvailabilityModel;
+import com.fyp.presentationmanager.model.availability.UserAvailabilityModel;
 import com.fyp.presentationmanager.service.availability.AvailabilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,6 @@ public class AvailabilityCtrl {
             responseModel.failed();
         }
         return responseModel;
-
     }
 
     @GetMapping(value = "/get")
@@ -36,8 +37,18 @@ public class AvailabilityCtrl {
             e.printStackTrace();
             responseModel.failed();
         }
-
         return responseModel;
+    }
 
+    @GetMapping(value = "/get-user-availability")
+    private ResponseModel<UserAvailabilityModel> getAvailabilities(@RequestParam Integer userId) {
+        ResponseModel<UserAvailabilityModel> responseModel = new ResponseModel();
+        try{
+            responseModel.success(availabilityService.getUserAvailabilities(userId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
     }
 }

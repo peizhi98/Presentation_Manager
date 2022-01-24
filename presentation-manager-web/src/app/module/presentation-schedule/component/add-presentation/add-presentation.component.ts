@@ -10,7 +10,7 @@ import {Observable} from 'rxjs';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {XlsxUtil} from '../../../../util/xlsx.util';
 import {SupervisorModel} from '../../../../model/role/supervisor.model';
-import {PatchLecturerFromBackend} from '../../../../store/user/user.action';
+import {PatchUserFromBackend} from '../../../../store/user/user.action';
 import {UserState} from '../../../../store/user/user.store';
 import {LecturerModel} from '../../../../model/role/lecturer.model';
 
@@ -47,7 +47,7 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
     this.scheduleId$.subscribe(id => {
       this.scheduleId = id;
     });
-    this.store.dispatch(new PatchLecturerFromBackend());
+    this.store.dispatch(new PatchUserFromBackend());
     this.lecturers$.subscribe(lec => {
       this.lecturers = lec;
     });

@@ -20,34 +20,43 @@ public class Presentation implements Cloneable, Comparable<Presentation> {
     private Date startTime;
     private Date endTime;
     private List<Panel> panelList = new ArrayList<>();
+    private Room room;
 
-    public Presentation(Integer id, List<Panel> panelList) {
-        this.id = id;
-        if (panelList != null) {
-            this.panelList = panelList;
-        }
-    }
-
-    public static Presentation build(PresentationBean presentationBean, PresentationMode mode, List<TimeRange> timeRangesToSchedule){
+    public static Presentation build(PresentationBean presentationBean, PresentationMode mode) {
         Presentation presentation = new Presentation();
         presentation.setId(presentationBean.getId());
         presentation.setPresentationMode(mode);
-        if (presentationBean.getPanelBeans() != null) {
+        if (presentationBean.getPresentationPanelBeans() != null) {
             List<Panel> panels = new ArrayList<>();
             presentation.setPanelList(panels);
-            for (PresentationPanelBean panelBean : presentationBean.getPanelBeans()) {
+            for (PresentationPanelBean panelBean : presentationBean.getPresentationPanelBeans()) {
                 Panel panel = new Panel();
                 panel.setId(panelBean.getPanelId());
                 List<TimeRange> availabilitiesDuringSchedule
-                        = panelBean.getPanelBean().getAvailableTimeRangesBetween(timeRangesToSchedule);
-                if (availabilitiesDuringSchedule == null) {
-                    throw new RuntimeException("Panel does not update availability");
-                }
+                        = panelBean.getPanelBean().getAvailableTimeRangesAfterNow();
+//                if (availabilitiesDuringSchedule == null) {
+//                    throw new RuntimeException("Panel does not update availability");
+//                }
                 panel.setAvailableTimeList(availabilitiesDuringSchedule);
                 panels.add(panel);
             }
         }
         return presentation;
+    }
+
+    public void setRoomAndInitMeetingTime(Room room) {
+        this.room = room;
+        for (int i = 0; i < 100; i++) {
+            this.setMeetingTime(room.getMeetingSlots().get((int) (room.getMeetingSlots().size() * Math.random())));
+            if (calculateNumberOfPanelNotAvailable() == 0) {
+                break;
+            }
+        }
+    }
+
+    public void setMeetingTime(TimeRange timeRange) {
+        this.startTime = timeRange.getStartTime();
+        this.endTime = timeRange.getEndTime();
     }
 
     public int calculateNumberOfPanelNotAvailable() {

@@ -1,1 +1,117 @@
-<p>evaluation-form-master works!</p>
+<ng-container *ngIf="currentForm">
+  <form [formGroup]="currentForm" (ngSubmit)="onSubmit()">
+    <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+
+      <div formArrayName="criteriaEvaluation" *ngIf="criteriaEvaluation.controls">
+        <div class="example-box" [ngStyle]="!isEditMode()&&{'padding-top': '10px'}"
+             *ngFor="let criteria of criteriaEvaluation.controls;let i = index;" cdkDrag>
+          <p class="example-handle" style="text-align: center;" [hidden]="!isEditMode()" cdkDragHandle>
+            <mat-icon> drag_handle</mat-icon>
+          </p>
+
+          <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+          <div class="w-100">
+            <h3 style="width: 2%; display: inline-block;">{{i + 1}}</h3>
+            <!--Criteria name-->
+            <mat-form-field style="width: 87%" *ngIf="isEditMode();else criteriaName" appearance="fill">
+              <mat-label>Criteria</mat-label>
+              <input matInput [formControl]="criteria.get(NAME)">
+              <mat-error *ngIf="criteria.get(NAME).invalid&&criteria.get(NAME).touched">Criteria cannot be empty.
+              </mat-error>
+            </mat-form-field>
+            <ng-template #criteriaName>
+              <div style="width: 100%; display: inline-block">
+                {{criteria.get(NAME).value}}
+              </div>
+            </ng-template>
+
+
+            <div style="width: 5%; display: inline-block"></div>
+            <button *ngIf="isEditMode()" type="button" style="float: right" mat-icon-button color="primary"
+                    (click)="removeCriterion(i)">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+          </div>
+          <!--score input-->
+          <div style="margin: auto;width: 30%;">
+            <ng-container *ngIf="isPanel();else chairpersonInput">
+              <mat-radio-group class="radio-label-above radio-label-content-center"
+                               [formControl]="criteria.get(RATING)">
+                <mat-radio-button class="ml-2 radio-label-content-center"
+                                  [value]="scaleOptions[0]">Unsatisfactory
+                </mat-radio-button>
+                <mat-radio-button class="ml-2 radio-label-content-center"
+                                  [value]="scaleOptions[1]">Satisfactory
+                </mat-radio-button>
+
+                <mat-error style="margin-left: 45px;"
+                           *ngIf="criteria.get(RATING).invalid&&criteria.get(RATING).touched">Please
+                  select a rating.
+                </mat-error>
+              </mat-radio-group>
+            </ng-container>
+            <ng-template #chairpersonInput>
+              <mat-radio-group class="radio-label-above radio-label-content-center"
+                               [formControl]="criteria.get(RATING)">
+                <mat-radio-button class="ml-2 radio-label-content-center"
+                                  [value]="scaleOptions[0]">Unsatisfactory
+                </mat-radio-button>
+                <mat-radio-button class="ml-2 radio-label-content-center"
+                                  [value]="scaleOptions[1]">Satisfactory
+                </mat-radio-button>
+
+                <mat-error style="margin-left: 45px;"
+                           *ngIf="criteria.get(RATING).invalid&&criteria.get(RATING).touched">Please
+                  select a rating.
+                </mat-error>
+              </mat-radio-group>
+            </ng-template>
+          </div>
+          <!--comment-->
+          <mat-form-field style="width: 100%" class="mt-2" appearance="outline">
+            <mat-label>Comment Section</mat-label>
+            <textarea matInput [formControl]="criteria.get(COMMENT)"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="example-box" *ngIf="isEditMode()" style="background-color: #ccc; padding-top: 20px">
+        <p style="text-align: center;">
+          <button mat-raised-button type="button" color="primary" (click)="addCriterion()">Add New Criterion</button>
+        </p>
+      </div>
+    </div>
+    <div>
+      <div style="display: inline-block; width: 10%">Overall evaluation:</div>
+      <div style="display: inline-block; width: 30%">
+        <mat-radio-group class="radio-label-above radio-label-content-center" disabled="true">
+          <mat-radio-button class="ml-2 radio-label-content-center"
+                            [value]="scaleOptions[0]">Pass
+          </mat-radio-button>
+          <mat-radio-button class="ml-2 radio-label-content-center"
+                            [value]="scaleOptions[1]">Fail
+          </mat-radio-button>
+
+        </mat-radio-group>
+      </div>
+
+    </div>
+    <mat-form-field style="width: 100%" class="mt-2" appearance="outline">
+      <mat-label>Overall comment</mat-label>
+      <textarea matInput disable="true"></textarea>
+    </mat-form-field>
+
+    <div class="mt-1 mb-1">
+      <p align="right">
+        <!--        <button *ngIf="isEditMode()" mat-raised-button color="primary" (click)="save()">Save</button>-->
+        <!--        <button *ngIf="isEvaluateMode()" mat-raised-button color="primary" type="submit"-->
+        <!--        >Submit-->
+        <!--        </button>-->
+        <button *ngIf="!isViewMode()" mat-raised-button color="primary" type="submit"
+        >{{(isEditMode()) ? 'Save' : 'Submit'}}
+        </button>
+      </p>
+    </div>
+  </form>
+</ng-container>

@@ -22,7 +22,6 @@ public class ScheduleModel {
     private Integer year;
     private Integer sem;
     private String title;
-    private Integer duration;
     private ScheduleType scheduleType;
     private PresentationMode presentationMode;
     private Date createDate;
@@ -35,6 +34,8 @@ public class ScheduleModel {
         this.title = scheduleBean.getTitle();
         this.sem = scheduleBean.getSem();
         this.year = scheduleBean.getYear();
+        this.scheduleType=scheduleBean.getScheduleType();
+        this.createDate=scheduleBean.getCreateDate();
     }
 
 }

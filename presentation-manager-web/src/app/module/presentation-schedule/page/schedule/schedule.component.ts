@@ -49,6 +49,11 @@ export class ScheduleComponent implements OnInit {
         link: RouteConstant.EVALUATION_VIEW,
         index: 3
       },
+      {
+        label: 'Google Calendar',
+        link: RouteConstant.GOOGLE_CALENDAR,
+        index: 4
+      },
       // {
       //   label: 'Details',
       //   link: './details',
@@ -68,9 +73,9 @@ export class ScheduleComponent implements OnInit {
         this.scheduleId = params.id;
         this.scheduleService.getSchedule(this.scheduleId).subscribe(resp => {
           if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
-            this.store.dispatch(new SetCurrentSchedule(this.scheduleId, resp.data.coordinator));
             this.scheduleModel = resp.data;
-            console.log(resp.data);
+            console.log(this.scheduleModel.title);
+            this.store.dispatch(new SetCurrentSchedule(this.scheduleId, resp.data.coordinator, this.scheduleModel.scheduleType, this.scheduleModel.title));
             this.loading = false;
           }
         });

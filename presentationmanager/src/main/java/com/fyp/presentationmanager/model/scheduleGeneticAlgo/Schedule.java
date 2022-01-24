@@ -1,12 +1,11 @@
 package com.fyp.presentationmanager.model.scheduleGeneticAlgo;
 
+import com.fyp.presentationmanager.enums.PresentationMode;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.Presentation;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.ScheduleData;
-import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.TimeRange;
 import com.fyp.presentationmanager.util.DateTimeUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,35 +25,38 @@ public class Schedule {
         for (Presentation presentation : this.presentationList) {
             boolean panelAvailable = false;
             //check panel availability improve generation from xx-k to 500  -4k
-            while (!panelAvailable) {
-                Date randomStartTime = getRandomTimeFromAvailableTimeSlotAndPanelAvailability();
-                Date endTime = new Date(randomStartTime.getTime() + DateTimeUtil.minutesToMillis(this.scheduleData.getPresentationDuration()));
-                presentation.setStartTime(randomStartTime);
-                presentation.setEndTime(endTime);
-                if (presentation.calculateNumberOfPanelNotAvailable() == 0) {
-                    panelAvailable = true;
-                }
+//            while (!panelAvailable) {
+//                Date randomStartTime = getRandomTimeFromAvailableTimeSlotAndPanelAvailability();
+//                Date endTime = new Date(randomStartTime.getTime() + DateTimeUtil.minutesToMillis(this.scheduleData.getPresentationDuration()));
+            if (presentation.getPresentationMode().equals(PresentationMode.ONLINE)) {
+                presentation.setRoomAndInitMeetingTime(scheduleData.getOnlineRoom());
+            } else if (presentation.getPresentationMode().equals(PresentationMode.PHYSICAL)) {
+                presentation.setRoomAndInitMeetingTime(scheduleData.getRoomsWithMeetingSlots().get((int) (scheduleData.getRoomsWithMeetingSlots().size() * Math.random())));
             }
+//                if (presentation.calculateNumberOfPanelNotAvailable() == 0) {
+//                    panelAvailable = true;
+//                }
+//            }
 
 
         }
         return this;
     }
 
-    private Date getRandomTimeFromAvailableTimeSlotAndPanelAvailability() {
-        List<TimeRange> shuffledTimeSlot = new ArrayList<>(this.scheduleData.getAvailableScheduleTimeSlots());
-        Collections.shuffle(shuffledTimeSlot);
-        for (TimeRange timeSlot : shuffledTimeSlot) {
-            Date latestStartTime = new Date(timeSlot.getEndTime().getTime() - DateTimeUtil.minutesToMillis(this.scheduleData.getPresentationDuration()));
-            if (DateTimeUtil.timeAfterIncl(latestStartTime, timeSlot.getStartTime())) {
-                long randomEpoch = getRandomEpochBetweenIncl(timeSlot.getStartTime(), latestStartTime);
-                randomEpoch = removeSecond(randomEpoch);
-                return new Date(randomEpoch);
-            }
-
-        }
-        throw new RuntimeException("Invalid schedule resource. Unable to generate random time from available schedule time slot.");
-    }
+//    private Date getRandomTimeFromAvailableTimeSlotAndPanelAvailability() {
+//        List<TimeRange> shuffledTimeSlot = new ArrayList<>(this.scheduleData.getAvailableScheduleTimeSlots());
+//        Collections.shuffle(shuffledTimeSlot);
+//        for (TimeRange timeSlot : shuffledTimeSlot) {
+//            Date latestStartTime = new Date(timeSlot.getEndTime().getTime() - DateTimeUtil.minutesToMillis(this.scheduleData.getPresentationDuration()));
+//            if (DateTimeUtil.timeAfterIncl(latestStartTime, timeSlot.getStartTime())) {
+//                long randomEpoch = getRandomEpochBetweenIncl(timeSlot.getStartTime(), latestStartTime);
+//                randomEpoch = removeSecond(randomEpoch);
+//                return new Date(randomEpoch);
+//            }
+//
+//        }
+//        throw new RuntimeException("Invalid schedule resource. Unable to generate random time from available schedule time slot.");
+//    }
 
     private long getRandomEpochBetweenIncl(Date from, Date to) {
         return ThreadLocalRandom.current()

@@ -19,14 +19,18 @@ public class Panel {
         if (AvailableTimeList != null) {
             this.AvailableTimeList = AvailableTimeList;
         }
+        DateTimeUtil.mergeOverlappedOrContinuousTimeRange(this.AvailableTimeList);
     }
 
     public boolean isAvailableOnTimeRange(Date startTime, Date endTime) {
-        for (TimeRange availableTime : AvailableTimeList) {
-            if (DateTimeUtil.timeRange1IsBetweenTimeRange2(startTime, endTime, availableTime.getStartTime(), availableTime.getEndTime())) {
-                return true;
+        if (AvailableTimeList != null && AvailableTimeList.size() > 0) {
+            for (TimeRange availableTime : AvailableTimeList) {
+                if (DateTimeUtil.timeRange1IsBetweenTimeRange2(startTime, endTime, availableTime.getStartTime(), availableTime.getEndTime())) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 }

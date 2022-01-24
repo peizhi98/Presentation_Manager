@@ -3,7 +3,6 @@ package com.fyp.presentationmanager.model.scheduleGeneticAlgo;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.Panel;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.Presentation;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.ScheduleData;
-import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.TimeRange;
 import com.fyp.presentationmanager.util.DateTimeUtil;
 
 import java.util.List;
@@ -49,30 +48,25 @@ public class Fitness {
 
     private int calculateConflicts(List<Presentation> presentationList, ScheduleData scheduleData) {
         int numberOfConflict = 0;
-        for (Presentation presentation1 : presentationList) {
-            numberOfConflict += presentation1.calculateNumberOfPanelNotAvailable();
-            if (!presentationIsBetweenAvailableTimeSlots(presentation1, scheduleData)) {
-                numberOfConflict++;
-            }
-//            for (Panel panel1 : presentation1.getPanelList()) {
-//                if (!panel1.isAvailableOnTimeRange(presentation1.getStartTime(), presentation1.getEndTime())) {
-//                    this.numberOfConflict++;
-//                }
-//            }
-            for (Presentation presentation2 : presentationList) {
-                if (presentation1.getId() != presentation2.getId()) {
-                    //conflict with other presentation
-//                    if (DateTimeUtil.timeRangesOverlapped(
-//                            presentation1.getStartTime(), presentation1.getEndTime(),
-//                            presentation2.getStartTime(), presentation2.getEndTime())) {
-//                        this.numberOfConflict++;
-//                    }
+        for (Presentation currentPresentation : presentationList) {
+            numberOfConflict += currentPresentation.calculateNumberOfPanelNotAvailable();
+
+            for (Presentation otherPresentation : presentationList) {
+                if (currentPresentation.getId() != otherPresentation.getId()) {
+//                    conflict with other presentation
+                    if (!currentPresentation.getRoom().isAllowMultiple()
+                            && currentPresentation.getRoom().getId().equals(otherPresentation.getRoom().getId())
+                            && DateTimeUtil.timeRangesOverlapped(
+                            currentPresentation.getStartTime(), currentPresentation.getEndTime(),
+                            otherPresentation.getStartTime(), otherPresentation.getEndTime())) {
+                        numberOfConflict++;
+                    }
                     //same panel schedule in different presentation at the same time
-                    for (Panel panel2 : presentation2.getPanelList()) {
-                        if (presentation1.hasPanel(panel2)
+                    for (Panel otherPanel : otherPresentation.getPanelList()) {
+                        if (currentPresentation.hasPanel(otherPanel)
                                 && DateTimeUtil.timeRangesOverlapped(
-                                presentation1.getStartTime(), presentation1.getEndTime(),
-                                presentation2.getStartTime(), presentation2.getEndTime())) {
+                                currentPresentation.getStartTime(), currentPresentation.getEndTime(),
+                                otherPresentation.getStartTime(), otherPresentation.getEndTime())) {
                             numberOfConflict++;
                         }
                     }
@@ -118,12 +112,12 @@ public class Fitness {
         return 0;
     }
 
-    public boolean presentationIsBetweenAvailableTimeSlots(Presentation presentation, ScheduleData scheduleData) {
-        for (TimeRange availableScheduleTimeSlot : scheduleData.getAvailableScheduleTimeSlots()) {
-            if (presentation.isBetweenTimeRange(availableScheduleTimeSlot)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public boolean presentationIsBetweenAvailableTimeSlots(Presentation presentation, ScheduleData scheduleData) {
+//        for (TimeRange availableScheduleTimeSlot : scheduleData.getAvailableScheduleTimeSlots()) {
+//            if (presentation.isBetweenTimeRange(availableScheduleTimeSlot)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 }
