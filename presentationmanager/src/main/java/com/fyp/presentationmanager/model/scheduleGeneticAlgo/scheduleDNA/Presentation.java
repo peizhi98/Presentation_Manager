@@ -2,6 +2,7 @@ package com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA;
 
 import com.fyp.presentationmanager.entity.PresentationBean;
 import com.fyp.presentationmanager.entity.PresentationPanelBean;
+import com.fyp.presentationmanager.entity.UserBean;
 import com.fyp.presentationmanager.enums.PresentationMode;
 import com.fyp.presentationmanager.util.DateTimeUtil;
 import lombok.Data;
@@ -29,6 +30,16 @@ public class Presentation implements Cloneable, Comparable<Presentation> {
         if (presentationBean.getPresentationPanelBeans() != null) {
             List<Panel> panels = new ArrayList<>();
             presentation.setPanelList(panels);
+            // treat chairperson as panel, just to consider availability
+            if (presentationBean.getChairPersonBean() != null) {
+                UserBean chairperson = presentationBean.getChairPersonBean();
+                Panel panel = new Panel();
+                panel.setId(chairperson.getId());
+                List<TimeRange> availabilitiesDuringSchedule
+                        = chairperson.getAvailableTimeRangesAfterNow();
+                panel.setAvailableTimeList(availabilitiesDuringSchedule);
+                panels.add(panel);
+            }
             for (PresentationPanelBean panelBean : presentationBean.getPresentationPanelBeans()) {
                 Panel panel = new Panel();
                 panel.setId(panelBean.getPanelId());
@@ -93,6 +104,17 @@ public class Presentation implements Cloneable, Comparable<Presentation> {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public PresentationBean findBean(List<PresentationBean> presentationBeans) {
+        if (presentationBeans != null) {
+            for (PresentationBean presentation : presentationBeans) {
+                if (presentation.getId().equals(this.id)) {
+                    return presentation;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

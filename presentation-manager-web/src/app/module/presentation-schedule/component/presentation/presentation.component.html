@@ -43,8 +43,6 @@
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:presentationModel.supervisorModel.name}"></ng-container>
         <ng-container
-          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor Email',data:presentationModel.supervisorModel.email}"></ng-container>
-        <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Start Time',data:presentationModel.startTime|date:timeFormat}"></ng-container>
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'End Time',data:presentationModel.endTime|date:timeFormat}"></ng-container>
@@ -58,7 +56,7 @@
         </div>
 
         <div *ngFor="let panel of presentationModel.panelModels; let i = index">
-          Panel {{i + 1}}: {{panel.email}}
+          Panel {{i + 1}}: {{panel.name}}
         </div>
       </ng-container>
     </ng-container>
@@ -76,13 +74,13 @@
           <button *ngxPermissionsOnly="constant.ROLE_PANEL"
                   [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PANEL" mat-raised-button
                   color="primary">
-          Evaluate as Panel
+          Evaluate
         </button>
         </span>
           <span class="ml-1">
           <button *ngxPermissionsOnly="constant.ROLE_CHAIRPERSON"
-                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.CHAIRPERSON" mat-raised-button
-                  color="primary">Evaluate as Chairperson
+                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.CONFIRMATION" mat-raised-button
+                  color="primary">Confirm Evaluation
         </button>
         </span>
 
@@ -104,8 +102,6 @@
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:presentationModel.supervisorModel.name}"></ng-container>
         <ng-container
-          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor Email',data:presentationModel.supervisorModel.email}"></ng-container>
-        <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Start Time',data:presentationModel.startTime|date:timeFormat}"></ng-container>
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'End Time',data:presentationModel.endTime|date:timeFormat}"></ng-container>
@@ -119,7 +115,7 @@
         </div>
 
         <div *ngFor="let panel of presentationModel.panelModels; let i = index">
-          Panel {{i + 1}}: {{panel.email}}
+          Panel {{i + 1}}: {{panel.name}}
         </div>
       </ng-container>
     </ng-container>

@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @NoArgsConstructor
@@ -42,5 +40,24 @@ public class EvaluationFormModel {
             evaluationFormModel.setCriterionModels(criterionModels);
         }
         return evaluationFormModel;
+    }
+
+    public static EvaluationFormModel buildConfirmationFormFromEvaluationForm(EvaluationFormBean confirmationForm, EvaluationFormBean evaluationFormBean) {
+        EvaluationFormModel confirmationFormModel = new EvaluationFormModel();
+        if (evaluationFormBean != null && confirmationForm != null) {
+            confirmationFormModel.setId(confirmationForm.getId());
+            confirmationFormModel.setEvaluationType(confirmationForm.getEvaluationType());
+            confirmationFormModel.setScheduleId(confirmationForm.getScheduleId());
+            confirmationFormModel.setMaxGap(confirmationForm.getMaxGap());
+            confirmationFormModel.setRubricUrl(confirmationForm.getRubricUrl());
+            List<CriterionModel> criterionModels = new ArrayList<>();
+            if (evaluationFormBean.getCriterionBeans() != null) {
+                for (CriterionBean criterionBean : evaluationFormBean.getCriterionBeans()) {
+                    criterionModels.add(CriterionModel.build(criterionBean));
+                }
+            }
+            confirmationFormModel.setCriterionModels(criterionModels);
+        }
+        return confirmationFormModel;
     }
 }

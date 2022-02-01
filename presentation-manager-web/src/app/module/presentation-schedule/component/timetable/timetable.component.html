@@ -2,7 +2,7 @@
   <p align="right">
     <span class="pr-1"><button mat-raised-button (click)="navigateToAutoSchedule()" color="primary">Auto-schedule
     </button></span>
-    <span><button mat-raised-button (click)="save()" color="primary">Save</button></span>
+    <span><button mat-raised-button (click)="save()" *ngxPermissionsOnly="SystemRole.COORDINATOR" color="primary">Save</button></span>
 
   </p>
 </div>
@@ -42,9 +42,9 @@
   </mat-sidenav>
   <mat-sidenav-content style="
   width: 84%;">
-    <ng-container *ngIf="resourceDataSource&&selectedDate">
+    <ng-container *ngIf="resourceDataSource">
       <ejs-schedule #scheduleObj cssClass='adaptive-rows' height='650px' [rowAutoHeight]='rowAutoHeight'
-                    [currentView]="currentView" [selectedDate]="selectedDate"
+                    [currentView]="currentView" [selectedDate]="selectedDate" [startHour]='startHour' [endHour]='endHour'
                     [group]="group" (actionBegin)="onActionBegin($event)" (actionComplete)="onActionComplete($event)"
                     [eventSettings]="eventSettings" cdkDropList [cdkDropListData]="scheduledPresentations"
                     (cdkDropListDropped)="drop($event)" (dragStart)="onSchedulerDragStart($event)"
@@ -67,16 +67,45 @@
         <ng-template #eventSettingsTooltipTemplate let-data>
           <div class="tooltip-wrap">
             <div class="content-area">
-              <ng-container>Common Availability</ng-container>
-              <ng-container
-                *ngIf="data.commonAvailabilityList&&data.commonAvailabilityList.length>0;else noCommon">
-                <ng-container *ngFor="let timeRange of data.commonAvailabilityList; let i = index">
-                  <div>{{(timeRange.startTime|date:timeFormat) + ' - ' + (timeRange.endTime|date:timeFormat)}}</div>
+              <ng-container *ngIf="!data.isBlock">
+                <ng-container>
+                  <div *ngIf="isMaster()">
+                    Chairperson: {{(data.chairperson) ? data.chairperson.name : ''}}
+                  </div>
+                  <div>
+                    Panel:
+                    <ng-container *ngIf="data.panelModels&&data.panelModels.length>0;else dash">
+                      <ng-container *ngFor="let panel of data.panelModels;let i=index">
+                        <ng-container *ngIf="i!==0">,</ng-container>
+                        {{panel.name}}
+                      </ng-container>
+                    </ng-container>
+                    <ng-template #dash>-</ng-template>
+                  </div>
+                  <ng-container>Common Availability</ng-container>
+                  <ng-container
+                    *ngIf="data.commonAvailabilityList&&data.commonAvailabilityList.length>0;else noCommon">
+                    <ng-container *ngFor="let timeRange of data.commonAvailabilityList; let i = index">
+                      <div>{{(timeRange.startTime|date:timeFormat) + ' - ' + (timeRange.endTime|date:timeFormat)}}</div>
+                    </ng-container>
+                  </ng-container>
                 </ng-container>
+
+
+              </ng-container>
+              <ng-container *ngIf="data.isBlock">
+                This time range is occupied by a presentation of {{data.scheduleModel.title}}
               </ng-container>
             </div>
           </div>
         </ng-template>
+
+
+
+
+
+
+
       </ejs-schedule>
     </ng-container>
   </mat-sidenav-content>

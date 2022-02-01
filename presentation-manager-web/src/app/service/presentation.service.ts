@@ -3,7 +3,7 @@ import {Constant} from '../../assets/constant/app.constant';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ResponseModel} from '../model/auth/response.model';
-import {AutoSchedulingModel, PresentationModel, PresentationScheduleModel} from '../model/presentation/presentation.model';
+import {AutoSchedulingModel, PresentationModel, PresentationScheduleModel, SchedulerModel} from '../model/presentation/presentation.model';
 
 
 @Injectable({
@@ -40,6 +40,17 @@ export class PresentationService {
       .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations-with-availability', {params});
   }
 
+  getScheduler(scheduleId: number): Observable<ResponseModel<SchedulerModel>> {
+    const params = new HttpParams().set('scheduleId', scheduleId.toString());
+    return this.http
+      .get<ResponseModel<SchedulerModel>>(this.serverUrl + this.presentationUrl + 'get-scheduler', {params});
+  }
+
+  getAllPresentationsAfterNow(): Observable<ResponseModel<PresentationModel[]>> {
+    return this.http
+      .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations-after-now');
+  }
+
   getPresentationsAsPanel(): Observable<ResponseModel<PresentationModel[]>> {
     return this.http
       .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations-panel');
@@ -50,14 +61,19 @@ export class PresentationService {
       .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations-supervisor');
   }
 
+  getPresentationsAsChairperson(): Observable<ResponseModel<PresentationModel[]>> {
+    return this.http
+      .get<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'get-presentations-chairperson');
+  }
+
   schedulePresentations(presentationList: PresentationScheduleModel[]): Observable<ResponseModel<PresentationScheduleModel[]>> {
     return this.http
       .post<ResponseModel<PresentationScheduleModel[]>>(this.serverUrl + this.presentationUrl + 'schedule-presentations', presentationList);
   }
 
-  autoSchedulePresentations(autoScheduleModel: AutoSchedulingModel): Observable<ResponseModel<PresentationScheduleModel[]>> {
+  autoSchedulePresentations(autoScheduleModel: AutoSchedulingModel): Observable<ResponseModel<SchedulerModel>> {
     return this.http
-      .post<ResponseModel<PresentationScheduleModel[]>>(this.serverUrl + this.presentationUrl + 'auto-schedule', autoScheduleModel);
+      .post<ResponseModel<SchedulerModel>>(this.serverUrl + this.presentationUrl + 'auto-schedule', autoScheduleModel);
   }
 
   syncAllPresentationWithGoogleCalendar(scheduleId: number): Observable<ResponseModel<PresentationModel[]>> {

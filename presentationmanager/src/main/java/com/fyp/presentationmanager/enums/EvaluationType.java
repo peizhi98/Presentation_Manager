@@ -4,7 +4,7 @@ public enum EvaluationType {
     PRESENTATION,
     REPORT,
     PANEL,
-    CHAIRPERSON;
+    CONFIRMATION;
 //    PRESENTATION("Presentation"),
 //    REPORT("Report"),
 //    PANEL("Panel"),

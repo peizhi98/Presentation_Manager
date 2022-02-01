@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PanelRepo extends JpaRepository<PresentationPanelBean, Integer> {
-    List<PresentationPanelBean> findPresentationPanelBeansByPanelId(Integer id);
+    List<PresentationPanelBean> findPresentationPanelBeansByPanelIdOrderByIdDesc(Integer id);
 }

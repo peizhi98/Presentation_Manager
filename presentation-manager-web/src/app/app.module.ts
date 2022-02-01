@@ -46,7 +46,7 @@ import {HttpCancelInterceptor} from './util/http-cancel.interceptor';
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorHandlingInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: HttpCancelInterceptor, multi: true},
+    // {provide: HTTP_INTERCEPTORS, useClass: HttpCancelInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
 })

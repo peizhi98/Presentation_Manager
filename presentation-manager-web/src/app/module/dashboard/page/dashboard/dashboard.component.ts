@@ -1,11 +1,8 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PresentationService} from '../../../../service/presentation.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {PresentationModel} from '../../../../model/presentation/presentation.model';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,6 +16,8 @@ export class DashboardComponent implements OnInit {
   firstLoadSupervising = true;
   supervisingPresentations: PresentationModel[];
 
+  firstLoadPresiding = true;
+  presidingPresentations: PresentationModel[];
 
   constructor(private presentationService: PresentationService, private loadingDialogUtil: LoadingDialogUtil) {
   }
@@ -47,6 +46,19 @@ export class DashboardComponent implements OnInit {
         if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
           this.supervisingPresentations = resp.data;
           this.firstLoadSupervising = false;
+          loading.close();
+        }
+      });
+    }
+  }
+
+  loadPresidingPresentations(): void {
+    if (this.firstLoadPresiding) {
+      const loading = this.loadingDialogUtil.openLoadingDialog();
+      this.presentationService.getPresentationsAsChairperson().subscribe(resp => {
+        if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
+          this.presidingPresentations = resp.data;
+          this.firstLoadPresiding = false;
           loading.close();
         }
       });

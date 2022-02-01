@@ -3,9 +3,9 @@
 </div>
 <mat-horizontal-stepper [linear]="isLinear" #stepper>
   <!--  first step-->
-  <mat-step>
+  <mat-step label="Select presentation to schedule">
     <form [formGroup]="firstFormGroup">
-      <ng-template matStepLabel>Select presentation to schedule</ng-template>
+      <!--      <ng-template matStepLabel>Select presentation to schedule</ng-template>-->
       <ng-container *ngIf="presentationModels">
         <table mat-table matSort class="w-100" *ngIf="dataSource" [dataSource]="dataSource">
           <!-- name Column -->
@@ -62,15 +62,21 @@
       <app-scheduler #slotScheduler></app-scheduler>
     </form>
   </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Generate</ng-template>
-    <ng-container *ngIf="form">
-      <form  [formGroup]="form">
+  <mat-step label="Generate">
+    <!--    <ng-template matStepLabel>Generate</ng-template>-->
+    <ng-container *ngIf="form&&durationList.length>0">
+      <form [formGroup]="form">
         <div>Presentation Duration:
           <mat-form-field style="width: 10%" appearance="fill">
             <mat-label>minutes</mat-label>
-            <input type="number" min="1" matInput [formControl]="form.get('duration')" >
-            <mat-error *ngIf="form.get('duration').invalid&&form.get('duration').touched">Please enter a valid presentation duration.
+            <mat-select [formControl]="form.get('duration')">
+              <mat-option *ngFor="let duration of durationList" [value]="duration">
+                {{duration}}
+              </mat-option>
+            </mat-select>
+            <!--            <input type="number" min="1" matInput [formControl]="form.get('duration')">-->
+            <mat-error *ngIf="form.get('duration').invalid&&form.get('duration').touched">Please select a presentation
+              duration.
             </mat-error>
           </mat-form-field>
         </div>
@@ -79,18 +85,22 @@
 
 
     <div>
-      <button mat-raised-button color="primary" (click)="generate()">Generate</button>
+      <span>
+      <button mat-raised-button color="primary" *ngxPermissionsOnly="SystemRole.COORDINATOR" (click)="generate()">Generate</button>
+      </span>
+      <span class="pl-1" *ngIf="scheduleGenerated">
+      <button mat-raised-button *ngxPermissionsOnly="SystemRole.COORDINATOR" color="primary" (click)="save()">Apply and Save</button>
+      </span>
     </div>
   </mat-step>
 </mat-horizontal-stepper>
-<ng-container *ngIf="resourceDataSource&&selectedDate">
+<ng-container *ngIf="resourceDataSource&&selectedDate&&eventSettings.dataSource">
   <ejs-schedule #scheduleObj cssClass='adaptive-rows' height='650px' [rowAutoHeight]='rowAutoHeight'
                 [currentView]="currentView" [selectedDate]="selectedDate"
-                [group]="group" (actionBegin)="onActionBegin($event)"
-                [eventSettings]="eventSettings" cdkDropList [cdkDropListData]="scheduledPresentations"
-                (cdkDropListDropped)="drop($event)" (dragStart)="onSchedulerDragStart($event)"
-                (dragStop)="onSchedulerDragStop($event)"
-                (resizeStart)="onResizeStart($event)" (resizeStop)="onResizeStop($event)"
+                [group]="group" (actionBegin)="onActionBegin($event)" [startHour]='startHour' [endHour]='endHour'
+                [eventSettings]="eventSettings" cdkDropList [cdkDropListData]="autoScheduledPresentations"
+                (dragStart)="onSchedulerDragStart($event)"
+                (resizeStart)="onResizeStart($event)"
                 (eventRendered)="onEventRendered($event)"
                 (cellDoubleClick)="disablePopupOpen($event)" (cellClick)="disablePopupOpen($event)">
 
@@ -104,5 +114,34 @@
       <e-view option="TimelineDay"></e-view>
       <e-view option="TimelineWeek"></e-view>
     </e-views>
+    <ng-template #eventSettingsTooltipTemplate let-data>
+      <div class="tooltip-wrap">
+        <div class="content-area">
+          <div *ngIf="isMaster()">
+            Chairperson: {{(data.chairperson) ? data.chairperson.name : ''}}
+          </div>
+          <div>
+            Panel:
+            <ng-container *ngIf="data.panelModels&&data.panelModels.length>0;else dash">
+              <ng-container *ngFor="let panel of data.panelModels;let i=index">
+                <ng-container *ngIf="i!==0">,</ng-container>
+                {{panel.name}}
+              </ng-container>
+            </ng-container>
+          </div>
+          <ng-template #dash>-</ng-template>
+          <ng-container>Common Availability</ng-container>
+          <ng-container
+            *ngIf="data.commonAvailabilityList&&data.commonAvailabilityList.length>0;else noCommon">
+            <ng-container *ngFor="let timeRange of data.commonAvailabilityList; let i = index">
+              <div>{{(timeRange.startTime|date:timeFormat) + ' - ' + (timeRange.endTime|date:timeFormat)}}</div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
   </ejs-schedule>
 </ng-container>
+<ng-template #noCommon>
+  <div>-</div>
+</ng-template>

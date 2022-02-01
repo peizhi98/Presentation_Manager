@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ScheduleRepo extends JpaRepository<ScheduleBean, Integer> {
     List<ScheduleBean> findScheduleBeansByCoordinatorId(Integer id);
+
+    List<ScheduleBean> findScheduleBeansByCoordinatorIdOrderByIdDesc(Integer id);
 }

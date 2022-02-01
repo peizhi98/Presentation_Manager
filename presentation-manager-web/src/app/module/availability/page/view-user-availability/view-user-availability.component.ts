@@ -23,8 +23,8 @@ import {ActivatedRoute} from '@angular/router';
 export class ViewUserAvailabilityComponent implements OnInit {
   @ViewChild('scheduleObj') public scheduleObj: ScheduleComponent;
   public userAvailabilityModel: UserAvailabilityModel;
-  public startHour = '08:00';
-  public endHour = '18:00';
+  startHour = Constant.SCHEDULER_START_HOUR;
+  endHour = Constant.SCHEDULER_END_HOUR;
   public setView: View = 'Week';
   public showQuickInfo = false;
   public availabilityModels: SchedulerAvailabilityModel[] = [];

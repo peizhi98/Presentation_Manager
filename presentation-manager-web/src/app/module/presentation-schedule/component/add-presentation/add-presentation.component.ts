@@ -10,9 +10,11 @@ import {Observable} from 'rxjs';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {XlsxUtil} from '../../../../util/xlsx.util';
 import {SupervisorModel} from '../../../../model/role/supervisor.model';
-import {PatchUserFromBackend} from '../../../../store/user/user.action';
+import {PatchLecturerFromBackend} from '../../../../store/user/user.action';
 import {UserState} from '../../../../store/user/user.store';
 import {LecturerModel} from '../../../../model/role/lecturer.model';
+import {ScheduleType} from '../../../../model/schedule/schedule.model';
+import {SystemRole} from '../../../../model/user/user.model';
 
 @Component({
   selector: 'app-add-presentation',
@@ -22,6 +24,7 @@ import {LecturerModel} from '../../../../model/role/lecturer.model';
 export class AddPresentationComponent implements OnInit, OnDestroy {
   presentationModels: PresentationModel[] = [];
   scheduleId: number;
+  scheduleType: ScheduleType;
   readingExcel = false;
   current = '';
   lecturers: LecturerModel[] = [];
@@ -31,6 +34,9 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
 
   @Select(ScheduleState.getScheduleId)
   scheduleId$: Observable<number>;
+
+  @Select(ScheduleState.getScheduleType)
+  scheduleType$: Observable<ScheduleType>;
 
   constructor(private presentationService: PresentationService,
               private store: Store,
@@ -47,7 +53,10 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
     this.scheduleId$.subscribe(id => {
       this.scheduleId = id;
     });
-    this.store.dispatch(new PatchUserFromBackend());
+    this.scheduleType$.subscribe(type => {
+      this.scheduleType = type;
+    });
+    this.store.dispatch(new PatchLecturerFromBackend());
     this.lecturers$.subscribe(lec => {
       this.lecturers = lec;
     });
@@ -120,21 +129,41 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
         const presentation = new PresentationModel();
         presentation.scheduleId = this.scheduleId;
         const sv = new SupervisorModel();
-        sv.email = d['Supervisor Email'];
+        sv.email = d['Supervisor'];
         presentation.supervisorModel = sv;
-        presentation.title = d['Project Title'];
+        presentation.title = d['Presentation Title'];
         presentation.studentEmail = d['Student Email'];
         presentation.studentName = d['Student Name'];
-
-        const panel: PanelModel = new PanelModel();
-        // panel.email = d['Panel'];
-
+        presentation.studentMatrixNo = d['Student Matric No.'];
+        if (this.scheduleType === ScheduleType.MASTER_DISSERTATION) {
+          const chairperson = new PanelModel();
+          chairperson.email = d['Chairperson'];
+          presentation.chairperson = chairperson;
+        }
         const panel1: PanelModel = new PanelModel();
-        // panel1.email = d['Panel'];
+        panel1.email = d['Panel 1'];
+        const panel2: PanelModel = new PanelModel();
+        panel2.email = d['Panel 2'];
+        const panel3: PanelModel = new PanelModel();
+        panel3.email = d['Panel 3'];
 
         presentation.panelModels = [];
-        presentation.panelModels.push(panel);
-        presentation.panelModels.push(panel1);
+        if (panel1.email) {
+          presentation.panelModels.push(panel1);
+        }
+        if (panel2.email) {
+          presentation.panelModels.push(panel2);
+        }
+        if (panel3.email) {
+          presentation.panelModels.push(panel3);
+        }
+        if (presentation.panelModels.length === 0) {
+          presentation.panelModels.push(new PanelModel());
+          presentation.panelModels.push(new PanelModel());
+        }
+        if (presentation.panelModels.length === 1) {
+          presentation.panelModels.push(new PanelModel());
+        }
         presentationModelList.push(presentation);
       });
 
@@ -171,5 +200,13 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
     //   console.log(lecturer.name.toLowerCase().includes(filterValue));
     //   lecturer.name.toLowerCase().includes(filterValue);
     // });
+  }
+
+  isMaster(): boolean {
+    return this.scheduleType === ScheduleType.MASTER_DISSERTATION;
+  }
+
+  get SystemRole() {
+    return SystemRole;
   }
 }

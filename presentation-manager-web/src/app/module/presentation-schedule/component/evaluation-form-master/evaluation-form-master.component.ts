@@ -27,7 +27,8 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
   evaluationFormModel: EvaluationFormModel;
   evaluationModel: EvaluationModel;
   criteriaModels: CriterionModel[] = [];
-  scaleOptions = [0,1];
+  scaleOptions = [1, 2, 3, 4, 5, 6];
+  confirmationScaleOptions = [0, 1, 2];
   evaluationFormMode = EvaluationFormMode.VIEW;
   currentForm: FormGroup;
   evaluationForm: FormGroup;
@@ -42,6 +43,8 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
   readonly CRITERION_EVALUATION_ID = 'criterionEvaluationId';
   readonly CRITERIA_EVALUATION = 'criteriaEvaluation';
   readonly MAX_GAP = 'maxGap';
+  readonly OVERALL_COMMENT = 'overallComment';
+  readonly OVERALL_RESULT = 'overallResult';
   subs: Subscription[] = [];
 
   @Select(ScheduleState.getScheduleId)
@@ -129,7 +132,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
   }
 
   initFormGroup(): void {
-    if ((this.evaluationType === EvaluationType.CHAIRPERSON
+    if ((this.evaluationType === EvaluationType.CONFIRMATION
       || this.evaluationType === EvaluationType.PANEL)
       && this.scheduleId
       && this.evaluationType
@@ -192,7 +195,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
   }
 
   getRatingControl(criterionEvaluation: CriterionEvaluationModel): FormControl {
-    if (this.evaluationType === EvaluationType.PRESENTATION) {
+    if (this.evaluationType === EvaluationType.PANEL) {
       return this.formBuilder.control(criterionEvaluation.rating, Validators.required);
     }
     return this.formBuilder.control(criterionEvaluation.rating, [Validators.required, Validators.max(criterionEvaluation.criterionModel.weightage)]);
@@ -212,9 +215,10 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
             this.evaluationFormModel.criterionModels = [];
           }
           this.criteriaModels = this.evaluationFormModel.criterionModels;
-          //build form
+          // build form
           this.evaluationFormEditingForm = this.formBuilder.group({
-            maxGap: this.formBuilder.control(this.evaluationFormModel.maxGap),
+            overallResult: this.formBuilder.control({value: '', disabled: true}),
+            overallComment: this.formBuilder.control({value: '', disabled: true}),
             criteriaEvaluation: this.formBuilder.array([])
           });
           this.evaluationFormModel.criterionModels.forEach(c => {
@@ -232,6 +236,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
   addCriterionEditingControl(criterionModel: CriterionModel): void {
     (this.evaluationFormEditingForm.get(this.CRITERIA_EVALUATION) as FormArray).push(this.formBuilder.group({
       name: this.formBuilder.control(criterionModel.name, Validators.required),
+      weightage: this.formBuilder.control(criterionModel.weightage, [Validators.required, Validators.pattern('^[0-9]*$')]),
       rating: this.formBuilder.control({value: '', disabled: true}),
       comment: this.formBuilder.control({value: '', disabled: true}),
       criterionId: this.formBuilder.control(criterionModel.id)
@@ -349,6 +354,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
       const criterion: CriterionModel = new CriterionModel();
       criterion.id = c.get(this.CRITERION_ID).value;
       criterion.name = c.get(this.NAME).value;
+      criterion.weightage = c.get(this.WEIGHTAGE).value;
       criterionModels.push(criterion);
     });
     this.evaluationFormService
@@ -386,12 +392,26 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
     return this.evaluationFormMode === EvaluationFormMode.EVALUATE;
   }
 
-  isPanel(): boolean {
+  isPanelForm(): boolean {
     return this.evaluationType === EvaluationType.PANEL;
   }
 
-  isChairperson(): boolean {
-    return this.evaluationType === EvaluationType.CHAIRPERSON;
+  isConfirmationForm(): boolean {
+    return this.evaluationType === EvaluationType.CONFIRMATION;
+  }
+
+  getConfirmationScaleName(scale: number):string {
+    switch (scale) {
+      case 0:
+        return 'Fail/ Repeat';
+      case 1:
+        return 'Good/Pass';
+      case 2:
+        return 'Excellent/Pass';
+      default:
+        return scale.toString();
+    }
+
   }
 
   // get EvaluationFormMode(): any {

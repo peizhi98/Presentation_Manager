@@ -1,12 +1,12 @@
 <ejs-schedule #presentationSlotSchedulerObj cssClass='adaptive-rows' [rowAutoHeight]='rowAutoHeight'
               [currentView]="currentView"
-              [group]="group"
+              [group]="group" [startHour]='startHour' [endHour]='endHour'
               [eventSettings]="eventSettings" cdkDropList
               (dragStart)="onSchedulerDragStart($event)"
               (dragStop)="onSchedulerDragStop($event)" (actionBegin)="onActionBegin($event)"
               (resizeStart)="onResizeStart($event)" (resizeStop)="onResizeStop($event)"
               (eventRendered)="onEventRendered($event)" (eventClick)="onEventClick($event)"
-              (cellDoubleClick)="disablePopupOpen($event)" (cellClick)="onCellClick($event)">
+              (cellDoubleClick)="disablePopupOpen($event)" (cellClick)="disablePopupOpen($event)">
 
   <e-resources>
     <e-resource field='roomId' title='Room Type' [dataSource]='resourceDataSource' [allowMultiple]='allowMultiple'

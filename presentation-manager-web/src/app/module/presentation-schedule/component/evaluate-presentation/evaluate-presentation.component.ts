@@ -1,11 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Select, Store} from '@ngxs/store';
+import {Store} from '@ngxs/store';
 import {ChangeEvaluationFormMode, ChangeEvaluationType} from '../../../../store/evaluation/evaluation.action';
 import {EvaluationFormMode, EvaluationType} from '../../../../model/evaluation/evaluation-form.model';
 import {ActivatedRoute} from '@angular/router';
-import {ScheduleType} from '../../../../model/schedule/schedule.model';
-import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-evaluate-presentation',
@@ -33,10 +30,23 @@ export class EvaluatePresentationComponent implements OnInit {
   getTitle(): string {
     switch (this.evaluationType) {
       case EvaluationType.PRESENTATION:
-        return 'Presentation Evaluation';
+        return 'VIVA Assessment Form';
       case EvaluationType.REPORT:
-        return 'Report Evaluation';
+        return 'Supervisor Assessment Form';
+      case EvaluationType.PANEL:
+        return 'Evaluation Form';
+      case EvaluationType.CONFIRMATION:
+        return 'Confirmation Panel Evaluation Form';
+      default:
+        return 'Invalid Form Name';
     }
   }
 
+  isFYP(): boolean {
+    return this.evaluationType === EvaluationType.PRESENTATION || this.evaluationType === EvaluationType.REPORT;
+  }
+
+  isMaster(): boolean {
+    return this.evaluationType === EvaluationType.PANEL || this.evaluationType === EvaluationType.CONFIRMATION;
+  }
 }

@@ -19,4 +19,7 @@ export class SchedulerRoomPresentationSlotModel {
   name: string;
   startTime: Date;
   endTime: Date;
+  isBlock: boolean;
+  titleOfScheduleBlock: string;
+
 }

@@ -58,11 +58,13 @@ public class UserServiceImpl implements UserService {
         List<LecturerModel> lecturerModels = new ArrayList<>();
         if (userBeans != null) {
             for (UserBean userBean : userBeans) {
-                LecturerModel lecturer = new LecturerModel();
-                lecturer.setId(userBean.getId());
-                lecturer.setName(userBean.getName());
-                lecturer.setEmail(userBean.getEmail());
-                lecturerModels.add(lecturer);
+                if (userBean.isLecturer()) {
+                    LecturerModel lecturer = new LecturerModel();
+                    lecturer.setId(userBean.getId());
+                    lecturer.setName(userBean.getName());
+                    lecturer.setEmail(userBean.getEmail());
+                    lecturerModels.add(lecturer);
+                }
             }
         }
         return lecturerModels;

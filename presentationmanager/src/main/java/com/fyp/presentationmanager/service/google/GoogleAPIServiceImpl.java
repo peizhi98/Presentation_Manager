@@ -164,6 +164,7 @@ public class GoogleAPIServiceImpl implements GoogleAPIService {
             Event event;
             if (presentationModel.getCalendarId() != null) {
                 event = service.events().get("primary", presentationModel.getCalendarId()).execute();
+                event.setLocation(location);
             } else {
                 event = new Event()
                         .setSummary(scheduleTitle)
@@ -183,21 +184,27 @@ public class GoogleAPIServiceImpl implements GoogleAPIService {
                     .setTimeZone("Asia/Kuala_Lumpur");
             event.setEnd(end);
 
-            EventAttendee[] attendees = new EventAttendee[]{
-//                    new EventAttendee().setEmail("PresentationManager0@gmail.com"),
-//                    new EventAttendee().setEmail("opzhi1998@gmail.com"),
-                    new EventAttendee().setEmail("wif180064@siswa.um.edu.my"),
-            };
-            event.setAttendees(Arrays.asList(attendees));
+//            EventAttendee[] attendees = new EventAttendee[]{
+////                    new EventAttendee().setEmail("PresentationManager0@gmail.com"),
+////                    new EventAttendee().setEmail("opzhi1998@gmail.com"),
+//                    new EventAttendee().setEmail("wif180064@siswa.um.edu.my"),
+//            };
+//            event.setAttendees(Arrays.asList(attendees));
             List<EventAttendee> eventAttendeeList = new ArrayList<>();
+            if (presentationModel.getChairperson() != null) {
+                eventAttendeeList.add(new EventAttendee().setEmail(presentationModel.getChairperson().getEmail()));
+            }
+            if (presentationModel.getStudentEmail() != null) {
+                eventAttendeeList.add(new EventAttendee().setEmail(presentationModel.getStudentEmail()));
+            }
             if (presentationModel.getPanelModels() != null && presentationModel.getPanelModels().size() > 0) {
                 for (PanelModel p : presentationModel.getPanelModels()) {
-//                    eventAttendeeList.add(new EventAttendee().setEmail(p.getEmail()));
+                    eventAttendeeList.add(new EventAttendee().setEmail(p.getEmail()));
                     //test
-                    eventAttendeeList.add(new EventAttendee().setEmail("wif180064@siswa.um.edu.my"));
+//                    eventAttendeeList.add(new EventAttendee().setEmail("wif180064@siswa.um.edu.my"));
                 }
             }
-
+            event.setAttendees(eventAttendeeList);
             EventReminder[] reminderOverrides = new EventReminder[]{
                     new EventReminder().setMethod("email").setMinutes(24 * 60),
                     new EventReminder().setMethod("popup").setMinutes(10),
@@ -225,6 +232,9 @@ public class GoogleAPIServiceImpl implements GoogleAPIService {
             String calendarId = "primary";
 //            event = service.events().insert("PresentationManager0@gmail.com", event).execute();
             if (presentationModel.getCalendarId() != null) {
+                if (!presentationModel.getRoomName().equals("Online") && event.getConferenceData() != null) {
+                    event.setConferenceData(null);
+                }
                 event = service.events().update(calendarId, event.getId(), event).setConferenceDataVersion(1).execute();
             } else {
                 event = service.events().insert(calendarId, event).setConferenceDataVersion(1).execute();

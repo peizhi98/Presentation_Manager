@@ -23,16 +23,13 @@
         <app-presentations-table *ngIf="panelingPresentations" [presentations]="panelingPresentations"></app-presentations-table>
       </mat-expansion-panel>
 
-      <mat-expansion-panel>
+      <mat-expansion-panel  (opened)="loadPresidingPresentations()">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Presiding
           </mat-panel-title>
-          <!--          <mat-panel-description>-->
-          <!--            You are the chairperson of these presentations-->
-          <!--          </mat-panel-description>-->
         </mat-expansion-panel-header>
-        <p>This is the primary content of the panel.</p>
+        <app-presentations-table *ngIf="presidingPresentations" [presentations]="presidingPresentations"></app-presentations-table>
       </mat-expansion-panel>
 
     </mat-accordion>

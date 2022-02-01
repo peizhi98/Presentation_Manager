@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {PresentationModel} from '../../../../model/presentation/presentation.model';
 import {MatPaginator} from '@angular/material/paginator';
@@ -8,7 +8,7 @@ import {Constant} from '../../../../../assets/constant/app.constant';
 import {ActivatedRoute, Router} from '@angular/router';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
 import {Select, Store} from '@ngxs/store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {SystemRole} from '../../../../model/user/user.model';
@@ -20,7 +20,7 @@ import {ScheduleType} from '../../../../model/schedule/schedule.model';
   templateUrl: './presentations-view.component.html',
   styleUrls: ['./presentations-view.component.css']
 })
-export class PresentationsViewComponent implements OnInit {
+export class PresentationsViewComponent implements OnInit, OnDestroy {
   // @Input() scheduleId: number;
   timeFormat = Constant.TIME_FORMAT;
   routeConstant = RouteConstant;
@@ -39,6 +39,8 @@ export class PresentationsViewComponent implements OnInit {
   @Select(ScheduleState.getScheduleTitle)
   scheduleTitle$: Observable<string>;
 
+  subs: Subscription[] = [];
+
 
   constructor(private router: Router,
               private activatedRoute: ActivatedRoute,
@@ -47,11 +49,17 @@ export class PresentationsViewComponent implements OnInit {
               private store: Store) {
   }
 
-  ngOnInit(): void {
-    this.scheduleType$.subscribe(t => {
-      this.scheduleType = t;
+  ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
     });
-    this.scheduleId$.subscribe(id => {
+  }
+
+  ngOnInit(): void {
+    this.subs.push(this.scheduleType$.subscribe(t => {
+      this.scheduleType = t;
+    }));
+    this.subs.push(this.scheduleId$.subscribe(id => {
       this.scheduleId = id;
       const loadingRef = this.loadingUtil.openLoadingDialog();
       this.presentationService.getPresentations(id).subscribe(res => {
@@ -61,7 +69,7 @@ export class PresentationsViewComponent implements OnInit {
           loadingRef.close();
         }
       });
-    });
+    }));
   }
 
   initTable(): void {

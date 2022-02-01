@@ -26,7 +26,7 @@ export class EvaluationCriteriaComponent implements OnInit {
   evaluationFormModel: EvaluationFormModel;
   criteriaModels: CriterionModel[] = [];
   fypEvaluationType = [EvaluationType.PRESENTATION, EvaluationType.REPORT];
-  masterEvaluationType = [EvaluationType.PANEL, EvaluationType.CHAIRPERSON];
+  masterEvaluationType = [EvaluationType.PANEL, EvaluationType.CONFIRMATION];
   selectedEvaluationType = null;
   scaleOptions = [1, 2, 3, 4, 5];
   totalWeightage = 0;
@@ -48,7 +48,7 @@ export class EvaluationCriteriaComponent implements OnInit {
       if (id) {
         this.scheduleId = id;
         this.scheduleType$.subscribe(type => {
-          console.log("this.scheduleType");
+          console.log('this.scheduleType');
           console.log(this.scheduleType);
           this.scheduleType = type;
           if (this.scheduleType === ScheduleType.FYP) {
@@ -165,6 +165,25 @@ export class EvaluationCriteriaComponent implements OnInit {
 
   isMaster(): boolean {
     return this.scheduleType === ScheduleType.MASTER_DISSERTATION;
+  }
+
+  get EvaluationType() {
+    return EvaluationType;
+  }
+
+  getTitle(evaluationType:EvaluationType): string {
+    switch (evaluationType) {
+      case EvaluationType.PRESENTATION:
+        return 'VIVA Assessment Form';
+      case EvaluationType.REPORT:
+        return 'Supervisor Assessment Form';
+      case EvaluationType.PANEL:
+        return 'Evaluation Form';
+      case EvaluationType.CONFIRMATION:
+        return 'Confirmation Panel Evaluation Form';
+      default:
+        return 'Invalid Form Name';
+    }
   }
 
 }

@@ -45,8 +45,12 @@ export class AppComponent implements OnInit {
 
     });
     this.user$.subscribe(user => {
-      this.user = user;
-      if (this.user === null && this.isAuth()) {
+      if (user) {
+        this.user = user;
+        console.log(this.user);
+      }
+      console.log(this.user);
+      if (!this.user && this.isAuth()) {
         this.authService.getAuthUser().subscribe(resp => {
           if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
             this.user = resp.data;
@@ -63,6 +67,11 @@ export class AppComponent implements OnInit {
   isAuth(): boolean {
     // return this.userService.auth();
     return this.store.selectSnapshot(AuthState.isAuth);
+  }
+
+  gotUser(): boolean {
+    // return this.userService.auth();
+    return !!(this.user);
   }
 
   logout(): void {

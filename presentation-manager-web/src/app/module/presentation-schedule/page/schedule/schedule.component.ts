@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ScheduleService} from '../../../../service/schedule.service';
 import {Store} from '@ngxs/store';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -7,13 +7,14 @@ import {Constant} from '../../../../../assets/constant/app.constant';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
 import {SetCurrentSchedule} from '../../../../store/schedule/schedule.action';
 import {AuthState} from '../../../../store/auth/auth.store';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.css']
 })
-export class ScheduleComponent implements OnInit {
+export class ScheduleComponent implements OnInit, OnDestroy {
   navLinks = [];
   activeLinkIndex = -1;
   scheduleModel: ScheduleModel;
@@ -21,6 +22,7 @@ export class ScheduleComponent implements OnInit {
   contentTitle = '';
   scheduleId: number;
   constant = Constant;
+  subs: Subscription[] = [];
 
   constructor(private scheduleService: ScheduleService,
               private activatedRoute: ActivatedRoute, private store: Store, private router: Router) {
@@ -62,13 +64,18 @@ export class ScheduleComponent implements OnInit {
     ];
   }
 
+  ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
+    });
+  }
+
   ngOnInit(): void {
     // this.router.events.subscribe((res) => {
     //   this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
     // });
-    console.log(
-      this.store.selectSnapshot(AuthState.getUser));
-    this.activatedRoute.params.subscribe(params => {
+
+    this.subs.push(this.activatedRoute.params.subscribe(params => {
       if (params) {
         this.scheduleId = params.id;
         this.scheduleService.getSchedule(this.scheduleId).subscribe(resp => {
@@ -80,7 +87,7 @@ export class ScheduleComponent implements OnInit {
           }
         });
       }
-    });
+    }));
   }
 
 }

@@ -10,6 +10,11 @@ export class Constant {
   public static readonly THEME_COLOR = '#4056A1';
   public static readonly SCHEDULER_COLOR_1 = 'rgb(54, 162, 235)';
   public static readonly SCHEDULER_COLOR_2 = 'rgb(75, 192, 192)';
+  public static readonly SCHEDULER_COLOR_BLOCKED = '#616161';
+
+  // scheduler
+  public static readonly SCHEDULER_START_HOUR = '08:00';
+  public static readonly SCHEDULER_END_HOUR = '18:00';
 
   // date
   public static readonly TIME_FORMAT = 'dd MMM yyyy hh:mm a';

@@ -25,8 +25,8 @@ import {ShowSnackBar} from '../../../../store/app/app.action';
 })
 export class ManageAvailabilityComponent implements OnInit {
   @ViewChild('scheduleObj') public scheduleObj: ScheduleComponent;
-  public startHour = '08:00';
-  public endHour = '18:00';
+  startHour = Constant.SCHEDULER_START_HOUR;
+  endHour = Constant.SCHEDULER_END_HOUR;
   public setView: View = 'Week';
   public showQuickInfo = false;
   public availabilityModels: SchedulerAvailabilityModel[] = [];

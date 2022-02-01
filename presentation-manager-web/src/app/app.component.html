@@ -9,14 +9,15 @@
 <!--<div *ngxPermissionsOnly="constant.ROLE_PANEL">{{constant.ROLE_PANEL}}</div>-->
 <!--<div *ngxPermissionsOnly="constant.ROLE_SUPERVISOR">{{constant.ROLE_SUPERVISOR}}</div>-->
 
-<mat-toolbar color="primary" *ngIf=isAuth()>
+<mat-toolbar color="primary" *ngIf="isAuth()">
   <div class="spacer"></div>
-    <a mat-button [routerLink]="routeConstant.DASHBOARD"
-       routerLinkActive="router-link-active">Dashboard</a>
+  <a mat-button [routerLink]="routeConstant.DASHBOARD"
+     routerLinkActive="router-link-active">Dashboard</a>
   <div *ngIf="user">
     <a mat-button [routerLink]="routeConstant.USER_MANAGEMENT" *ngxPermissionsOnly="SystemRole.ADMIN"
        routerLinkActive="router-link-active">User Management</a>
-    <a mat-button [routerLink]="routeConstant.SCHEDULE_VIEW" *ngxPermissionsOnly="[SystemRole.COORDINATOR,SystemRole.LECTURER]"
+    <a mat-button [routerLink]="routeConstant.SCHEDULE_VIEW"
+       *ngxPermissionsOnly="[SystemRole.COORDINATOR,SystemRole.LECTURER]"
        routerLinkActive="router-link-active">Schedule</a>
     <a mat-button [routerLink]="routeConstant.AVAILABILITY" *ngxPermissionsOnly="SystemRole.LECTURER"
        routerLinkActive="router-link-active">Availability</a>

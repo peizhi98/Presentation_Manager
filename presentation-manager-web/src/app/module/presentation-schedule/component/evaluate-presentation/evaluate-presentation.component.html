@@ -2,7 +2,8 @@
 
   <mat-card-content>
     <h1 class="pl-2 pt-1" align="center"
-       >{{getTitle()}}</h1>
-    <app-evaluation-form-fyp></app-evaluation-form-fyp>
+    >{{getTitle()}}</h1>
+    <app-evaluation-form-fyp *ngIf="isFYP()"></app-evaluation-form-fyp>
+    <app-evaluation-form-master *ngIf="isMaster()"></app-evaluation-form-master>
   </mat-card-content>
 </mat-card>

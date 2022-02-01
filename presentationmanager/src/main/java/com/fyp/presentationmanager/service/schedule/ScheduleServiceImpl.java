@@ -1,9 +1,13 @@
 package com.fyp.presentationmanager.service.schedule;
 
+import com.fyp.presentationmanager.entity.EvaluationFormBean;
 import com.fyp.presentationmanager.entity.ScheduleBean;
+import com.fyp.presentationmanager.enums.EvaluationType;
+import com.fyp.presentationmanager.enums.ScheduleType;
 import com.fyp.presentationmanager.model.ScheduleModel;
 import com.fyp.presentationmanager.model.auth.CustomUserDetails;
 import com.fyp.presentationmanager.model.role.CoordinatorModel;
+import com.fyp.presentationmanager.repo.EvaluationFormRepo;
 import com.fyp.presentationmanager.repo.ScheduleRepo;
 import com.fyp.presentationmanager.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     private ScheduleRepo scheduleRepo;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private EvaluationFormRepo evaluationFormRepo;
 
     @Override
     public ScheduleModel addOrEditSchedule(ScheduleModel scheduleModel) {
@@ -32,6 +38,12 @@ public class ScheduleServiceImpl implements ScheduleService {
             scheduleBean = new ScheduleBean(scheduleModel);
             scheduleBean.setCoordinatorId(customUserDetails.getId());
             scheduleRepo.save(scheduleBean);
+            if (scheduleModel.getScheduleType().equals(ScheduleType.MASTER_DISSERTATION)) {
+                EvaluationFormBean confirmationForm = new EvaluationFormBean();
+                confirmationForm.setScheduleId(scheduleBean.getId());
+                confirmationForm.setEvaluationType(EvaluationType.CONFIRMATION);
+                this.evaluationFormRepo.save(confirmationForm);
+            }
             scheduleModel.setId(scheduleBean.getId());
         }
 
@@ -43,7 +55,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<ScheduleModel> findSchedulesByUser() {
         CustomUserDetails customUserDetails = authService.getAuthUserDetails();
         List<ScheduleModel> scheduleModelList = new ArrayList<>();
-        List<ScheduleBean> scheduleBeanList = this.scheduleRepo.findScheduleBeansByCoordinatorId(customUserDetails.getId());
+        List<ScheduleBean> scheduleBeanList = this.scheduleRepo.findScheduleBeansByCoordinatorIdOrderByIdDesc(customUserDetails.getId());
         if (scheduleBeanList != null) {
             for (ScheduleBean scheduleBean : scheduleBeanList) {
                 scheduleModelList.add(new ScheduleModel(scheduleBean));

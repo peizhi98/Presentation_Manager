@@ -108,6 +108,17 @@ public class UserBean implements Serializable {
         return systemRoles;
     }
 
+    public boolean isLecturer() {
+        if (this.userRoleBeans != null) {
+            for (UserRoleBean userRoleBean : this.userRoleBeans) {
+                if (userRoleBean.getSystemRole().equals(SystemRole.LECTURER)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public List<AvailabilityBean> getAvailabilityBeans() {
         return availabilityBeans;
     }

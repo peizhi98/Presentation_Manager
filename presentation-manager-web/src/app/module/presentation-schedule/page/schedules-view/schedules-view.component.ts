@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {ScheduleService} from '../../../../service/schedule.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {ScheduleModel, ScheduleType} from '../../../../model/schedule/schedule.model';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {MatTableDataSource} from '@angular/material/table';
@@ -25,7 +25,11 @@ export class SchedulesViewComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private scheduleService: ScheduleService, private router: Router, private dialogUtil: LoadingDialogUtil, private store: Store) {
+  constructor(private scheduleService: ScheduleService,
+              private router: Router,
+              private dialogUtil: LoadingDialogUtil,
+              private store: Store,
+              private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -58,20 +62,22 @@ export class SchedulesViewComponent implements OnInit {
 
   // custom sorting accessor, MatTableDataSource use the column name to sort by default
   initSortingAccessor(): void {
-    // this.dataSource.sortingDataAccessor = (item, property) => {
-    //   switch (property) {
-    //     case this.displayedColumns[0]:
-    //       return this.dataSource.data.indexOf(item);
-    //     case this.displayedColumns[1]:
-    //       return item.studentName;
-    //     case this.displayedColumns[2]:
-    //       return item.title;
-    //     case this.displayedColumns[3]:
-    //       return item.supervisorModel.name;
-    //     default:
-    //       return item[property];
-    //   }
-    // };
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case this.displayedColumns[0]:
+          return this.dataSource.data.indexOf(item);
+        case this.displayedColumns[1]:
+          return item.title;
+        case this.displayedColumns[2]:
+          return item.year;
+        case this.displayedColumns[3]:
+          return item.sem;
+        case this.displayedColumns[4]:
+          return item.scheduleType;
+        default:
+          return item[property];
+      }
+    };
   }
 
   applyFilter(event: Event): void {
@@ -84,7 +90,7 @@ export class SchedulesViewComponent implements OnInit {
 
 
   routeToSchedule(id: number): void {
-    this.router.navigate(['schedule/' + id + '/presentation']);
+    this.router.navigate([id + '/' + RouteConstant.PRESENTATION_VIEW], {relativeTo: this.activatedRoute});
   }
 
   getScheduleType(type: ScheduleType): string {

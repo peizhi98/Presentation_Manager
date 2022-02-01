@@ -11,6 +11,7 @@ export class PresentationModel {
   studentMatrixNo: string;
   studentEmail: string;
   scheduleId: number;
+  scheduleTitle: string;
   title: string;
   mark: number;
   resultStatus: string;
@@ -36,6 +37,7 @@ export class PresentationModel {
 
   constructor() {
     this.supervisorModel = new SupervisorModel();
+    this.chairperson = new PanelModel();
   }
 }
 
@@ -51,7 +53,7 @@ export class SchedulerPresentationModel extends PresentationModel {
   schedulerId: number | string;
   roomId: number;
   scheduleSaved: boolean;
-  IsBlock: boolean;
+  isBlock: boolean;
 }
 
 export class PresentationModeCheckModel extends PresentationModel {
@@ -67,4 +69,9 @@ export class AutoSchedulingModel {
   roomPresentationSlotsModels: RoomPresentationSlotsModel[];
   onlinePresentationSlotsModel: RoomPresentationSlotsModel;
   presentationDuration: number;
+}
+
+export class SchedulerModel {
+  presentationToSchedule: PresentationModel[];
+  unAvailableTime: PresentationModel[];
 }

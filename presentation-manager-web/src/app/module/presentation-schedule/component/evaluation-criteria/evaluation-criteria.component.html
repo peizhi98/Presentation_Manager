@@ -8,16 +8,20 @@
         View
       </button>
       <mat-form-field *ngIf="scheduleType" appearance="fill" class="ml-2 pr-2">
-        <mat-label>Evaluation Type</mat-label>
+        <mat-label>Evaluation Form</mat-label>
 
         <mat-select [(ngModel)]="selectedEvaluationType">
           <ng-container *ngIf="isFyp()">
-            <mat-option *ngFor="let type of fypEvaluationType" [value]="type"
-                        (click)="loadEvaluationForm(type)">{{type.valueOf()}}</mat-option>
+            <mat-option *ngFor="let form of fypEvaluationType" [value]="form"
+                        (click)="loadEvaluationForm(form)">{{getTitle(form)}}</mat-option>
+<!--            <mat-option [value]="EvaluationType.PANEL" (click)="loadEvaluationForm(EvaluationType.PRESENTATION)">VIVA Assessment Form</mat-option>-->
+<!--            <mat-option [value]="EvaluationType.CHAIRPERSON" (click)="loadEvaluationForm(EvaluationType.REPORT)">Supervisor Assessment Form</mat-option>-->
           </ng-container>
           <ng-container *ngIf="isMaster()">
-            <mat-option *ngFor="let type of masterEvaluationType" [value]="type"
-                        (click)="loadEvaluationForm(type)">{{type.valueOf()}}</mat-option>
+            <mat-option *ngFor="let form of masterEvaluationType" [value]="form"
+                        (click)="loadEvaluationForm(form)">{{getTitle(form)}}</mat-option>
+<!--            <mat-option [value]="EvaluationType.PANEL" (click)="loadEvaluationForm(EvaluationType.PANEL)">Evaluation Form</mat-option>-->
+<!--            <mat-option [value]="EvaluationType.CHAIRPERSON" (click)="loadEvaluationForm(EvaluationType.CHAIRPERSON)">getTi</mat-option>-->
           </ng-container>
 
         </mat-select>

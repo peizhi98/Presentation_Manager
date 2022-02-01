@@ -4,6 +4,7 @@ import com.fyp.presentationmanager.model.ResponseModel;
 import com.fyp.presentationmanager.model.presentation.AutoSchedulingModel;
 import com.fyp.presentationmanager.model.presentation.PresentationModel;
 import com.fyp.presentationmanager.model.presentation.PresentationScheduleModel;
+import com.fyp.presentationmanager.model.presentation.SchedulerModel;
 import com.fyp.presentationmanager.service.presentation.PresentationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -55,11 +56,25 @@ public class PresentationCtrl {
 
     }
 
-    @GetMapping(value = "/get-presentations-with-availability")
-    private ResponseModel<List<PresentationModel>> getPresentationsWithAvailability(@RequestParam Integer scheduleId) {
+    @GetMapping(value = "/get-scheduler")
+    private ResponseModel<SchedulerModel> getScheduler(@RequestParam Integer scheduleId) {
+        ResponseModel<SchedulerModel> responseModel = new ResponseModel();
+        try {
+            responseModel.success(presentationService.getScheduler(scheduleId));
+//            responseModel.success(presentationService.getPresentationListWithCommonAvailability(scheduleId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
+
+    }
+
+    @GetMapping(value = "/get-presentations-after-now")
+    private ResponseModel<List<PresentationModel>> getAllPresentationAfterNow() {
         ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
         try {
-            responseModel.success(presentationService.getPresentationListWithCommonAvailability(scheduleId));
+            responseModel.success(presentationService.getAllPresentationAfterNow());
         } catch (Exception e) {
             e.printStackTrace();
             responseModel.failed();
@@ -92,6 +107,18 @@ public class PresentationCtrl {
         return responseModel;
     }
 
+    @GetMapping(value = "/get-presentations-chairperson")
+    private ResponseModel<List<PresentationModel>> getPresentationsAsChairperson() {
+        ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
+        try {
+            responseModel.success(presentationService.getPresentationListAsChairperson());
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
+    }
+
     @PostMapping(value = "/schedule-presentations")
     private ResponseModel<List<PresentationScheduleModel>> schedulePresentations(@RequestBody List<PresentationScheduleModel> presentationModelList) {
         ResponseModel<List<PresentationScheduleModel>> responseModel = new ResponseModel();
@@ -105,10 +132,10 @@ public class PresentationCtrl {
     }
 
     @PostMapping(value = "/auto-schedule")
-    private ResponseModel<List<PresentationModel>> autoSchedule(@RequestBody AutoSchedulingModel autoSchedulingModel) {
-        ResponseModel<List<PresentationModel>> responseModel = new ResponseModel();
+    private ResponseModel<SchedulerModel> autoSchedule(@RequestBody AutoSchedulingModel autoSchedulingModel) {
+        ResponseModel<SchedulerModel> responseModel = new ResponseModel();
         try {
-            responseModel.success(presentationService.autoScheduling(autoSchedulingModel));
+            responseModel.success(presentationService.getAutoSchedulingResultScheduler(autoSchedulingModel));
         } catch (Exception e) {
             e.printStackTrace();
             responseModel.failed();

@@ -1,20 +1,21 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {Select, Store} from '@ngxs/store';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {PresentationService} from '../../../../service/presentation.service';
 import {
   AutoSchedulingModel,
   PresentationModeCheckModel,
-  PresentationModel,
-  PresentationScheduleModel, SchedulerPresentationModel
+  PresentationScheduleModel,
+  SchedulerModel,
+  SchedulerPresentationModel
 } from '../../../../model/presentation/presentation.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
-import {PresentationMode} from '../../../../model/schedule/schedule.model';
+import {PresentationMode, ScheduleType} from '../../../../model/schedule/schedule.model';
 import {RoomService} from '../../../../service/room.service';
 import {ShowSnackBar} from '../../../../store/app/app.action';
 import {MatStepper} from '@angular/material/stepper';
@@ -24,22 +25,24 @@ import {TimeRange} from '../../../../service/test.service';
 import {
   ActionEventArgs,
   DragEventArgs,
-  EventRenderedArgs, EventSettingsModel, GroupModel,
+  EventRenderedArgs,
+  EventSettingsModel,
+  GroupModel,
   ResizeEventArgs,
   ScheduleComponent,
   View
 } from '@syncfusion/ej2-angular-schedule';
-import {CdkDragDrop} from '@angular/cdk/drag-drop';
-import {RouteConstant} from '../../../../../assets/constant/route.contant';
 import {ChangeEventArgs} from '@syncfusion/ej2-buttons';
 import {DatePipe} from '@angular/common';
+import {ActivatedRoute, Router} from '@angular/router';
+import {SystemRole} from '../../../../model/user/user.model';
 
 @Component({
   selector: 'app-auto-scheduling-setting',
   templateUrl: './auto-scheduling-setting.component.html',
   styleUrls: ['./auto-scheduling-setting.component.css']
 })
-export class AutoSchedulingSettingComponent implements OnInit {
+export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
   @ViewChild('stepper')
   stepper: MatStepper;
   @ViewChild('slotScheduler')
@@ -50,18 +53,21 @@ export class AutoSchedulingSettingComponent implements OnInit {
   // select presentation step
   timeFormat = Constant.TIME_FORMAT;
   scheduleId: number;
+  scheduleType: ScheduleType;
   presentationModels: PresentationModeCheckModel[] = [];
   dataSource: MatTableDataSource<PresentationModeCheckModel>;
   displayedColumns = ['name', 'title', 'scheduledTime', 'check'];
 
-  //slot scheduler
+  // slot scheduler
   presentationSlots: SchedulerRoomPresentationSlotModel[] = [];
   slotsGroupByRooms: RoomPresentationSlotsModel[] = [];
   rooms: RoomModel[] = [];
 
-  //last step
+  // last step
   form: FormGroup;
   autoSchedulingModel: AutoSchedulingModel;
+  scheduleGenerated = false;
+  durationList = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
   autoScheduleRequest = null;
 
@@ -71,11 +77,14 @@ export class AutoSchedulingSettingComponent implements OnInit {
 
   @Select(ScheduleState.getScheduleId)
   scheduleId$: Observable<number>;
+  @Select(ScheduleState.getScheduleType)
+  scheduleType$: Observable<ScheduleType>;
 
-
-
+  subs: Subscription[] = [];
 
   @ViewChild('scheduleObj') scheduleObj: ScheduleComponent;
+  startHour = Constant.SCHEDULER_START_HOUR;
+  endHour = Constant.SCHEDULER_END_HOUR;
   selectedDate: Date;
   scheduleFirstLoad = true;
   rowAutoHeight = true;
@@ -83,32 +92,40 @@ export class AutoSchedulingSettingComponent implements OnInit {
   dateFormat = Constant.DATE_FORMAT;
   datePipe = new DatePipe('en-US');
   group: GroupModel = {
-    enableCompactView: false,
+    enableCompactView: true,
     resources: ['MeetingRoom']
   };
-  dragging = false;
   allowMultiple = true;
-  draggingIndex: number = null;
-  draggingPresentation: SchedulerPresentationModel = null;
-  disableDrag = false;
 
   resourceDataSource: RoomModel[];
   eventSettings: EventSettingsModel;
-  presentationModelList: SchedulerPresentationModel[] = [];
-  scheduledPresentations: SchedulerPresentationModel[] = [];
+  autoSchedulingResultScheduler: SchedulerModel;
+  autoScheduledPresentations: SchedulerPresentationModel[] = [];
 
   constructor(private roomService: RoomService,
               private formBuilder: FormBuilder,
               private loadingUtil: LoadingDialogUtil,
               private presentationService: PresentationService,
               private store: Store,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private router: Router,
+              private activatedRoute: ActivatedRoute) {
+    // for (let i = 15; i <= 60; i + 5) {
+    //   this.durationList.push(i);
+    // }
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
+    });
   }
 
   ngOnInit() {
-    this.scheduleId$.subscribe(id => {
+    this.subs.push(this.scheduleId$.subscribe(id => {
       this.scheduleId = id;
       const loadingRef = this.loadingUtil.openLoadingDialog();
+      console.log('auto-scheduling');
       this.presentationService.getPresentations(id).subscribe(res => {
         if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
           this.presentationModels = (res.data as PresentationModeCheckModel[]);
@@ -120,10 +137,15 @@ export class AutoSchedulingSettingComponent implements OnInit {
           loadingRef.close();
         }
       });
-    });
+    }));
+    this.subs.push(this.scheduleType$.subscribe(type => {
+      this.scheduleType = type;
+    }));
     this.form = this.fb.group(
       {duration: this.fb.control('', [Validators.required, Validators.min(1)])}
     );
+
+
     this.firstFormGroup = this.formBuilder.group({
       firstCtrl: ['', Validators.required],
     });
@@ -202,7 +224,7 @@ export class AutoSchedulingSettingComponent implements OnInit {
         const slotsGroupByRoom: RoomPresentationSlotsModel = new RoomPresentationSlotsModel();
         this.slotsGroupByRooms.push(slotsGroupByRoom);
         slotsGroupByRoom.id = r.id;
-        slotsGroupByRoom.name = r.name;
+        slotsGroupByRoom.name = this.getRoomName(r.id);
         slotsGroupByRoom.slots = [];
         this.presentationSlots.forEach(ps => {
           if (ps.roomId === r.id) {
@@ -218,7 +240,9 @@ export class AutoSchedulingSettingComponent implements OnInit {
       this.store.dispatch(new ShowSnackBar('Please input presentation slots to generate presentation schedule'));
       return;
     }
-    if (this.slotsGroupByRooms.length > 0) {
+    this.form.markAllAsTouched();
+    if (this.slotsGroupByRooms.length > 0 && this.form.valid) {
+      const loadingRef = this.loadingUtil.openLoadingDialog('Scheduling Presentations. Please wait...');
       this.autoSchedulingModel = new AutoSchedulingModel();
       this.autoSchedulingModel.considerAvailability = true;
       this.autoSchedulingModel.roomPresentationSlotsModels = [];
@@ -226,7 +250,7 @@ export class AutoSchedulingSettingComponent implements OnInit {
       this.autoSchedulingModel.presentationDuration = this.form.get('duration').value;
       // separate online and physical room
       this.slotsGroupByRooms.forEach(room => {
-        if (room.name === 'Online') {
+        if (this.getRoomName(room.id) === 'Online') {
           this.autoSchedulingModel.onlinePresentationSlotsModel = room;
         } else {
           this.autoSchedulingModel.roomPresentationSlotsModels.push(room);
@@ -244,13 +268,16 @@ export class AutoSchedulingSettingComponent implements OnInit {
       });
       this.autoSchedulingModel.presentationsToScheduleOnline = onlinePresentations;
       this.autoSchedulingModel.presentationsToSchedulePhysical = physicalPresentations;
-      console.log(this.autoSchedulingModel);
       this.autoScheduleRequest = this.presentationService.autoSchedulePresentations(this.autoSchedulingModel).subscribe(res => {
           if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
             console.log(res.data);
+            this.populatePresentation(res.data);
+            this.scheduleGenerated = true;
+
           } else {
             this.store.dispatch(new ShowSnackBar('Failed to auto generate valid presentation schedule. Please make sure panels are available on presentation slots.'));
           }
+        loadingRef.close();
         }
       );
     }
@@ -269,124 +296,124 @@ export class AutoSchedulingSettingComponent implements OnInit {
   }
 
 
+  populatePresentation(schedulerModel: SchedulerModel): void {
+    this.autoScheduledPresentations = [];
+    this.autoSchedulingResultScheduler = schedulerModel;
+    this.resourceDataSource = this.presentationSlotScheduler.resourceDataSource;
+    let counter = 0;
+    let selectedTime = new Date();
+    this.autoSchedulingResultScheduler.presentationToSchedule.forEach((presentationData, index) => {
+      const schedulerPresentationModel: SchedulerPresentationModel = new SchedulerPresentationModel();
+      schedulerPresentationModel.id = presentationData.id;
+      schedulerPresentationModel.roomId = presentationData.roomId;
+      schedulerPresentationModel.roomName = presentationData.roomName;
+      schedulerPresentationModel.title = presentationData.title;
+      schedulerPresentationModel.studentName = presentationData.studentName;
+      schedulerPresentationModel.panelModels = presentationData.panelModels;
+      schedulerPresentationModel.chairperson = presentationData.chairperson;
+      schedulerPresentationModel.supervisorModel = presentationData.supervisorModel;
+      if (presentationData.startTime && presentationData.endTime) {
+        schedulerPresentationModel.startTime = new Date(presentationData.startTime);
+        schedulerPresentationModel.endTime = new Date(presentationData.endTime);
+      }
+      schedulerPresentationModel.commonAvailabilityList = presentationData.commonAvailabilityList;
+      schedulerPresentationModel.scheduleModel = presentationData.scheduleModel;
+      this.autoScheduledPresentations.push(schedulerPresentationModel);
 
-
-  populatePresentation(): void {
-    this.roomService.getAllRooms().subscribe(res => {
-      if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
-        this.resourceDataSource = res.data;
+      if (this.scheduleFirstLoad && schedulerPresentationModel.startTime) {
+        if (counter === 0) {
+          selectedTime = schedulerPresentationModel.startTime;
+          counter++;
+        } else if (selectedTime.valueOf() > schedulerPresentationModel.startTime.valueOf()) {
+          selectedTime = schedulerPresentationModel.startTime;
+        }
       }
     });
-    const loadingRef = this.loadingUtil.openLoadingDialog();
-    this.scheduleId$.subscribe(id => {
-      let selectedTime: Date = new Date();
-      let counter = 0;
-      this.presentationService.getPresentationsWithAvailability(id).subscribe(res => {
-        if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
-          console.log(res.data);
-          (res.data as SchedulerPresentationModel[]).forEach((presentationData, index) => {
-            const schedulerPresentationModel: SchedulerPresentationModel = new SchedulerPresentationModel();
-            schedulerPresentationModel.id = presentationData.id;
-            schedulerPresentationModel.roomId = presentationData.roomId;
-            schedulerPresentationModel.roomName = presentationData.roomName;
-            schedulerPresentationModel.title = presentationData.title;
-            schedulerPresentationModel.studentName = presentationData.studentName;
-            schedulerPresentationModel.panelModels = presentationData.panelModels;
-            schedulerPresentationModel.supervisorModel = presentationData.supervisorModel;
-            // schedulerPresentationModel.IsBlock = true;
-            if (presentationData.startTime && presentationData.endTime) {
-              schedulerPresentationModel.startTime = new Date(presentationData.startTime);
-              schedulerPresentationModel.endTime = new Date(presentationData.endTime);
-            }
-            schedulerPresentationModel.commonAvailabilityList = presentationData.commonAvailabilityList;
-            schedulerPresentationModel.IsBlock = true;
-            if (presentationData.startTime && presentationData.endTime) {
-              this.scheduledPresentations.push(schedulerPresentationModel);
-              schedulerPresentationModel.scheduleSaved = true;
-            } else {
-              this.presentationModelList.push(schedulerPresentationModel);
-              schedulerPresentationModel.scheduleSaved = false;
-            }
-
-            if (this.scheduleFirstLoad && schedulerPresentationModel.startTime) {
-              if (counter === 0) {
-                selectedTime = schedulerPresentationModel.startTime;
-                counter++;
-                console.log(selectedTime);
-              } else if (selectedTime.valueOf() > schedulerPresentationModel.startTime.valueOf()) {
-                selectedTime = schedulerPresentationModel.startTime;
-                console.log(selectedTime);
-              }
-              this.selectedDate = selectedTime;
-            }
-          });
-          this.eventSettings = {
-            fields: {
-              id: 'schedulerId',
-              subject: {name: 'title', title: 'Title'},
-              // location: {name: 'Location', title: 'Location'},
-              // description: {name: 'Description', title: 'Comments'},
-              startTime: {name: 'startTime', title: 'From'},
-              endTime: {name: 'endTime', title: 'To'},
-              isBlock: 'true'
-            },
-            enableTooltip: true
-          };
-          this.eventSettings.dataSource = this.scheduledPresentations;
-          loadingRef.close();
-          this.scheduleFirstLoad = false;
+    this.selectedDate = selectedTime;
+    // populate blocked time range
+    if (this.autoSchedulingResultScheduler.unAvailableTime) {
+      this.autoSchedulingResultScheduler.unAvailableTime.forEach((presentationData, index) => {
+        if (presentationData.roomName !== 'Online') {
+          const schedulerPresentationModel: SchedulerPresentationModel = new SchedulerPresentationModel();
+          schedulerPresentationModel.roomId = presentationData.roomId;
+          schedulerPresentationModel.roomName = presentationData.roomName;
+          schedulerPresentationModel.title = 'Unavailable';
+          schedulerPresentationModel.isBlock = true;
+          schedulerPresentationModel.scheduleModel = presentationData.scheduleModel;
+          if (presentationData.startTime && presentationData.endTime) {
+            // as block event
+            this.autoScheduledPresentations.push(schedulerPresentationModel);
+            schedulerPresentationModel.startTime = new Date(presentationData.startTime);
+            schedulerPresentationModel.endTime = new Date(presentationData.endTime);
+          }
         }
       });
-    });
+    }
+    this.eventSettings = {
+      fields: {
+        id: 'schedulerId',
+        subject: {name: 'title', title: 'Title'},
+        startTime: {name: 'startTime', title: 'From'},
+        endTime: {name: 'endTime', title: 'To'},
+        isBlock: 'true',
+      },
+      enableTooltip: true
+    };
+    this.eventSettings.dataSource = [];
+    this.eventSettings.dataSource = this.autoScheduledPresentations;
+    this.scheduleFirstLoad = false;
+
   }
 
   onChange(args: ChangeEventArgs): void {
     this.scheduleObj.rowAutoHeight = args.checked;
   }
+
   onEventRendered(args: EventRenderedArgs): void {
-    const scheduledSaved: boolean = args.data.scheduleSaved as boolean;
-    if (!args.element) {
+    if (args.data.isBlock) {
+      args.element.style.backgroundColor = Constant.SCHEDULER_COLOR_BLOCKED;
       return;
     }
-    if (scheduledSaved) {
-      args.element.style.backgroundColor = Constant.SCHEDULER_COLOR_1;
-    } else {
-      args.element.style.backgroundColor = Constant.SCHEDULER_COLOR_2;
+    if (args.data && args.data.commonAvailabilityList) {
+      for (const ca of args.data.commonAvailabilityList) {
+        if ((new Date(ca.startTime).valueOf() <= new Date(args.data.startTime).valueOf())
+          && (new Date(ca.endTime).valueOf() >= new Date(args.data.endTime).valueOf())) {
+          args.element.style.backgroundColor = Constant.SCHEDULER_COLOR_1;
+          return;
+        }
+      }
+      args.element.style.backgroundColor = '#f64747';
     }
   }
 
   onSchedulerDragStart(args: DragEventArgs): void {
     args.interval = 5;
     args.navigation.enable = true;
-  }
-
-  onSchedulerDragStop(args: DragEventArgs): void {
-    args.data.scheduleSaved = false;
+    let eventData: any = null;
+    if (args != null && args.data && args.data[0]) {
+      eventData = args.data[0];
+    } else if (args != null && args.data) {
+      eventData = args.data;
+    }
+    if (eventData && eventData.isBlock) {
+      args.cancel = true;
+      return;
+    }
   }
 
   onResizeStart(args: ResizeEventArgs): void {
     args.interval = 5;
-    args.data.scheduleSaved = false;
-    console.log(args.data);
-  }
-
-  onResizeStop(args: ResizeEventArgs): void {
-    args.data.scheduleSaved = false;
-    args.element.style.backgroundColor = 'rgb(75, 192, 192)';
-  }
-
-  onCdkDragStart(presentation, index): void {
-    // this.dragging = true;
-    this.draggingIndex = index;
-    this.draggingPresentation = presentation;
-  }
-
-  testDrop(event: MouseEvent): void {
-
-  }
-
-  drop(event: CdkDragDrop<PresentationModel[]>): void {
-
+    console.log(args);
+    let eventData: any = null;
+    if (args != null && args.data && args.data[0]) {
+      eventData = args.data[0];
+    } else if (args != null && args.data) {
+      eventData = args.data;
+    }
+    if (eventData && eventData.isBlock) {
+      args.cancel = true;
+      return;
+    }
   }
 
   addToTimetable(data): void {
@@ -401,8 +428,8 @@ export class AutoSchedulingSettingComponent implements OnInit {
   save(): void {
     const loadingDialog = this.loadingUtil.openLoadingDialog();
     const presentationSchedules: PresentationScheduleModel[] = [];
-    this.scheduledPresentations.forEach(sp => {
-      if (sp.startTime && sp.endTime) {
+    this.autoScheduledPresentations.forEach(sp => {
+      if (sp.startTime && sp.endTime && !sp.isBlock) {
         const presentationScheduleModel: PresentationScheduleModel = new PresentationScheduleModel();
         presentationScheduleModel.endTime = sp.endTime;
         presentationScheduleModel.startTime = sp.startTime;
@@ -413,12 +440,8 @@ export class AutoSchedulingSettingComponent implements OnInit {
     });
     this.presentationService.schedulePresentations(presentationSchedules).subscribe((resp) => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
-        this.presentationModelList = [];
-        this.scheduledPresentations = [];
-        console.log(this.scheduleObj);
-        console.log(this.scheduleObj.getCurrentViewDates());
-        // this.selectedDate = this.scheduleObj.getCurrentViewDates()[0];
-        this.ngOnInit();
+        this.store.dispatch(new ShowSnackBar('Successfully save generated presentations time.'));
+        this.router.navigate(['../'], {relativeTo: this.activatedRoute});
       }
       loadingDialog.close();
     });
@@ -426,25 +449,25 @@ export class AutoSchedulingSettingComponent implements OnInit {
 
   onActionBegin(args: ActionEventArgs): void {
     const now: Date = new Date();
-    if (((args.data && args.data[0] && new Date(args.data[0].startTime).valueOf() <= now.valueOf())
+    const eventData: any = args.data[0]
+      ? args.data[0]
+      : args.data;
+    if (((eventData && eventData && new Date(eventData.startTime).valueOf() <= now.valueOf())
       || (args.changedRecords && args.changedRecords[0] && new Date(args.changedRecords[0].startTime).valueOf() <= now.valueOf()))
       && (args.requestType === 'eventCreate' ||
         args.requestType === 'eventChange')
     ) {
       args.cancel = true;
-      this.store.dispatch(new ShowSnackBar('Add or edit presentation in history is not allowed.'));
+      this.store.dispatch(new ShowSnackBar('Add presentation slot in history is not allowes'));
       return;
     }
-    //disable overlapping physical presentation
-    if (!(args.data && args.data[0] && args.data[0].roomName === 'Online') &&
-      !(args.changedRecords && args.changedRecords[0] && args.changedRecords[0].roomName === 'Online') &&
+    // disable overlapping physical presentation
+
+    if (!(eventData && eventData && this.getRoomName(eventData.roomId) === 'Online') &&
+      !(args.changedRecords && args.changedRecords[0] && this.getRoomName(args.changedRecords[0].roomId) === 'Online') &&
       (args.requestType === 'eventCreate' ||
         args.requestType === 'eventChange')
     ) {
-      const eventData: any = args.data[0]
-        ? args.data[0]
-        : args.data;
-
       if (!this.scheduleObj.isSlotAvailable(eventData)) {
         args.cancel = true;
         this.store.dispatch(new ShowSnackBar('Overlapping physical presentation is not allowed.'));
@@ -456,4 +479,20 @@ export class AutoSchedulingSettingComponent implements OnInit {
 
   }
 
+  isMaster(): boolean {
+    return this.scheduleType === ScheduleType.MASTER_DISSERTATION;
+  }
+
+  getRoomName(id: number): string {
+    for (const r of this.presentationSlotScheduler.resourceDataSource) {
+      if (r.id === id) {
+        return r.name;
+      }
+    }
+    return '';
+  }
+
+  get SystemRole() {
+    return SystemRole;
+  }
 }

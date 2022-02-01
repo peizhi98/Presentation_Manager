@@ -17,9 +17,10 @@ export enum EvaluationType {
   PRESENTATION = 'PRESENTATION',
   REPORT = 'REPORT',
   PANEL = 'PANEL',
-  CHAIRPERSON = 'CHAIRPERSON'
+  CONFIRMATION = 'CONFIRMATION'
 }
 
+// only use in frontend
 export enum EvaluationFormMode {
   VIEW = 'View',
   EDIT = 'Edit',

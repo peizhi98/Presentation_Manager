@@ -3,7 +3,7 @@ import {Select, Store} from '@ngxs/store';
 import {LecturerModel} from '../../../../model/role/lecturer.model';
 import {UserState} from '../../../../store/user/user.store';
 import {Observable} from 'rxjs';
-import {PatchUserFromBackend} from '../../../../store/user/user.action';
+import {PatchLecturerFromBackend} from '../../../../store/user/user.action';
 import {AvailabilityService} from '../../../../service/availability.service';
 import {ActivatedRoute, Router} from '@angular/router';
 
@@ -23,7 +23,7 @@ export class AvailabilityComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(new PatchUserFromBackend());
+    this.store.dispatch(new PatchLecturerFromBackend());
     this.lecturers$.subscribe(lec => {
       this.lecturers = lec;
     });

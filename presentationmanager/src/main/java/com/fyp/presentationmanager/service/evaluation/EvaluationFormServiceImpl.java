@@ -39,8 +39,15 @@ public class EvaluationFormServiceImpl implements EvaluationFormService {
 
     @Override
     public EvaluationFormModel getEvaluationForm(Integer scheduleId, EvaluationType evaluationType) {
-        EvaluationFormBean evaluationFormBean = this.evaluationFormRepo.getEvaluationFormBeanByScheduleIdAndEvaluationType(scheduleId, evaluationType);
-        return EvaluationFormModel.build(evaluationFormBean);
+        if (evaluationType.equals(EvaluationType.CONFIRMATION)) {
+            EvaluationFormBean evaluationFormBean = this.evaluationFormRepo.getEvaluationFormBeanByScheduleIdAndEvaluationType(scheduleId, EvaluationType.PANEL);
+            EvaluationFormBean confirmationForm = this.evaluationFormRepo.getEvaluationFormBeanByScheduleIdAndEvaluationType(scheduleId, EvaluationType.CONFIRMATION);
+            return EvaluationFormModel.buildConfirmationFormFromEvaluationForm(confirmationForm, evaluationFormBean);
+        } else {
+            EvaluationFormBean evaluationFormBean = this.evaluationFormRepo.getEvaluationFormBeanByScheduleIdAndEvaluationType(scheduleId, evaluationType);
+            return EvaluationFormModel.build(evaluationFormBean);
+        }
+
     }
 
     @Override

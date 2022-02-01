@@ -1,11 +1,14 @@
 <ng-container *ngIf="currentForm">
+  <div *ngIf="isConfirmationForm()&&!isEvaluateMode()">This form is generated based on evaluation form and not
+    editable.
+  </div>
   <form [formGroup]="currentForm" (ngSubmit)="onSubmit()">
     <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-
       <div formArrayName="criteriaEvaluation" *ngIf="criteriaEvaluation.controls">
-        <div class="example-box" [ngStyle]="!isEditMode()&&{'padding-top': '10px'}"
+        <div class="example-box" [ngStyle]="!isEditMode()&&!isConfirmationForm()&&{'padding-top': '10px'}"
              *ngFor="let criteria of criteriaEvaluation.controls;let i = index;" cdkDrag>
-          <p class="example-handle" style="text-align: center;" [hidden]="!isEditMode()" cdkDragHandle>
+          <p class="example-handle" style="text-align: center;" [hidden]="!isEditMode()||isConfirmationForm()"
+             cdkDragHandle>
             <mat-icon> drag_handle</mat-icon>
           </p>
 
@@ -13,62 +16,74 @@
           <div class="w-100">
             <h3 style="width: 2%; display: inline-block;">{{i + 1}}</h3>
             <!--Criteria name-->
-            <mat-form-field style="width: 87%" *ngIf="isEditMode();else criteriaName" appearance="fill">
+            <mat-form-field style="width: 87%" *ngIf="isEditMode()&&!isConfirmationForm();else criteriaName"
+                            appearance="fill">
               <mat-label>Criteria</mat-label>
               <input matInput [formControl]="criteria.get(NAME)">
               <mat-error *ngIf="criteria.get(NAME).invalid&&criteria.get(NAME).touched">Criteria cannot be empty.
               </mat-error>
             </mat-form-field>
             <ng-template #criteriaName>
-              <div style="width: 100%; display: inline-block">
+              <div style="width: 87%; display: inline-block">
                 {{criteria.get(NAME).value}}
               </div>
             </ng-template>
 
 
             <div style="width: 5%; display: inline-block"></div>
-            <button *ngIf="isEditMode()" type="button" style="float: right" mat-icon-button color="primary"
+            <!--weightage-->
+            <ng-container *ngIf="!isConfirmationForm()">
+              <mat-form-field style="width: 6%" class="right" appearance="fill" *ngIf="isEditMode();else weightage">
+                <mat-label>Weightage</mat-label>
+                <input matInput type="number" [formControl]="criteria.get(WEIGHTAGE)">
+                <mat-error *ngIf="criteria.get(WEIGHTAGE).invalid&&criteria.get(WEIGHTAGE).touched">Please enter valid
+                  integer
+                </mat-error>
+              </mat-form-field>
+            </ng-container>
+            <ng-template #weightage>
+              <div style="float: right;display: inline-block">
+                {{criteria.get(WEIGHTAGE).value}}%
+              </div>
+            </ng-template>
+
+            <button *ngIf="isEditMode()&&!isConfirmationForm()" type="button" style="float: right" mat-icon-button
+                    color="primary"
                     (click)="removeCriterion(i)">
               <mat-icon>delete_forever</mat-icon>
             </button>
           </div>
           <!--score input-->
-          <div style="margin: auto;width: 30%;">
-            <ng-container *ngIf="isPanel();else chairpersonInput">
+
+          <ng-container *ngIf="isPanelForm();else confirmationInput">
+            <div style="margin: auto;width: 18%;">
               <mat-radio-group class="radio-label-above radio-label-content-center"
                                [formControl]="criteria.get(RATING)">
-                <mat-radio-button class="ml-2 radio-label-content-center"
-                                  [value]="scaleOptions[0]">Unsatisfactory
-                </mat-radio-button>
-                <mat-radio-button class="ml-2 radio-label-content-center"
-                                  [value]="scaleOptions[1]">Satisfactory
-                </mat-radio-button>
-
+                <mat-radio-button *ngFor="let scale of scaleOptions" class="ml-2 radio-label-content-center"
+                                  [value]="scale">{{scale}}</mat-radio-button>
                 <mat-error style="margin-left: 45px;"
                            *ngIf="criteria.get(RATING).invalid&&criteria.get(RATING).touched">Please
-                  select a rating.
+                  select a score.
                 </mat-error>
               </mat-radio-group>
-            </ng-container>
-            <ng-template #chairpersonInput>
+            </div>
+          </ng-container>
+          <ng-template #confirmationInput>
+            <div style="margin: auto;width: 25%;">
               <mat-radio-group class="radio-label-above radio-label-content-center"
                                [formControl]="criteria.get(RATING)">
-                <mat-radio-button class="ml-2 radio-label-content-center"
-                                  [value]="scaleOptions[0]">Unsatisfactory
-                </mat-radio-button>
-                <mat-radio-button class="ml-2 radio-label-content-center"
-                                  [value]="scaleOptions[1]">Satisfactory
-                </mat-radio-button>
-
-                <mat-error style="margin-left: 45px;"
-                           *ngIf="criteria.get(RATING).invalid&&criteria.get(RATING).touched">Please
-                  select a rating.
-                </mat-error>
+                <mat-radio-button *ngFor="let scale of confirmationScaleOptions" class="ml-2 radio-label-content-center"
+                                  [value]="scale">{{getConfirmationScaleName(scale)}}</mat-radio-button>
+                <!--                  <mat-error style="margin-left: 45px;"-->
+                <!--                             *ngIf="criteria.get(RATING).invalid&&criteria.get(RATING).touched">Please-->
+                <!--                    select a score.-->
+                <!--                  </mat-error>-->
               </mat-radio-group>
-            </ng-template>
-          </div>
+            </div>
+          </ng-template>
+
           <!--comment-->
-          <mat-form-field style="width: 100%" class="mt-2" appearance="outline">
+          <mat-form-field *ngIf="!isConfirmationForm()" style="width: 100%" class="mt-2" appearance="outline">
             <mat-label>Comment Section</mat-label>
             <textarea matInput [formControl]="criteria.get(COMMENT)"></textarea>
           </mat-form-field>
@@ -76,30 +91,27 @@
       </div>
 
 
-      <div class="example-box" *ngIf="isEditMode()" style="background-color: #ccc; padding-top: 20px">
+      <div class="example-box" *ngIf="isEditMode()&&!isConfirmationForm()"
+           style="background-color: #ccc; padding-top: 20px">
         <p style="text-align: center;">
           <button mat-raised-button type="button" color="primary" (click)="addCriterion()">Add New Criterion</button>
         </p>
       </div>
     </div>
-    <div>
-      <div style="display: inline-block; width: 10%">Overall evaluation:</div>
-      <div style="display: inline-block; width: 30%">
-        <mat-radio-group class="radio-label-above radio-label-content-center" disabled="true">
-          <mat-radio-button class="ml-2 radio-label-content-center"
-                            [value]="scaleOptions[0]">Pass
-          </mat-radio-button>
-          <mat-radio-button class="ml-2 radio-label-content-center"
-                            [value]="scaleOptions[1]">Fail
-          </mat-radio-button>
 
+    <div *ngIf="isConfirmationForm()">
+      <div style="display: inline-block; width: 10%">Overall result:</div>
+      <div style="display: inline-block; width: 30%">
+        <mat-radio-group class="radio-label-above radio-label-content-center"
+                         [formControl]="currentForm.get(OVERALL_RESULT)">
+          <mat-radio-button *ngFor="let scale of confirmationScaleOptions" class="ml-2 radio-label-content-center"
+                            [value]="scale">{{getConfirmationScaleName(scale)}}</mat-radio-button>
         </mat-radio-group>
       </div>
-
     </div>
     <mat-form-field style="width: 100%" class="mt-2" appearance="outline">
       <mat-label>Overall comment</mat-label>
-      <textarea matInput disable="true"></textarea>
+      <textarea matInput [formControl]="currentForm.get(OVERALL_COMMENT)"></textarea>
     </mat-form-field>
 
     <div class="mt-1 mb-1">
@@ -108,9 +120,12 @@
         <!--        <button *ngIf="isEvaluateMode()" mat-raised-button color="primary" type="submit"-->
         <!--        >Submit-->
         <!--        </button>-->
-        <button *ngIf="!isViewMode()" mat-raised-button color="primary" type="submit"
-        >{{(isEditMode()) ? 'Save' : 'Submit'}}
-        </button>
+        <ng-container *ngIf="!isConfirmationForm()">
+          <button *ngIf="!isViewMode()" mat-raised-button color="primary" type="submit"
+          >{{(isEditMode()) ? 'Save' : 'Submit'}}
+          </button>
+        </ng-container>
+
       </p>
     </div>
   </form>

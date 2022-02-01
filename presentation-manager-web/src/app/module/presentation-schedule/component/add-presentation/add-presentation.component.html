@@ -22,7 +22,7 @@
           <button mat-raised-button color="primary" (click)="addForm()">Add Presentation</button>
         </div>
         <div align="center" class="mt-1">
-          <button mat-raised-button color="primary" (click)="save()">Confirm and Save</button>
+          <button mat-raised-button color="primary" *ngxPermissionsOnly="SystemRole.COORDINATOR" (click)="save()">Confirm and Save</button>
         </div>
       </mat-card-content>
     </mat-card>
@@ -35,7 +35,8 @@
         <mat-card-content>
           <div>
             <div>
-              <label>Project Title: </label>
+              <ng-container
+                *ngTemplateOutlet="titleDisplay;context:{title: 'Presentation Title'}"></ng-container>
               <mat-form-field class="w-50">
                 <mat-label>Presentation Title</mat-label>
                 <input matInput [(ngModel)]="presentation.title">
@@ -54,7 +55,9 @@
                 <mat-icon>delete_forever</mat-icon>
               </button>
 
-              <div><label>Supervisor: </label>
+              <div class="w-100">
+                <ng-container
+                  *ngTemplateOutlet="titleDisplay;context:{title: 'Supervisor'}"></ng-container>
                 <mat-form-field class="w-50">
                   <mat-label>Supervisor Username (Email)</mat-label>
                   <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)"
@@ -64,7 +67,8 @@
               </div>
 
               <div>
-                <label>Student Name: </label>
+                <ng-container
+                  *ngTemplateOutlet="titleDisplay;context:{title: 'Student Name'}"></ng-container>
                 <mat-form-field class="w-50">
                   <mat-label>Student Name</mat-label>
                   <input matInput [(ngModel)]="presentation.studentName">
@@ -72,18 +76,41 @@
               </div>
 
               <div>
-                <label>Student Email: </label>
+                <ng-container
+                  *ngTemplateOutlet="titleDisplay;context:{title: 'Student Matric No.'}"></ng-container>
+                <mat-form-field class="w-50">
+                  <mat-label>Matric No.</mat-label>
+                  <input matInput [(ngModel)]="presentation.studentMatrixNo">
+                </mat-form-field>
+              </div>
+
+              <div>
+                <ng-container
+                  *ngTemplateOutlet="titleDisplay;context:{title: 'Student Email'}"></ng-container>
                 <mat-form-field class="w-50">
                   <mat-label>Student Email</mat-label>
                   <input matInput [(ngModel)]="presentation.studentEmail">
                 </mat-form-field>
               </div>
 
-              <div *ngFor="let panel of presentation.panelModels;let i=index;">
-                <label>Panel {{i + 1}}: </label>
+              <div *ngIf="isMaster()">
+                <ng-container
+                  *ngTemplateOutlet="titleDisplay;context:{title: 'Chairperson'}"></ng-container>
                 <mat-form-field class="w-50">
-                  <mat-label>Panel Email</mat-label>
-                  <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)" [(ngModel)]="panel.email">
+                  <mat-label>Chairperson Username (Email)</mat-label>
+                  <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)"
+                         [(ngModel)]="presentation.chairperson.email">
+
+                </mat-form-field>
+              </div>
+
+              <div *ngFor="let panel of presentation.panelModels;let i=index;">
+                <ng-container
+                  *ngTemplateOutlet="titleDisplay;context:{title: 'Panel '+(i+1).toString()}"></ng-container>
+                <mat-form-field class="w-50">
+                  <mat-label>Panel Username (Email)</mat-label>
+                  <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)"
+                         [(ngModel)]="panel.email">
                 </mat-form-field>
                 <button mat-icon-button color="primary"
                         (click)="removePanel(presentation.panelModels,i)">
@@ -104,10 +131,17 @@
 
 <mat-autocomplete #auto="matAutocomplete">
   <mat-option *ngFor="let lecturer of filteredLecturers" [value]="lecturer.email">
-    <span>{{lecturer.name|| 'Name not registered'}}</span> |
+    <span>{{lecturer.name || 'Name not registered'}}</span> |
     <small>{{lecturer.email}}</small>
   </mat-option>
 </mat-autocomplete>
-
+<ng-template #titleDisplay let-title="title">
+  <div style="display: inline-block; width: 10%">
+    {{title}}
+  </div>
+  <div style="display: inline-block;">
+    :
+  </div>
+</ng-template>
 
 

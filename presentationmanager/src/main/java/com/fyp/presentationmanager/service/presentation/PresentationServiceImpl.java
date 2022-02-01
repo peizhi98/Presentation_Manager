@@ -6,6 +6,7 @@ import com.fyp.presentationmanager.model.auth.CustomUserDetails;
 import com.fyp.presentationmanager.model.presentation.AutoSchedulingModel;
 import com.fyp.presentationmanager.model.presentation.PresentationModel;
 import com.fyp.presentationmanager.model.presentation.PresentationScheduleModel;
+import com.fyp.presentationmanager.model.presentation.SchedulerModel;
 import com.fyp.presentationmanager.model.role.PanelModel;
 import com.fyp.presentationmanager.model.room.RoomPresentationSlotsModel;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.GeneticAlgorithm;
@@ -52,8 +53,13 @@ public class PresentationServiceImpl implements PresentationService {
         for (PresentationModel presentationModel : presentationModelList) {
             UserBean sv =
                     this.userService.getUserByEmail(presentationModel.getSupervisorModel().getEmail());
+            UserBean chairperson =
+                    this.userService.getUserByEmail(presentationModel.getChairperson().getEmail());
             PresentationBean presentationBean = new PresentationBean(presentationModel);
             presentationBean.setSupervisorId(sv.getId());
+            if (chairperson != null) {
+                presentationBean.setChairPersonId(chairperson.getId());
+            }
             this.presentationRepo.save(presentationBean);
 
             if (presentationModel.getPanelModels() != null) {
@@ -95,34 +101,72 @@ public class PresentationServiceImpl implements PresentationService {
     }
 
     @Override
+    public SchedulerModel getScheduler(Integer scheduleId) {
+        List<PresentationBean> presentationBeans =
+                this.presentationRepo.findPresentationBeansByScheduleIdNotAndEndTimeAfter(scheduleId, new Date());
+        List<PresentationModel> otherPresentations = new ArrayList<>();
+        if (presentationBeans != null) {
+            for (PresentationBean p : presentationBeans) {
+                otherPresentations.add(PresentationModel.build(p));
+            }
+        }
+        List<PresentationModel> presentationToSchedule = getPresentationListWithCommonAvailability(scheduleId);
+        return new SchedulerModel(presentationToSchedule, otherPresentations);
+    }
+
+    @Override
+    public List<PresentationModel> getAllPresentationAfterNow() {
+        List<PresentationBean> presentationBeans =
+                this.presentationRepo.findPresentationBeansByEndTimeAfter(new Date());
+        List<PresentationModel> occupiedPresentationSlots = new ArrayList<>();
+        if (presentationBeans != null) {
+            for (PresentationBean p : presentationBeans) {
+                occupiedPresentationSlots.add(PresentationModel.build(p));
+            }
+        }
+        return occupiedPresentationSlots;
+    }
+
+    @Override
     public List<PresentationModel> getPresentationListWithCommonAvailability(Integer scheduleId) {
         List<PresentationBean> presentationBeans = this.presentationRepo.findPresentationBeansByScheduleId(scheduleId);
         List<PresentationModel> presentationModelList = new ArrayList<>();
         if (presentationBeans != null) {
             for (PresentationBean presentationBean : presentationBeans) {
-                PresentationModel presentationModel = PresentationModel.build(presentationBean);
-                List<TimeRange> commonAvailabilityList = calculatePanelCommonAvailability(presentationBean);
-                presentationModel.setCommonAvailabilityList(commonAvailabilityList);
+                PresentationModel presentationModel = this.getPresentationModelWithCommonAvailability(presentationBean);
                 presentationModelList.add(presentationModel);
             }
         }
         return presentationModelList;
     }
 
+    private PresentationModel getPresentationModelWithCommonAvailability(PresentationBean presentationBean) {
+        PresentationModel presentationModel = PresentationModel.build(presentationBean);
+        List<TimeRange> commonAvailabilityList = calculatePanelCommonAvailability(presentationBean);
+        presentationModel.setCommonAvailabilityList(commonAvailabilityList);
+        return presentationModel;
+    }
+
     private List<TimeRange> calculatePanelCommonAvailability(PresentationBean presentationBean) {
         List<TimeRange> commonAvailabilityList = new ArrayList<>();
         if (presentationBean.getPanelBeans() != null && presentationBean.getPanelBeans().size() > 0) {
-            List<UserBean> panels = presentationBean.getPanelBeans();
+            List<UserBean> panelsOrChairperson = presentationBean.getPanelBeans();
+            // add chairperson
+            if (presentationBean.getChairPersonBean() != null) {
+                panelsOrChairperson.add(presentationBean.getChairPersonBean());
+            }
             List<List<TimeRange>> availabilityListGroupByPanel = new ArrayList<>();
-            for (UserBean panel : panels) {
+            for (UserBean panel : panelsOrChairperson) {
+                List<TimeRange> availabilityList = new ArrayList<>();
                 if (panel.getAvailabilityBeans() != null && panel.getAvailabilityBeans().size() > 0) {
-                    List<TimeRange> availabilityList = new ArrayList<>();
                     for (AvailabilityBean availability : panel.getAvailabilityBeans()) {
                         if (DateTimeUtil.timeRangesAfterNow(availability.getStartTime(), availability.getEndTime())) {
                             availabilityList.add(availability.toTimeRange());
                         }
                     }
                     availabilityListGroupByPanel.add(availabilityList);
+                } else {
+                    return new ArrayList<>();
                 }
             }
             if (availabilityListGroupByPanel.size() == 0) {
@@ -172,7 +216,7 @@ public class PresentationServiceImpl implements PresentationService {
     @Override
     public List<PresentationModel> getPresentationListAsPanel() {
         CustomUserDetails authUser = this.authService.getAuthUserDetails();
-        List<PresentationPanelBean> presentationPanelBeans = this.panelRepo.findPresentationPanelBeansByPanelId(authUser.getId());
+        List<PresentationPanelBean> presentationPanelBeans = this.panelRepo.findPresentationPanelBeansByPanelIdOrderByIdDesc(authUser.getId());
         List<PresentationModel> presentationModelList = new ArrayList<>();
         if (presentationPanelBeans != null) {
             for (PresentationPanelBean presentationPanelBean : presentationPanelBeans) {
@@ -186,7 +230,21 @@ public class PresentationServiceImpl implements PresentationService {
     @Override
     public List<PresentationModel> getPresentationListAsSupervisor() {
         CustomUserDetails authUser = this.authService.getAuthUserDetails();
-        List<PresentationBean> presentationBeans = this.presentationRepo.findPresentationBeansBySupervisorId(authUser.getId());
+        List<PresentationBean> presentationBeans = this.presentationRepo.findPresentationBeansBySupervisorIdOrderByIdDesc(authUser.getId());
+        List<PresentationModel> presentationModelList = new ArrayList<>();
+        if (presentationBeans != null) {
+            for (PresentationBean presentationBean : presentationBeans) {
+                PresentationModel presentationModel = PresentationModel.build(presentationBean);
+                presentationModelList.add(presentationModel);
+            }
+        }
+        return presentationModelList;
+    }
+
+    @Override
+    public List<PresentationModel> getPresentationListAsChairperson() {
+        CustomUserDetails authUser = this.authService.getAuthUserDetails();
+        List<PresentationBean> presentationBeans = this.presentationRepo.findPresentationBeansByChairPersonIdOrderByIdDesc(authUser.getId());
         List<PresentationModel> presentationModelList = new ArrayList<>();
         if (presentationBeans != null) {
             for (PresentationBean presentationBean : presentationBeans) {
@@ -211,6 +269,16 @@ public class PresentationServiceImpl implements PresentationService {
             }
         }
         return presentationScheduleModels;
+    }
+
+    @Override
+    public SchedulerModel getAutoSchedulingResultScheduler(AutoSchedulingModel autoSchedulingModel) {
+        List<PresentationModel> occupiedPresentationSlots = this.getAllPresentationAfterNow();
+        List<PresentationModel> autoScheduledModel = this.autoScheduling(autoSchedulingModel);
+        SchedulerModel schedulerModel = new SchedulerModel();
+        schedulerModel.setUnAvailableTime(occupiedPresentationSlots);
+        schedulerModel.setPresentationToSchedule(autoScheduledModel);
+        return schedulerModel;
     }
 
     @Override
@@ -266,7 +334,20 @@ public class PresentationServiceImpl implements PresentationService {
                     presentationsToSchedule.add(presentation);
                 }
             }
-            this.geneticAlgorithmScheduling(presentationsToSchedule, autoSchedulingModel);
+            List<Presentation> autoScheduledPresentation = this.geneticAlgorithmScheduling(presentationsToSchedule, autoSchedulingModel);
+            List<PresentationModel> scheduledPresentationModels = new ArrayList<>();
+            if (autoScheduledPresentation != null) {
+                for (Presentation p : autoScheduledPresentation) {
+                    PresentationBean presentationBean = this.presentationRepo.getById(p.getId());
+                    PresentationModel scheduledPresentationModel = this.getPresentationModelWithCommonAvailability(presentationBean);
+                    scheduledPresentationModel.setStartTime(p.getStartTime());
+                    scheduledPresentationModel.setEndTime(p.getEndTime());
+                    scheduledPresentationModel.setRoomId(p.getRoom().getId());
+                    scheduledPresentationModel.setRoomName(p.getRoom().getName());
+                    scheduledPresentationModels.add(scheduledPresentationModel);
+                }
+            }
+            return scheduledPresentationModels;
         }
         return null;
     }
@@ -318,7 +399,7 @@ public class PresentationServiceImpl implements PresentationService {
         double previousFitness = 0;
         // stop when unable to generate for many time or feasible generated
         while (population.getScheduleList().get(0).getFitness().ofFeasibility() != 1.0
-                && unableToEvolveCounter < 50000) {
+                && unableToEvolveCounter < 1000) {
             population = geneticAlgorithm.evolve(population).shuffleAndSortByFitness();
             System.out.println("--------------------------------------------------------------------");
             System.out.println("Generation: " + ++generation);

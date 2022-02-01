@@ -14,12 +14,11 @@ import {
   View
 } from '@syncfusion/ej2-angular-schedule';
 import {Constant} from '../../../../../assets/constant/app.constant';
-import {SchedulerPresentationModel} from '../../../../model/presentation/presentation.model';
 import {RoomModel, SchedulerRoomPresentationSlotModel} from '../../../../model/room/RoomModel';
 import {RoomService} from '../../../../service/room.service';
-import {AppState} from '../../../../store/app/app.store';
 import {Store} from '@ngxs/store';
 import {ShowSnackBar} from '../../../../store/app/app.action';
+import {PresentationService} from '../../../../service/presentation.service';
 
 @Component({
   selector: 'app-scheduler',
@@ -29,6 +28,8 @@ import {ShowSnackBar} from '../../../../store/app/app.action';
 export class SchedulerComponent implements OnInit {
   @ViewChild('presentationSlotSchedulerObj') scheduleObj: ScheduleComponent;
   rowAutoHeight = true;
+  startHour = Constant.SCHEDULER_START_HOUR;
+  endHour = Constant.SCHEDULER_END_HOUR;
   currentView: View = 'TimelineDay';
   timeFormat = Constant.TIME_FORMAT;
   group: GroupModel = {
@@ -37,27 +38,44 @@ export class SchedulerComponent implements OnInit {
   };
   allowMultiple = true;
   eventSettings: EventSettingsModel;
-  scheduledPresentations: SchedulerPresentationModel[] = [];
   resourceDataSource: RoomModel[];
 
-  constructor(private roomService: RoomService, private store: Store) {
+  constructor(private roomService: RoomService, private store: Store, private presentationService: PresentationService) {
   }
 
   ngOnInit(): void {
+    this.eventSettings = {
+      fields: {
+        id: 'schedulerId',
+        subject: {name: 'subject'},
+        startTime: {name: 'startTime', title: 'From'},
+        endTime: {name: 'endTime', title: 'To'}
+      },
+      enableTooltip: true
+    };
+    this.eventSettings.dataSource = [];
     this.roomService.getAllRooms().subscribe(res => {
       if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
         console.log(res.data);
         this.resourceDataSource = res.data;
-        this.eventSettings = {
-          fields: {
-            id: 'schedulerId',
-            subject: {name: 'subject'},
-            startTime: {name: 'startTime', title: 'From'},
-            endTime: {name: 'endTime', title: 'To'}
-          },
-          enableTooltip: true
-        };
-        this.eventSettings.dataSource = [];
+      }
+    });
+    this.presentationService.getAllPresentationsAfterNow().subscribe(res => {
+      if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
+        res.data.forEach((presentationData, index) => {
+          if (presentationData.roomName !== 'Online') {
+            const blockedSlot: SchedulerRoomPresentationSlotModel = new SchedulerRoomPresentationSlotModel();
+            blockedSlot.startTime = presentationData.startTime;
+            blockedSlot.endTime = presentationData.endTime;
+            blockedSlot.roomId = presentationData.roomId;
+            blockedSlot.roomName = presentationData.roomName;
+            blockedSlot.subject = 'Unavailable';
+            blockedSlot.isBlock = true;
+            blockedSlot.titleOfScheduleBlock = presentationData.scheduleModel.title;
+            this.addToScheduler(blockedSlot);
+          }
+
+        });
       }
     });
   }
@@ -85,12 +103,26 @@ export class SchedulerComponent implements OnInit {
   }
 
   onEventRendered(args: EventRenderedArgs): void {
+    if (args.data.isBlock) {
+      args.element.style.backgroundColor = '#616161';
+      return;
+    }
     args.element.style.backgroundColor = Constant.SCHEDULER_COLOR_1;
   }
 
   onSchedulerDragStart(args: DragEventArgs): void {
     args.interval = 5;
     args.navigation.enable = true;
+    let eventData: any = null;
+    if (args.data && args.data[0]) {
+      eventData = args.data[0];
+    } else if (args.data) {
+      eventData = args.data;
+    }
+    if (eventData && eventData.isBlock) {
+      args.cancel = true;
+      return;
+    }
   }
 
   onSchedulerDragStop(args: DragEventArgs): void {
@@ -98,28 +130,30 @@ export class SchedulerComponent implements OnInit {
 
   onResizeStart(args: ResizeEventArgs): void {
     args.interval = 5;
+    let eventData: any = null;
+    if (args.data && args.data[0]) {
+      eventData = args.data[0];
+    } else if (args.data) {
+      eventData = args.data;
+    }
+    if (eventData && eventData.isBlock) {
+      args.cancel = true;
+      return;
+    }
   }
 
   onResizeStop(args: ResizeEventArgs): void {
-    // const start = args.data.startTime;
-    // const end = args.data.endTime;
-    // (this.eventSettings.dataSource as SchedulerRoomPresentationSlotModel[]).forEach(slot => {
-    //   if (slot.startTime.valueOf() === end.valueOf() || (end.valueOf() > slot.startTime && end.valueOf() < slot.endTime)) {
-    //     end = slot.endTime;
-    //   }
-    // });
-    console.log(args);
   }
 
   disablePopupOpen(args): void {
     args.cancel = true;
   }
 
-  onCellClick(args: CellClickEventArgs): void {
-    args.cancel = true;
-  }
-
   onEventClick(args: EventClickArgs): void {
+    console.log(args);
+    if ((args.event as SchedulerRoomPresentationSlotModel).isBlock) {
+      args.cancel = true;
+    }
   }
 
   deleteSelectedEvent(): void {
@@ -130,9 +164,10 @@ export class SchedulerComponent implements OnInit {
   }
 
   public onActionBegin(args: ActionEventArgs): void {
+    console.log(args);
     if (
       (args.requestType === 'eventCreate' ||
-      args.requestType === 'eventChange')
+        args.requestType === 'eventChange')
     ) {
       const eventData: any = args.data[0]
         ? args.data[0]
