@@ -3,7 +3,6 @@ export class CriterionModel {
   evaluationFormId: number;
   name: string;
   weightage: number;
-  scale: number;
   position: number;
   comment:string;
 }

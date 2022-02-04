@@ -109,16 +109,20 @@ export class GoogleIntegrationComponent implements OnInit {
     });
   }
 
-  syncPresentations(id: number): void {
+  syncPresentations(presentation: PresentationModel): void {
+    if (!presentation.startTime) {
+      this.store.dispatch(new ShowSnackBar('Unable to sync presentation. Please schedule the presentation time before syncing.'));
+      return;
+    }
     const loadingRef = this.loadingUtil.openLoadingDialog('Syncing presentation...');
-    this.presentationService.syncPresentationWithGoogleCalendar(id).subscribe(res => {
+    this.presentationService.syncPresentationWithGoogleCalendar(presentation.id).subscribe(res => {
       if (res.data && res.status === Constant.RESPONSE_SUCCESS) {
         loadingRef.close();
         this.store.dispatch(new ShowSnackBar('Successfully sync presentation'));
         this.ngOnInit();
       } else {
         loadingRef.close();
-        this.store.dispatch(new ShowSnackBar('Failed to sync presentation'));
+        this.store.dispatch(new ShowSnackBar('Failed to sync presentation. Please check if attendees email are valid.'));
       }
     });
   }

@@ -14,7 +14,7 @@ export class Constant {
 
   // scheduler
   public static readonly SCHEDULER_START_HOUR = '08:00';
-  public static readonly SCHEDULER_END_HOUR = '18:00';
+  public static readonly SCHEDULER_END_HOUR = '22:00';
 
   // date
   public static readonly TIME_FORMAT = 'dd MMM yyyy hh:mm a';

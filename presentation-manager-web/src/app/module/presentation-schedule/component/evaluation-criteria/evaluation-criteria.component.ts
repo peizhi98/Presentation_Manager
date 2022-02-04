@@ -19,6 +19,7 @@ import {ScheduleType} from '../../../../model/schedule/schedule.model';
   styleUrls: ['./evaluation-criteria.component.css']
 })
 export class EvaluationCriteriaComponent implements OnInit {
+  constant = Constant;
   displayedColumns: string[] = ['position', 'criteria', 'weightage', 'max', 'delete'];
   @ViewChild(MatTable) table: MatTable<CriterionModel>;
   @Input() scheduleId: number;
@@ -171,7 +172,7 @@ export class EvaluationCriteriaComponent implements OnInit {
     return EvaluationType;
   }
 
-  getTitle(evaluationType:EvaluationType): string {
+  getTitle(evaluationType: EvaluationType): string {
     switch (evaluationType) {
       case EvaluationType.PRESENTATION:
         return 'VIVA Assessment Form';

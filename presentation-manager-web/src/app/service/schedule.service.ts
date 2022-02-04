@@ -12,21 +12,30 @@ import {AuthService} from './auth.service';
 export class ScheduleService {
 
   private serverUrl = Constant.SERVER_URL;
-  private presentationUrl = '/schedule/';
+  private scheduleUrl = '/schedule/';
 
   constructor(private http: HttpClient, private userService: AuthService) {
   }
 
   addOrEditSchedule(scheduleModel: ScheduleModel): Observable<ResponseModel<ScheduleModel>> {
-    return this.http.post<ResponseModel<ScheduleModel>>(this.serverUrl + this.presentationUrl + 'add-edit', scheduleModel);
+    return this.http.post<ResponseModel<ScheduleModel>>(this.serverUrl + this.scheduleUrl + 'add-edit', scheduleModel);
   }
 
   getSchedules(): Observable<ResponseModel<ScheduleModel[]>> {
-    return this.http.get<ResponseModel<ScheduleModel[]>>(this.serverUrl + this.presentationUrl + 'get-schedules');
+    return this.http.get<ResponseModel<ScheduleModel[]>>(this.serverUrl + this.scheduleUrl + 'get-schedules');
+  }
+
+  getMasterSchedules(): Observable<ResponseModel<ScheduleModel[]>> {
+    return this.http.get<ResponseModel<ScheduleModel[]>>(this.serverUrl + this.scheduleUrl + 'get-master');
   }
 
   getSchedule(id: number): Observable<ResponseModel<ScheduleModel>> {
     const params = new HttpParams().set('id', id.toString());
-    return this.http.get<ResponseModel<ScheduleModel>>(this.serverUrl + this.presentationUrl + 'get-schedule', {params});
+    return this.http.get<ResponseModel<ScheduleModel>>(this.serverUrl + this.scheduleUrl + 'get-schedule', {params});
+  }
+
+  deleteSchedule(id: number): Observable<ResponseModel<boolean>> {
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.delete<ResponseModel<boolean>>(this.serverUrl + this.scheduleUrl + 'delete-schedule', {params});
   }
 }

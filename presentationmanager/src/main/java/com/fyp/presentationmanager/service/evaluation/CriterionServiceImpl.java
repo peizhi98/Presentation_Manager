@@ -32,7 +32,7 @@ public class CriterionServiceImpl implements CriterionService {
                 criterionBean.setPosition(currentIndex++);
                 criterionBean.setName(criterionModel.getName());
                 criterionBean.setWeightage(criterionModel.getWeightage());
-                criterionBean.setScale(criterionModel.getScale());
+//                criterionBean.setScale(criterionModel.getScale());
                 criterionBeans.add(criterionBean);
             }
         }

@@ -17,6 +17,7 @@ import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.Room;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.ScheduleData;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.TimeRange;
 import com.fyp.presentationmanager.repo.PanelRepo;
+import com.fyp.presentationmanager.repo.PresentationPanelRepo;
 import com.fyp.presentationmanager.repo.PresentationRepo;
 import com.fyp.presentationmanager.repo.ScheduleRepo;
 import com.fyp.presentationmanager.service.auth.AuthService;
@@ -36,6 +37,8 @@ import java.util.List;
 public class PresentationServiceImpl implements PresentationService {
     @Autowired
     private PresentationRepo presentationRepo;
+    @Autowired
+    private PresentationPanelRepo presentationPanelRepo;
     @Autowired
     private ScheduleRepo scheduleRepo;
     @Autowired
@@ -78,6 +81,72 @@ public class PresentationServiceImpl implements PresentationService {
         }
 
         return presentationModelList;
+    }
+
+    @Override
+    public PresentationModel editPresentation(PresentationModel presentationModel) {
+        PresentationBean presentationBean = this.presentationRepo.getById(presentationModel.getId());
+        if (presentationBean == null) {
+            throw new RuntimeException("Presentation editing does not exist.");
+        }
+        presentationBean.setTitle(presentationModel.getTitle());
+        presentationBean.setStudentName(presentationModel.getStudentName());
+        presentationBean.setStudentEmail(presentationModel.getStudentEmail());
+        presentationBean.setStudentMatrixNo(presentationModel.getStudentMatrixNo());
+        UserBean sv =
+                this.userService.getUserByEmail(presentationModel.getSupervisorModel().getEmail());
+        UserBean chairperson =
+                this.userService.getUserByEmail(presentationModel.getChairperson().getEmail());
+        presentationBean.setSupervisorId(sv.getId());
+        if (sv != null) {
+            presentationBean.setSupervisorId(sv.getId());
+        }
+        if (chairperson != null) {
+            presentationBean.setChairPersonId(chairperson.getId());
+        }
+
+
+        List<PresentationPanelBean> existingPresentationPanelBeans = presentationBean.getPresentationPanelBeans();
+        List<PanelModel> updatedPanelList = presentationModel.getPanelModels();
+        if (updatedPanelList != null) {
+            if (existingPresentationPanelBeans != null) {
+                compareAndDeleteFromExisting(existingPresentationPanelBeans, updatedPanelList);
+            }
+            for (PanelModel pModel : updatedPanelList) {
+                if (pModel.getEmail() != null && !presentationBean.hasPanelWithUsername(pModel.getEmail())) {
+                    PresentationPanelBean presentationPanelBean = new PresentationPanelBean();
+                    UserBean panel
+                            = this.userService.getUserByEmail(pModel.getEmail());
+                    presentationPanelBean.setPanelId(panel.getId());
+                    presentationPanelBean.setPresentationId(presentationBean.getId());
+                    this.panelRepo.save(presentationPanelBean);
+                }
+            }
+        }
+        return presentationModel;
+    }
+
+    private void compareAndDeleteFromExisting(List<PresentationPanelBean> presentationPanelBeans, List<PanelModel> panelModelList) {
+        if (presentationPanelBeans != null) {
+            List<PresentationPanelBean> presentationPanelsCopy = new ArrayList<>(presentationPanelBeans);
+            for (PresentationPanelBean pp : presentationPanelsCopy) {
+                if (!findBeanFromModelsByUsername(pp, panelModelList)) {
+                    presentationPanelBeans.remove(presentationPanelBeans.indexOf(pp));
+                    this.presentationPanelRepo.deleteById(pp.getId());
+                }
+            }
+        }
+
+    }
+
+    private boolean findBeanFromModelsByUsername(PresentationPanelBean presentationPanelBean, List<PanelModel> panelModelList) {
+        if (panelModelList != null) {
+            for (PanelModel p : panelModelList) {
+                if (presentationPanelBean.getPanelBean().getEmail() == p.getEmail())
+                    return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -504,5 +573,16 @@ public class PresentationServiceImpl implements PresentationService {
             }
         }
         return presentationModel;
+    }
+
+    @Override
+    public Boolean deletePresentation(Integer id) {
+        try {
+            this.presentationRepo.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

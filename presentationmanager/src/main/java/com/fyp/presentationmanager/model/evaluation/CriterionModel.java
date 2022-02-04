@@ -15,7 +15,7 @@ public class CriterionModel {
     private Integer evaluationFormId;
     private String name;
     private Integer weightage;
-    private Integer scale;
+//    private Integer scale;
     private Integer position;
 
     public static CriterionModel build(CriterionBean criterionBean) {
@@ -24,7 +24,7 @@ public class CriterionModel {
             criterionModel.setId(criterionBean.getId());
             criterionModel.setPosition(criterionBean.getPosition());
             criterionModel.setName(criterionBean.getName());
-            criterionModel.setScale(criterionBean.getScale());
+//            criterionModel.setScale(criterionBean.getScale());
             criterionModel.setWeightage(criterionBean.getWeightage());
         }
         return criterionModel;

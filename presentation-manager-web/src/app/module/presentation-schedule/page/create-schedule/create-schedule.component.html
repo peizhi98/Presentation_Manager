@@ -11,7 +11,7 @@
         <div>
           <!--          <h4>Title:</h4>-->
           <mat-form-field class="w-50" appearance="fill">
-            <mat-label>Presentation schedule title</mat-label>
+            <mat-label>Schedule title</mat-label>
             <input matInput [(ngModel)]="scheduleModel.title">
           </mat-form-field>
         </div>
@@ -39,7 +39,7 @@
             <mat-label>Schedule Type</mat-label>
             <mat-select [(ngModel)]="scheduleModel.scheduleType" name="Schedule Type">
               <mat-option [value]="ScheduleType.FYP">FYP</mat-option>
-              <mat-option [value]="ScheduleType.MASTER_DISSERTATION">Master</mat-option>
+              <mat-option [value]="ScheduleType.MASTER_DISSERTATION">Master Dissertation</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

@@ -1,5 +1,6 @@
 package com.fyp.presentationmanager.entity;
 
+import com.fyp.presentationmanager.enums.EvaluationType;
 import com.fyp.presentationmanager.enums.PresentationMode;
 import com.fyp.presentationmanager.model.presentation.PresentationModel;
 
@@ -60,12 +61,6 @@ public class PresentationBean implements Serializable {
     @Column(name = TITLE)
     private String title;
 
-    @Column(name = MARK)
-    private Integer mark;
-
-    @Column(name = RESULT_STATUS)
-    private Integer resultStatus;
-
     @Column(name = START_TIME)
     private Date startTime;
 
@@ -116,6 +111,9 @@ public class PresentationBean implements Serializable {
     @OneToMany(mappedBy = "presentationBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PresentationPanelBean> presentationPanelBeans;
 
+    @OneToMany(mappedBy = "presentationBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EvaluationBean> evaluationBeans;
+
     public PresentationBean() {
     }
 
@@ -158,22 +156,6 @@ public class PresentationBean implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Integer getMark() {
-        return mark;
-    }
-
-    public void setMark(Integer mark) {
-        this.mark = mark;
-    }
-
-    public Integer getResultStatus() {
-        return resultStatus;
-    }
-
-    public void setResultStatus(Integer resultStatus) {
-        this.resultStatus = resultStatus;
     }
 
     public Date getStartTime() {
@@ -342,10 +324,66 @@ public class PresentationBean implements Serializable {
         this.calendarHtmlLink = calendarHtmlLink;
     }
 
+
+    public List<EvaluationBean> getEvaluationBeans() {
+        return evaluationBeans;
+    }
+
+    public void setEvaluationBeans(List<EvaluationBean> evaluationBeans) {
+        this.evaluationBeans = evaluationBeans;
+    }
+
+    public boolean isSupervisorId(Integer userId) {
+        if (supervisorId.equals(userId)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isChairpersonId(Integer userId) {
+        if (chairPersonId.equals(userId)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isPanelId(Integer userId) {
+        if (getPanelBeans() != null) {
+            for (UserBean panel : getPanelBeans()) {
+                if (panel.getId().equals(userId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean containIn(List<PresentationModel> presentationModels) {
         if (presentationModels != null) {
             for (PresentationModel presentationModel : presentationModels) {
                 if (presentationModel.getId().equals(this.id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isConfirmed() {
+        if (this.getEvaluationBeans() != null) {
+            for (EvaluationBean e : this.getEvaluationBeans()) {
+                if (e.getEvaluationFormBean().getEvaluationType().equals(EvaluationType.CONFIRMATION)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hasPanelWithUsername(String email) {
+        if (this.getPresentationPanelBeans() != null) {
+            for (PresentationPanelBean pp : this.getPresentationPanelBeans()) {
+                if (pp.getPanelBean().getEmail().equals(email)) {
                     return true;
                 }
             }

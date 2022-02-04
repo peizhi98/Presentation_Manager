@@ -23,10 +23,14 @@ export class EvaluationService {
   }
 
   getAuthUserEvaluation(evaluationType: EvaluationType, presentationId: number): Observable<ResponseModel<EvaluationModel>> {
-    console.log(evaluationType);
-    console.log(presentationId);
     const params = new HttpParams().set('evaluationType', evaluationType.toString()).set('presentationId', presentationId.toString());
     return this.http
       .get<ResponseModel<EvaluationModel>>(this.serverUrl + this.evaluationUrl + 'get-auth-evaluation', {params});
+  }
+
+  getEvaluationsOfType(evaluationType: EvaluationType, presentationId: number): Observable<ResponseModel<EvaluationModel[]>> {
+    const params = new HttpParams().set('evaluationType', evaluationType.toString()).set('presentationId', presentationId.toString());
+    return this.http
+      .get<ResponseModel<EvaluationModel[]>>(this.serverUrl + this.evaluationUrl + 'get-evaluations-of-type', {params});
   }
 }

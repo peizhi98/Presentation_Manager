@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {FypEvaluationOverviewModel, FypPresentationEvaluationOverviewModel} from '../../../../model/evaluation/evaluation-report';
-import {Select} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
 import {Observable} from 'rxjs';
 import {EvaluationReportService} from '../../../../service/evaluation-report.service';
@@ -11,6 +11,10 @@ import {MatSort} from '@angular/material/sort';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {ChartDataSets} from 'chart.js';
 import {BaseChartDirective, Color, Label} from 'ng2-charts';
+import {ShowSnackBar} from '../../../../store/app/app.action';
+import * as XLSX from 'xlsx';
+import {PresentationModel} from '../../../../model/presentation/presentation.model';
+import {PresentationState} from '../../../../store/presentation/presentation.store';
 
 
 @Component({
@@ -24,7 +28,7 @@ export class EvaluationReportFypComponent implements OnInit {
   fypEvaluationOverviewModel: FypEvaluationOverviewModel;
   presentationEvaluations: FypPresentationEvaluationOverviewModel[] = [];
   // table
-  displayedColumns: string[] = ['number', 'studentName', 'title', 'reportScore', 'presentationScore', 'total'];
+  displayedColumns: string[] = ['studentName', 'matrix', 'numOfPanels', 'evaluatedPanels', 'highest', 'lowest', 'diff', 'presentationScore', 'reportScore', 'total', 'percent'];
   dataSource: MatTableDataSource<FypPresentationEvaluationOverviewModel> = new MatTableDataSource<FypPresentationEvaluationOverviewModel>();
 
   @ViewChild(MatPaginator, {static: false}) set paginator(matPaginator: MatPaginator) {
@@ -84,7 +88,7 @@ export class EvaluationReportFypComponent implements OnInit {
   @Select(ScheduleState.getScheduleId)
   scheduleId$: Observable<number>;
 
-  constructor(private evaluationReportService: EvaluationReportService, private loadingUtil: LoadingDialogUtil) {
+  constructor(private evaluationReportService: EvaluationReportService, private loadingUtil: LoadingDialogUtil, private store: Store) {
   }
 
   ngOnInit(): void {
@@ -120,8 +124,11 @@ export class EvaluationReportFypComponent implements OnInit {
             // this.chart.update();
             console.log(this.chartData);
             console.log(this.chartLabels);
-            loadingRef.close();
+
+          } else {
+            this.store.dispatch(new ShowSnackBar('Failed to generate evaluation report.'));
           }
+          loadingRef.close();
         });
       }
     });
@@ -148,17 +155,27 @@ export class EvaluationReportFypComponent implements OnInit {
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case this.displayedColumns[0]:
-          return this.dataSource.data.indexOf(item);
-        case this.displayedColumns[1]:
           return item.studentName;
+        case this.displayedColumns[1]:
+          return item.matrix;
         case this.displayedColumns[2]:
-          return item.title;
+          return item.numberOfPanels;
         case this.displayedColumns[3]:
-          return item.reportScore;
+          return item.numberOfPanelsEvaluated;
         case this.displayedColumns[4]:
-          return item.presentationScore;
+          return item.highestEvaluationGivenByPanel;
         case this.displayedColumns[5]:
+          return item.lowestEvaluationGivenByPanel;
+        case this.displayedColumns[6]:
+          return item.maxDifferenceInEvaluation;
+        case this.displayedColumns[7]:
+          return item.presentationScore;
+        case this.displayedColumns[8]:
+          return item.reportScore;
+        case this.displayedColumns[9]:
           return item.total;
+        case this.displayedColumns[10]:
+          return item.totalInPercent;
         default:
           return item[property];
       }
@@ -174,6 +191,9 @@ export class EvaluationReportFypComponent implements OnInit {
   }
 
   scoreDisplay(score: any): any {
+    if (score === 0) {
+      return 0;
+    }
     return (score) ? score : '-';
   }
 
@@ -204,5 +224,21 @@ export class EvaluationReportFypComponent implements OnInit {
 
   isChartView(): boolean {
     return this.selectedView === 'chart';
+  }
+
+  exportexcel(): void {
+    /* pass here the table id */
+    const element = document.getElementById('excel-table');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    const p: PresentationModel = this.store.selectSnapshot(PresentationState.getPresentationModel);
+    const fileName = this.store.selectSnapshot(ScheduleState.getScheduleTitle) + ' Evaluation Report';
+    console.log(fileName);
+    /* save to file */
+    XLSX.writeFile(wb, fileName + '.xlsx');
+
   }
 }

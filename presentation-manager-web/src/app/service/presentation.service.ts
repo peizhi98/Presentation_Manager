@@ -22,6 +22,11 @@ export class PresentationService {
       .post<ResponseModel<PresentationModel[]>>(this.serverUrl + this.presentationUrl + 'add-presentation-list', presentationList);
   }
 
+  editPresentation(presentation: PresentationModel): Observable<ResponseModel<PresentationModel>> {
+    return this.http
+      .post<ResponseModel<PresentationModel>>(this.serverUrl + this.presentationUrl + 'edit-presentation', presentation);
+  }
+
   getPresentation(id: number): Observable<ResponseModel<PresentationModel>> {
     const params = new HttpParams().set('id', id.toString());
     return this.http
@@ -86,5 +91,11 @@ export class PresentationService {
     const params = new HttpParams().set('presentationId', presentationId.toString());
     return this.http
       .get<ResponseModel<PresentationModel>>(this.serverUrl + this.presentationUrl + 'sync-google-calendar', {params});
+  }
+
+  deletePresentation(presentationId: number): Observable<ResponseModel<boolean>> {
+    const params = new HttpParams().set('presentationId', presentationId.toString());
+    return this.http
+      .delete<ResponseModel<boolean>>(this.serverUrl + this.presentationUrl + 'delete', {params});
   }
 }

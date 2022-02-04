@@ -164,13 +164,12 @@ public class GoogleAPIServiceImpl implements GoogleAPIService {
             Event event;
             if (presentationModel.getCalendarId() != null) {
                 event = service.events().get("primary", presentationModel.getCalendarId()).execute();
-                event.setLocation(location);
             } else {
-                event = new Event()
-                        .setSummary(scheduleTitle)
-                        .setLocation(location);
+                event = new Event();
             }
-
+            event.setLocation(location);
+            event.setSummary(scheduleTitle + " (" + presentationModel.getTitle() + ")");
+            event.setDescription("Student Name: " + presentationModel.getStudentName());
 
             DateTime startDateTime = new DateTime(presentationModel.getStartTime().getTime());
             EventDateTime start = new EventDateTime()

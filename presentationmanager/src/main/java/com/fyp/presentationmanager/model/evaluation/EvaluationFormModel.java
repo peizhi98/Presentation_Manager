@@ -19,8 +19,7 @@ public class EvaluationFormModel {
     private Integer id;
     private Integer scheduleId;
     private EvaluationType evaluationType;
-    private Integer maxGap;
-    private Integer rubricUrl;
+    private String rubricUrl;
     private List<CriterionModel> criterionModels;
 
     public static EvaluationFormModel build(EvaluationFormBean evaluationFormBean) {
@@ -29,7 +28,6 @@ public class EvaluationFormModel {
             evaluationFormModel.setId(evaluationFormBean.getId());
             evaluationFormModel.setEvaluationType(evaluationFormBean.getEvaluationType());
             evaluationFormModel.setScheduleId(evaluationFormBean.getScheduleId());
-            evaluationFormModel.setMaxGap(evaluationFormBean.getMaxGap());
             evaluationFormModel.setRubricUrl(evaluationFormBean.getRubricUrl());
             List<CriterionModel> criterionModels = new ArrayList<>();
             if (evaluationFormBean.getCriterionBeans() != null) {
@@ -48,7 +46,6 @@ public class EvaluationFormModel {
             confirmationFormModel.setId(confirmationForm.getId());
             confirmationFormModel.setEvaluationType(confirmationForm.getEvaluationType());
             confirmationFormModel.setScheduleId(confirmationForm.getScheduleId());
-            confirmationFormModel.setMaxGap(confirmationForm.getMaxGap());
             confirmationFormModel.setRubricUrl(confirmationForm.getRubricUrl());
             List<CriterionModel> criterionModels = new ArrayList<>();
             if (evaluationFormBean.getCriterionBeans() != null) {

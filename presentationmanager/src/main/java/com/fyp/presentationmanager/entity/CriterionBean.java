@@ -29,15 +29,15 @@ public class CriterionBean implements Serializable {
     @Column(name = WEIGHTAGE)
     private Integer weightage;
 
-    @Column(name = SCALE)
-    private Integer scale;
-
     @Column(name = POSITION)
     private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = EVALUATION_FORM_ID, referencedColumnName = EvaluationFormBean.ID, insertable = false, updatable = false)
     private EvaluationFormBean evaluationFormBean;
+
+    @OneToMany(mappedBy = "criterionBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<CriterionEvaluationBean> criterionEvaluationBeans;
 
     public CriterionBean() {
     }
@@ -72,14 +72,6 @@ public class CriterionBean implements Serializable {
 
     public void setWeightage(Integer weightage) {
         this.weightage = weightage;
-    }
-
-    public Integer getScale() {
-        return scale;
-    }
-
-    public void setScale(Integer scale) {
-        this.scale = scale;
     }
 
     public Integer getPosition() {

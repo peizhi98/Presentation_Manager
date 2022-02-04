@@ -1,1 +1,4 @@
-<app-evaluation-report-fyp></app-evaluation-report-fyp>
+<ng-container *ngIf="scheduleType">
+  <app-evaluation-report-fyp *ngIf="isFyp()"></app-evaluation-report-fyp>
+  <app-evaluation-report-master *ngIf="isMaster()"></app-evaluation-report-master>
+</ng-container>

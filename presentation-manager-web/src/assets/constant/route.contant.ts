@@ -26,6 +26,9 @@ export class RouteConstant {
   public static readonly EVALUATE_ROUTE = RouteConstant.PRESENTATION_ROUTE + '/' + RouteConstant.EVALUATE;
   public static readonly FORM = ':form';
   public static readonly FORM_ROUTE = RouteConstant.EVALUATE_ROUTE + '/' + RouteConstant.FORM;
+  public static readonly REPORT = 'report';
+  public static readonly REPORT_ROUTE = RouteConstant.PRESENTATION_ROUTE + '/' + RouteConstant.REPORT;
+
   public static readonly ADD_PRESENTATION = 'add';
   public static readonly ADD_PRESENTATION_ROUTE = RouteConstant.PRESENTATION_VIEW_ROUTE + '/' + RouteConstant.ADD_PRESENTATION;
 

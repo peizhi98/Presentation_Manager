@@ -2,12 +2,16 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ScheduleService} from '../../../../service/schedule.service';
 import {Store} from '@ngxs/store';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ScheduleModel} from '../../../../model/schedule/schedule.model';
+import {ScheduleModel, ScheduleType} from '../../../../model/schedule/schedule.model';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
 import {SetCurrentSchedule} from '../../../../store/schedule/schedule.action';
-import {AuthState} from '../../../../store/auth/auth.store';
 import {Subscription} from 'rxjs';
+import {ConfirmationDialogComponent} from '../../../../component/confirmation-dialog/confirmation-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {ShowSnackBar} from '../../../../store/app/app.action';
+import {EditScheduleDialogComponent} from '../../component/edit-schedule-dialog/edit-schedule-dialog.component';
+import {SystemRole} from '../../../../model/user/user.model';
 
 @Component({
   selector: 'app-schedule',
@@ -22,10 +26,15 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   contentTitle = '';
   scheduleId: number;
   constant = Constant;
+  routeConstant = RouteConstant;
   subs: Subscription[] = [];
+  permissionsToNavbar = [];
 
   constructor(private scheduleService: ScheduleService,
-              private activatedRoute: ActivatedRoute, private store: Store, private router: Router) {
+              private activatedRoute: ActivatedRoute,
+              private store: Store,
+              private router: Router,
+              private dialog: MatDialog) {
     this.navLinks = [
       {
         label: 'Presentation',
@@ -68,6 +77,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     this.subs.forEach(s => {
       s.unsubscribe();
     });
+
   }
 
   ngOnInit(): void {
@@ -83,11 +93,49 @@ export class ScheduleComponent implements OnInit, OnDestroy {
             this.scheduleModel = resp.data;
             console.log(this.scheduleModel.title);
             this.store.dispatch(new SetCurrentSchedule(this.scheduleId, resp.data.coordinator, this.scheduleModel.scheduleType, this.scheduleModel.title));
+            if (this.scheduleModel.scheduleType === ScheduleType.MASTER_DISSERTATION) {
+              this.permissionsToNavbar = [Constant.ROLE_SCHEDULE_COORDINATOR, SystemRole.OFFICE];
+            } else {
+              this.permissionsToNavbar = [Constant.ROLE_SCHEDULE_COORDINATOR];
+            }
             this.loading = false;
           }
         });
       }
     }));
+  }
+
+  deleteScheduleConfirmation(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: 'Are you sure to delete this schedule? ',
+    });
+    dialogRef.afterClosed().subscribe(confirm => {
+      if (confirm) {
+        this.scheduleService.deleteSchedule(this.scheduleModel.id).subscribe(resp => {
+          if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
+            this.router.navigate(['../'], {relativeTo: this.activatedRoute});
+            this.store.dispatch(new ShowSnackBar('Successfully deleted schedule.'));
+          } else {
+            this.store.dispatch(new ShowSnackBar('Failed to delete schedule.'));
+          }
+        });
+      }
+    });
+  }
+
+  showEditDialog(): void {
+    const dialogRef = this.dialog.open(EditScheduleDialogComponent, {
+      data: this.scheduleModel,
+    });
+    dialogRef.afterClosed().subscribe(reload => {
+      if (reload) {
+        this.ngOnInit();
+      }
+    });
+  }
+
+  get SystemRole() {
+    return SystemRole;
   }
 
 }

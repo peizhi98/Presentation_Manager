@@ -31,10 +31,7 @@ public class EvaluationFormBean implements Serializable {
     private EvaluationType evaluationType;
 
     @Column(name = RUBRIC_URL)
-    private Integer rubricUrl;
-
-    @Column(name = MAX_GAP)
-    private Integer maxGap;
+    private String rubricUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = SCHEDULE_ID, referencedColumnName = ScheduleBean.ID, insertable = false, updatable = false)
@@ -42,6 +39,9 @@ public class EvaluationFormBean implements Serializable {
 
     @OneToMany(mappedBy = "evaluationFormBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CriterionBean> criterionBeans;
+
+    @OneToMany(mappedBy = "evaluationFormBean", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EvaluationBean> evaluationBeans;
 
     public EvaluationFormBean() {
     }
@@ -70,11 +70,11 @@ public class EvaluationFormBean implements Serializable {
         this.evaluationType = evaluationType;
     }
 
-    public Integer getRubricUrl() {
+    public String getRubricUrl() {
         return rubricUrl;
     }
 
-    public void setRubricUrl(Integer rubricUrl) {
+    public void setRubricUrl(String rubricUrl) {
         this.rubricUrl = rubricUrl;
     }
 
@@ -86,12 +86,12 @@ public class EvaluationFormBean implements Serializable {
         this.scheduleBean = scheduleBean;
     }
 
-    public Integer getMaxGap() {
-        return maxGap;
+    public List<EvaluationBean> getEvaluationBeans() {
+        return evaluationBeans;
     }
 
-    public void setMaxGap(Integer maxGap) {
-        this.maxGap = maxGap;
+    public void setEvaluationBeans(List<EvaluationBean> evaluationBeans) {
+        this.evaluationBeans = evaluationBeans;
     }
 
     public List<CriterionBean> getCriterionBeans() {

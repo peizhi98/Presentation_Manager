@@ -99,6 +99,7 @@ public class UserServiceImpl implements UserService {
         UserBean userBean = this.userRepo.getById(userModel.getId());
         if (userBean != null) {
             userBean.setName(userModel.getName());
+            userBean.setEmail(userModel.getEmail());
             if (userModel.getSystemRoles() != null) {
                 List<SystemRole> updatedRoles = userModel.getSystemRoles();
                 List<UserRoleBean> existingRoleBeans = userBean.getUserRoleBeans();

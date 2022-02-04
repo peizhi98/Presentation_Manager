@@ -25,15 +25,12 @@ public class EvaluationFormServiceImpl implements EvaluationFormService {
         }
         evaluationFormBean.setEvaluationType(evaluationFormModel.getEvaluationType());
         evaluationFormBean.setScheduleId(evaluationFormModel.getScheduleId());
-        evaluationFormBean.setMaxGap(evaluationFormModel.getMaxGap());
-        evaluationFormBean.setRubricUrl(evaluationFormModel.getScheduleId());
+        evaluationFormBean.setRubricUrl(evaluationFormModel.getRubricUrl());
         evaluationFormRepo.save(evaluationFormBean);
         if (evaluationFormModel.getCriterionModels() != null) {
             criterionService
                     .addOrEditCriterionModelList(evaluationFormModel.getCriterionModels(), evaluationFormBean.getId());
         }
-
-
         return evaluationFormModel;
     }
 

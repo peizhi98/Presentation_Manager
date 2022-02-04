@@ -7,3 +7,7 @@
   display: flex;
   align-items: center;
 }
+.mat-row:hover {
+  background-color: #E8EAF6;
+  cursor: pointer;
+}

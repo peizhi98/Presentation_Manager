@@ -24,13 +24,17 @@ import {UserRoleState} from './store/user-role/user-role.store';
 import {DecimalPipe} from '@angular/common';
 import {ChartsModule} from 'ng2-charts';
 import {HttpCancelInterceptor} from './util/http-cancel.interceptor';
+import { ConfirmationDialogComponent } from './component/confirmation-dialog/confirmation-dialog.component';
+import { MarkingSchemeDialogComponent } from './component/marking-scheme-dialog/marking-scheme-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoadingDialogComponent,
     NotFoundComponent,
-    UnauthorizedComponent
+    UnauthorizedComponent,
+    ConfirmationDialogComponent,
+    MarkingSchemeDialogComponent
   ],
   imports: [
     SharedModule,

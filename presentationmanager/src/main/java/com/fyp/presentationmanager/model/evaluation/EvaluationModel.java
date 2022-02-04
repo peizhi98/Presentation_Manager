@@ -19,6 +19,7 @@ public class EvaluationModel {
     private Integer evaluatorId;
     private String comment;
     private Integer rating;
+    private String rubricUrl;
     private List<CriterionEvaluationModel> criterionEvaluationModelList;
 
     public static EvaluationModel build(EvaluationBean evaluationBean, List<CriterionEvaluationModel> criterionEvaluationModelList) {

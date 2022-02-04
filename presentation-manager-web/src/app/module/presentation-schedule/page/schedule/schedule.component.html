@@ -1,18 +1,61 @@
 <ng-container *ngIf="scheduleModel">
-  <ng-container *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+  <ng-container>
     <div class="pl-2 pt-1"
-         style="font: 400 34px/40px Roboto, 'Helvetica Neue', sans-serif;">{{scheduleModel.title}}</div>
+         style="font: 400 34px/40px Roboto, 'Helvetica Neue', sans-serif;">{{scheduleModel.title}}
+      <button *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR" [matMenuTriggerFor]="more_menu" type="button"
+              style="float: right" mat-icon-button color="primary">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </div>
 
-      <nav mat-tab-nav-bar>
-        <a mat-tab-link
-           *ngFor="let link of navLinks"
-           [routerLink]="link.link"
-           routerLinkActive #rla="routerLinkActive"
-           [active]="rla.isActive">
-          {{link.label}}
-        </a>
-      </nav>
-
+    <mat-menu #more_menu="matMenu">
+      <button mat-menu-item (click)="showEditDialog()">
+        Edit
+      </button>
+      <button mat-menu-item (click)="deleteScheduleConfirmation()">
+        Delete this schedule
+      </button>
+    </mat-menu>
+    <nav mat-tab-nav-bar *ngxPermissionsOnly="permissionsToNavbar">
+      <!--      <a mat-tab-link-->
+      <!--         *ngFor="let link of navLinks"-->
+      <!--         [routerLink]="link.link"-->
+      <!--         routerLinkActive #rla="routerLinkActive"-->
+      <!--         [active]="rla.isActive">-->
+      <!--        {{link.label}}-->
+      <!--      </a>-->
+      <a mat-tab-link
+         [routerLink]="routeConstant.PRESENTATION_VIEW"
+         routerLinkActive #rla="routerLinkActive"
+         [active]="rla.isActive">
+        Presentation
+      </a>
+      <a mat-tab-link
+         [routerLink]="routeConstant.TIMETABLE"
+         routerLinkActive #rla="routerLinkActive"
+         [active]="rla.isActive">
+        Timetable
+      </a>
+      <a mat-tab-link
+         *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR"
+         [routerLink]="routeConstant.CRITERIA"
+         routerLinkActive #rla="routerLinkActive"
+         [active]="rla.isActive">
+        Evaluation Criteria
+      </a>
+      <a mat-tab-link
+         [routerLink]="routeConstant.EVALUATION_VIEW"
+         routerLinkActive #rla="routerLinkActive"
+         [active]="rla.isActive">
+        Evaluation Report
+      </a>
+      <a mat-tab-link
+         [routerLink]="routeConstant.GOOGLE_CALENDAR"
+         routerLinkActive #rla="routerLinkActive"
+         [active]="rla.isActive">
+        Google Calendar
+      </a>
+    </nav>
 
   </ng-container>
   <router-outlet></router-outlet>

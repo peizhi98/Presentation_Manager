@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Confirmation Form Marking Scheme</h1>
+<div mat-dialog-content>
+  <table mat-table [dataSource]="dataSource">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="markRange">
+      <th mat-header-cell *matHeaderCellDef> Range of score</th>
+      <td mat-cell *matCellDef="let element"> {{element.markRange}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="result">
+      <th mat-header-cell *matHeaderCellDef> Result</th>
+      <td mat-cell *matCellDef="let element"> {{element.result}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>OK</button>
+</mat-dialog-actions>

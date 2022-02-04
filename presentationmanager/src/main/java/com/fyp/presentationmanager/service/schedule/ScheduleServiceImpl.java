@@ -32,7 +32,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         ScheduleBean scheduleBean;
         if (scheduleModel.getId() != null) {
-            this.scheduleRepo.getById(scheduleModel.getId());
+            scheduleBean = this.scheduleRepo.getById(scheduleModel.getId());
+            if (scheduleBean != null) {
+                scheduleBean.setSem(scheduleModel.getSem());
+                scheduleBean.setYear(scheduleModel.getYear());
+                scheduleBean.setTitle(scheduleModel.getTitle());
+            }
         } else {
             CustomUserDetails customUserDetails = authService.getAuthUserDetails();
             scheduleBean = new ScheduleBean(scheduleModel);
@@ -65,6 +70,18 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public List<ScheduleModel> findMasterSchedules() {
+        List<ScheduleModel> scheduleModelList = new ArrayList<>();
+        List<ScheduleBean> scheduleBeanList = this.scheduleRepo.findScheduleBeansByScheduleTypeOrderByIdDesc(ScheduleType.MASTER_DISSERTATION);
+        if (scheduleBeanList != null) {
+            for (ScheduleBean scheduleBean : scheduleBeanList) {
+                scheduleModelList.add(new ScheduleModel(scheduleBean));
+            }
+        }
+        return scheduleModelList;
+    }
+
+    @Override
     public ScheduleModel getSchedule(Integer id) {
         ScheduleBean scheduleBean = this.scheduleRepo.getById(id);
         ScheduleModel scheduleModel = new ScheduleModel();
@@ -88,6 +105,18 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         }
         return scheduleModel;
+    }
+
+    @Override
+    public Boolean deleteSchedule(Integer id) {
+        try {
+            this.scheduleRepo.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
 }

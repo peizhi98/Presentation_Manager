@@ -10,6 +10,8 @@ import java.util.List;
 public interface PresentationService {
     List<PresentationModel> addPresentationList(List<PresentationModel> scheduleModelList);
 
+    PresentationModel editPresentation(PresentationModel presentationModel);
+
     PresentationModel getPresentation(Integer id);
 
     List<PresentationModel> getPresentationList(Integer scheduleId);
@@ -35,4 +37,6 @@ public interface PresentationService {
     List<PresentationModel> syncAllPresentationWithGoogleCalendar(Integer scheduleId);
 
     PresentationModel syncPresentationWithGoogleCalendar(Integer presentationId);
+
+    Boolean deletePresentation(Integer id);
 }

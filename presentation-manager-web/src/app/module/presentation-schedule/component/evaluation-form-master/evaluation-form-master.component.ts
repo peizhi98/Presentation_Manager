@@ -15,6 +15,11 @@ import {EvaluationModel} from '../../../../model/evaluation/evaluation.model';
 import {PresentationState} from '../../../../store/presentation/presentation.store';
 import {CriterionEvaluationModel} from '../../../../model/evaluation/criterion-evaluation.model';
 import {EvaluationService} from '../../../../service/evaluation.service';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmationDialogComponent} from '../../../../component/confirmation-dialog/confirmation-dialog.component';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ChangeEvaluationFormMode} from '../../../../store/evaluation/evaluation.action';
+import {MarkingSchemeDialogComponent} from '../../../../component/marking-scheme-dialog/marking-scheme-dialog.component';
 
 @Component({
   selector: 'app-evaluation-form-master',
@@ -40,9 +45,9 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
   readonly COMMENT = 'comment';
   readonly WEIGHTAGE = 'weightage';
   readonly CRITERION_ID = 'criterionId';
+  readonly LINK = 'link';
   readonly CRITERION_EVALUATION_ID = 'criterionEvaluationId';
   readonly CRITERIA_EVALUATION = 'criteriaEvaluation';
-  readonly MAX_GAP = 'maxGap';
   readonly OVERALL_COMMENT = 'overallComment';
   readonly OVERALL_RESULT = 'overallResult';
   subs: Subscription[] = [];
@@ -62,42 +67,18 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
 
   constructor(private evaluationFormService: EvaluationFormService, private matSnackBar: MatSnackBar,
               private loadingUtil: LoadingDialogUtil, private evaluationService: EvaluationService,
-              private formBuilder: FormBuilder, private store: Store) {
+              private formBuilder: FormBuilder, private store: Store, private dialog: MatDialog, private router: Router, private activatedRoute: ActivatedRoute) {
   }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => {
       s.unsubscribe();
     });
+    this.store.dispatch(new ChangeEvaluationFormMode(null));
   }
 
   ngOnInit(): void {
     console.log('master form');
-    //
-    // this.scheduleId$.subscribe(id => {
-    //   if (id) {
-    //     console.log(id);
-    //     this.scheduleId = id;
-    //     this.evaluationFormMode$.subscribe(mode => {
-    //       if (mode) {
-    //         console.log(mode);
-    //         this.evaluationFormMode = mode;
-    //         this.evaluationType$.subscribe(type => {
-    //             if (type) {
-    //               console.log(type);
-    //               this.evaluationType = type;
-    //               if ((this.evaluationType === EvaluationType.PRESENTATION
-    //                 || this.evaluationType === EvaluationType.REPORT)) {
-    //                 this.initFormGroup();
-    //               }
-    //             }
-    //           }
-    //         );
-    //       }
-    //     });
-    //   }
-    // });
-
     this.subs.push(this.scheduleId$.subscribe(id => {
       if (id) {
         this.scheduleId = id;
@@ -137,6 +118,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
       && this.scheduleId
       && this.evaluationType
       && this.evaluationFormMode) {
+      this.currentForm = null;
       console.log(' initiating...' + this.scheduleId + '-' + this.evaluationType + '-' + this.evaluationFormMode + '-' + this.presentationId + '-');
       switch (this.evaluationFormMode) {
         case EvaluationFormMode.EVALUATE:
@@ -159,6 +141,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
         .subscribe(resp => {
           if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
             this.evaluationModel = resp.data;
+            console.log(this.evaluationModel);
             if (!this.evaluationModel.id) {
               this.evaluationModel.presentationId = this.presentationId;
             }
@@ -168,19 +151,37 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
             // this.criteriaModels = this.evaluationFormModel.criterionModels;
             // build form
             this.evaluationForm = this.formBuilder.group({
-              maxGap: this.formBuilder.control(156),
-              criteriaEvaluation: this.formBuilder.array([])
+              criteriaEvaluation: this.formBuilder.array([]),
+              overallResult: this.getOverallRatingControl(),
+              overallComment: this.formBuilder.control(this.evaluationModel.comment),
+              link: this.formBuilder.control(this.evaluationModel.rubricUrl)
             });
             this.evaluationModel.criterionEvaluationModelList.forEach(c => {
               this.addCriterionEvaluationControl(c);
             });
             this.currentForm = this.evaluationForm;
+          } else {
+            if (this.evaluationType === EvaluationType.CONFIRMATION) {
+              this.openSnackBar('Unable to generate confirmation form. ' + resp.message);
+            } else {
+              this.openSnackBar('Failed to retrieve form.' + resp.message);
+            }
           }
           loadingRef.close();
         });
     }
 
 
+  }
+
+  getOverallRatingControl() {
+    if (this.evaluationType === EvaluationType.CONFIRMATION) {
+      const c: FormControl = this.formBuilder.control(this.evaluationModel.rating, Validators.required);
+      // c.disable();
+      return c;
+    } else {
+      return this.formBuilder.control('');
+    }
   }
 
   addCriterionEvaluationControl(criterionEvaluation: CriterionEvaluationModel): void {
@@ -219,6 +220,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
           this.evaluationFormEditingForm = this.formBuilder.group({
             overallResult: this.formBuilder.control({value: '', disabled: true}),
             overallComment: this.formBuilder.control({value: '', disabled: true}),
+            link: this.formBuilder.control(this.evaluationFormModel.rubricUrl),
             criteriaEvaluation: this.formBuilder.array([])
           });
           this.evaluationFormModel.criterionModels.forEach(c => {
@@ -265,8 +267,8 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
     if (this.criteriaEvaluation.controls) {
       this.criteriaEvaluation.controls.forEach(c => {
         if (c.get(this.RATING)) {
-          if (this.evaluationType === EvaluationType.PRESENTATION) {
-            total += (c.get(this.RATING).value / 5) * c.get(this.WEIGHTAGE).value;
+          if (this.evaluationType === EvaluationType.PANEL) {
+            total += (c.get(this.RATING).value / 6) * c.get(this.WEIGHTAGE).value;
           } else {
             total += c.get(this.RATING).value;
           }
@@ -308,6 +310,8 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
         case EvaluationFormMode.VIEW:
           break;
       }
+    } else {
+      this.openSnackBar('Invalid form input.');
     }
 
   }
@@ -319,6 +323,8 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
       evaluationModel.id = this.evaluationModel.id;
       evaluationModel.presentationId = this.evaluationModel.presentationId;
       evaluationModel.evaluationFormId = this.evaluationModel.evaluationFormId;
+      evaluationModel.comment = this.currentForm.get(this.OVERALL_COMMENT).value;
+      evaluationModel.rating = this.currentForm.get(this.OVERALL_RESULT).value;
       const criteriaEvaluation: CriterionEvaluationModel[] = [];
       console.log(this.criteriaEvaluation);
       this.criteriaEvaluation.controls.forEach(c => {
@@ -335,6 +341,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
         loadingRef.close();
         if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
           this.openSnackBar('Successfully submit evaluation form');
+          this.router.navigate(['../../'], {relativeTo: this.activatedRoute});
         } else {
           this.openSnackBar('Failed to submit evaluation form.');
         }
@@ -348,6 +355,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
     editedEvaluationForm.id = this.evaluationFormModel.id;
     editedEvaluationForm.evaluationType = this.evaluationType;
     editedEvaluationForm.scheduleId = this.scheduleId;
+    editedEvaluationForm.rubricUrl = this.currentForm.get(this.LINK).value;
     const criterionModels: CriterionModel[] = [];
     editedEvaluationForm.criterionModels = criterionModels;
     this.criteriaEvaluation.controls.forEach(c => {
@@ -400,7 +408,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
     return this.evaluationType === EvaluationType.CONFIRMATION;
   }
 
-  getConfirmationScaleName(scale: number):string {
+  getConfirmationScaleName(scale: number): string {
     switch (scale) {
       case 0:
         return 'Fail/ Repeat';
@@ -414,8 +422,22 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
 
   }
 
-  // get EvaluationFormMode(): any {
-  //   return EvaluationFormMode;
-  // }
+  showCannotEdit() {
+    this.openSnackBar('Confirmation result are generated automatically based on panels evaluation. Edit is not allowed.');
+    return false;
+  }
 
+  confirmEvaluation(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: 'Submitting the form will finalize the result of this presentation. Edit is not allowed after this. Are you sure to confirm the evaluation? ',
+    });
+    dialogRef.afterClosed().subscribe(confirm => {
+      if (confirm) {
+        this.onSubmit();
+      }
+    });
+  }
+  openMarkingScheme(): void {
+    const dialogRef = this.dialog.open(MarkingSchemeDialogComponent);
+  }
 }

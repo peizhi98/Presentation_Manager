@@ -76,6 +76,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
   scheduledPresentations: SchedulerPresentationModel[] = [];
   scheduler: SchedulerModel;
 
+  durationList: number[] = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+  duration = 15;
+
   @Select(ScheduleState.getScheduleId)
   scheduleId$: Observable<number>;
   @Select(ScheduleState.getScheduleType)
@@ -161,7 +164,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
               }
             });
           }
-          this.selectedDate = selectedTime;
+          if (!this.selectedDate) {
+            this.selectedDate = selectedTime;
+          }
           if (this.scheduler.unAvailableTime) {
             this.scheduler.unAvailableTime.forEach((presentationData, index) => {
               if (presentationData.roomName !== 'Online') {
@@ -228,7 +233,10 @@ export class TimetableComponent implements OnInit, OnDestroy {
         }
         console.log(123);
         this.draggingPresentation.startTime = cellData.startTime;
-        this.draggingPresentation.endTime = cellData.endTime;
+        // this.draggingPresentation.endTime = cellData.endTime;
+        this.draggingPresentation.endTime = new Date(cellData.startTime.getTime() + (this.duration * 60 * 1000));
+        console.log(this.draggingPresentation);
+        console.log(this.duration);
         this.draggingPresentation.roomId = resourceDetails.resourceData.id;
         this.draggingPresentation.roomName = resourceDetails.resourceData.name;
         this.addToTimetable(this.draggingPresentation);
@@ -397,6 +405,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
     }
     return '';
   }
+
   get SystemRole() {
     return SystemRole;
   }

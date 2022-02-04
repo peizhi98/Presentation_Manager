@@ -30,6 +30,19 @@ public class PresentationCtrl {
 
     }
 
+    @PostMapping(value = "/edit-presentation")
+    private ResponseModel<PresentationModel> editPresentation(@RequestBody PresentationModel presentationModel) {
+        ResponseModel<PresentationModel> responseModel = new ResponseModel();
+        try {
+            responseModel.success(presentationService.editPresentation(presentationModel));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseModel.failed();
+        }
+        return responseModel;
+
+    }
+
     @GetMapping(value = "/get-presentation")
     private ResponseModel<PresentationModel> getPresentation(@RequestParam Integer id) {
         ResponseModel<PresentationModel> responseModel = new ResponseModel();
@@ -147,14 +160,37 @@ public class PresentationCtrl {
     @GetMapping(value = "sync-google-calendar-all")
     public ResponseModel<List<PresentationModel>> syncAllPresentationWithGoogleCalendar(@RequestParam Integer scheduleId) {
         ResponseModel<List<PresentationModel>> response = new ResponseModel<>();
-        response.success(this.presentationService.syncAllPresentationWithGoogleCalendar(scheduleId));
+        try {
+            response.success(this.presentationService.syncAllPresentationWithGoogleCalendar(scheduleId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.failed();
+        }
         return response;
     }
 
     @GetMapping(value = "sync-google-calendar")
     public ResponseModel<PresentationModel> syncPresentationWithGoogleCalendar(@RequestParam Integer presentationId) {
         ResponseModel<PresentationModel> response = new ResponseModel<>();
-        response.success(this.presentationService.syncPresentationWithGoogleCalendar(presentationId));
+        try {
+            response.success(this.presentationService.syncPresentationWithGoogleCalendar(presentationId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.failed();
+        }
+
+        return response;
+    }
+
+    @DeleteMapping(value = "delete")
+    public ResponseModel<Boolean> deletePresentation(@RequestParam Integer presentationId) {
+        ResponseModel<Boolean> response = new ResponseModel<>();
+        try {
+            response.success(presentationService.deletePresentation(presentationId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.failed();
+        }
         return response;
     }
 }

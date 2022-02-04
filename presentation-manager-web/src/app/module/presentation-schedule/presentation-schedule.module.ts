@@ -23,6 +23,10 @@ import { AutoSchedulingSettingComponent } from './component/auto-scheduling-sett
 import { SchedulerComponent } from './component/scheduler/scheduler.component';
 import {DateTimePickerModule} from '@syncfusion/ej2-angular-calendars';
 import { GoogleIntegrationComponent } from './component/google-integration/google-integration.component';
+import { EditScheduleDialogComponent } from './component/edit-schedule-dialog/edit-schedule-dialog.component';
+import { EvaluationReportMasterComponent } from './component/evaluation-report-master/evaluation-report-master.component';
+import { PresentationEvalautionReportComponent } from './component/presentation-evalaution-report/presentation-evalaution-report.component';
+import { EditPresentationDialogComponent } from './component/edit-presentation-dialog/edit-presentation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +47,10 @@ import { GoogleIntegrationComponent } from './component/google-integration/googl
     AutoSchedulingSettingComponent,
     SchedulerComponent,
     GoogleIntegrationComponent,
+    EditScheduleDialogComponent,
+    EvaluationReportMasterComponent,
+    PresentationEvalautionReportComponent,
+    EditPresentationDialogComponent,
   ],
   exports: [
     SchedulesViewComponent,

@@ -1,6 +1,35 @@
 <ng-container *ngIf="currentForm">
+  <div *ngIf="!isConfirmationForm()">
+    <div *ngIf="isEditMode();else maxGap">
+      <mat-form-field style="width: 200px" appearance="fill">
+        <mat-label>Link of the rubric file</mat-label>
+        <input type="text" matInput [formControl]="currentForm.get(LINK)">
+      </mat-form-field>
+    </div>
+    <ng-template #maxGap>
+      <a mat-raised-button color="primary" [href]="currentForm.get(LINK).value" target="_blank"
+         type="button">View rubric</a>
+    </ng-template>
+  </div>
+  <div *ngIf="isConfirmationForm()">
+    <button mat-raised-button color="primary" (click)="openMarkingScheme()">
+      Marking Scheme
+    </button>
+  </div>
+  <ng-container *ngIf="!isConfirmationForm()">
+    <div *ngIf="isEvaluateMode();else weightage">
+      Total Mark: {{calculateTotalMark()|number}}/{{calculateTotalWeightage()}}
+    </div>
+  </ng-container>
+
+  <ng-template #weightage>
+    Total Weightage: {{calculateTotalWeightage()}}
+  </ng-template>
   <div *ngIf="isConfirmationForm()&&!isEvaluateMode()">This form is generated based on evaluation form and not
     editable.
+  </div>
+  <div *ngIf="isConfirmationForm()&&isEvaluateMode()">The result is generated based on panels evaluation and not
+    editable. Please comment and submit the confirmation form if both panels agree with the confirmation result.
   </div>
   <form [formGroup]="currentForm" (ngSubmit)="onSubmit()">
     <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
@@ -73,7 +102,8 @@
               <mat-radio-group class="radio-label-above radio-label-content-center"
                                [formControl]="criteria.get(RATING)">
                 <mat-radio-button *ngFor="let scale of confirmationScaleOptions" class="ml-2 radio-label-content-center"
-                                  [value]="scale">{{getConfirmationScaleName(scale)}}</mat-radio-button>
+                                  [value]="scale"
+                                  (click)="showCannotEdit()">{{getConfirmationScaleName(scale)}}</mat-radio-button>
                 <!--                  <mat-error style="margin-left: 45px;"-->
                 <!--                             *ngIf="criteria.get(RATING).invalid&&criteria.get(RATING).touched">Please-->
                 <!--                    select a score.-->
@@ -105,7 +135,8 @@
         <mat-radio-group class="radio-label-above radio-label-content-center"
                          [formControl]="currentForm.get(OVERALL_RESULT)">
           <mat-radio-button *ngFor="let scale of confirmationScaleOptions" class="ml-2 radio-label-content-center"
-                            [value]="scale">{{getConfirmationScaleName(scale)}}</mat-radio-button>
+                            [value]="scale"
+                            (click)="showCannotEdit()">{{getConfirmationScaleName(scale)}}</mat-radio-button>
         </mat-radio-group>
       </div>
     </div>
@@ -120,11 +151,17 @@
         <!--        <button *ngIf="isEvaluateMode()" mat-raised-button color="primary" type="submit"-->
         <!--        >Submit-->
         <!--        </button>-->
-        <ng-container *ngIf="!isConfirmationForm()">
+        <ng-container *ngIf="!isConfirmationForm();else confirmationButton">
           <button *ngIf="!isViewMode()" mat-raised-button color="primary" type="submit"
           >{{(isEditMode()) ? 'Save' : 'Submit'}}
           </button>
         </ng-container>
+        <ng-template #confirmationButton>
+          <button *ngIf="isEvaluateMode()" (click)="confirmEvaluation()" mat-raised-button color="primary"
+                  type="button">
+            Confirm
+          </button>
+        </ng-template>
 
       </p>
     </div>

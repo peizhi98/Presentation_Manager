@@ -4,6 +4,8 @@ import {ScheduleService} from '../../../../service/schedule.service';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {Store} from '@ngxs/store';
 import {ShowSnackBar} from '../../../../store/app/app.action';
+import {ActivatedRoute, Router} from '@angular/router';
+import {RouteConstant} from '../../../../../assets/constant/route.contant';
 
 @Component({
   selector: 'app-create-schedule',
@@ -17,7 +19,7 @@ export class CreateScheduleComponent implements OnInit {
   currentYear = (new Date()).getFullYear();
   academicYearsSelection = [];
 
-  constructor(private scheduleService: ScheduleService, private store: Store) {
+  constructor(private scheduleService: ScheduleService, private store: Store, private router: Router, private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -31,8 +33,10 @@ export class CreateScheduleComponent implements OnInit {
   save(): void {
     this.scheduleService.addOrEditSchedule(this.scheduleModel).subscribe(resp => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
-        this.scheduleModel = new ScheduleModel();
+        // this.scheduleModel = new ScheduleModel();
+        console.log(resp.data);
         this.store.dispatch(new ShowSnackBar('Successfully Created a New Presentation Schedule.'));
+        this.router.navigate([resp.data.id+'/'+RouteConstant.PRESENTATION_VIEW], {relativeTo: this.activatedRoute.parent});
       } else {
         this.store.dispatch(new ShowSnackBar('Failed to Created a New Presentation Schedule.'));
       }

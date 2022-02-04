@@ -58,7 +58,7 @@
         <ng-container [matColumnDef]=displayedColumns[5]>
           <th mat-header-cell *matHeaderCellDef>Sync</th>
           <td mat-cell *matCellDef="let row">
-            <button matTooltip="Sync" (click)="syncPresentations(row.id)" mat-icon-button color="primary">
+            <button matTooltip="Sync" (click)="syncPresentations(row)" mat-icon-button color="primary">
               <mat-icon>sync</mat-icon>
             </button>
           </td>

@@ -1,5 +1,4 @@
 import {CriterionEvaluationModel} from './criterion-evaluation.model';
-import {EvaluationType} from './evaluation-form.model';
 
 export class EvaluationModel {
   id: number;
@@ -8,6 +7,7 @@ export class EvaluationModel {
   evaluatorId: number;
   comment: string;
   rating: number;
+  rubricUrl: string;
   criterionEvaluationModelList: CriterionEvaluationModel[];
 }
 

@@ -2,7 +2,8 @@
   <p align="right">
     <span class="pr-1"><button mat-raised-button (click)="navigateToAutoSchedule()" color="primary">Auto-schedule
     </button></span>
-    <span><button mat-raised-button (click)="save()" *ngxPermissionsOnly="SystemRole.COORDINATOR" color="primary">Save</button></span>
+    <span><button mat-raised-button (click)="save()" *ngxPermissionsOnly="SystemRole.COORDINATOR"
+                  color="primary">Save</button></span>
 
   </p>
 </div>
@@ -11,6 +12,17 @@
   <mat-sidenav style="
   width: 15%; border: none"
                mode="side" position="end" disableClose opened>
+    <div>Presentation Duration:
+      <mat-form-field style="width: 30%" appearance="fill">
+        <mat-label>minutes</mat-label>
+        <mat-select [(ngModel)]="duration">
+          <mat-option *ngFor="let d of durationList" [value]="d">
+            {{d}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <small>*Drag and drop presentation to schedule</small>
     <div cdkDropList [cdkDropListData]="presentationModels" class="example-list" (cdkDropListDropped)="drop($event)">
       <div class="example-box" *ngFor="let presentation of presentationModels;let i=index;" cdkDrag
            (cdkDragStarted)="onCdkDragStart(presentation,i)">
@@ -44,7 +56,8 @@
   width: 84%;">
     <ng-container *ngIf="resourceDataSource">
       <ejs-schedule #scheduleObj cssClass='adaptive-rows' height='650px' [rowAutoHeight]='rowAutoHeight'
-                    [currentView]="currentView" [selectedDate]="selectedDate" [startHour]='startHour' [endHour]='endHour'
+                    [currentView]="currentView" [selectedDate]="selectedDate" [startHour]='startHour'
+                    [endHour]='endHour'
                     [group]="group" (actionBegin)="onActionBegin($event)" (actionComplete)="onActionComplete($event)"
                     [eventSettings]="eventSettings" cdkDropList [cdkDropListData]="scheduledPresentations"
                     (cdkDropListDropped)="drop($event)" (dragStart)="onSchedulerDragStart($event)"
@@ -99,11 +112,6 @@
             </div>
           </div>
         </ng-template>
-
-
-
-
-
 
 
       </ejs-schedule>

@@ -7,15 +7,18 @@ import {UserModel} from '../../model/user/user.model';
 import {AuthState} from '../auth/auth.store';
 import {Constant} from '../../../assets/constant/app.constant';
 import {ChangePresentationRole} from '../user-role/user-role.action';
+import {PresentationModel} from '../../model/presentation/presentation.model';
 
 export class PresentationStateModel {
   presentationId: number;
+  presentationModel: PresentationModel;
   panels: PanelModel[];
   supervisor: SupervisorModel;
 }
 
 export const defaultState = {
   presentationId: null,
+  presentationModel: null,
   panels: [],
   supervisor: new SupervisorModel()
 };
@@ -35,12 +38,20 @@ export class PresentationState {
     return state.presentationId;
   }
 
+  @Selector()
+  public static getPresentationModel(state: PresentationStateModel): PresentationModel {
+    return state.presentationModel;
+  }
+
   @Action(SetCurrentPresentation)
   setCurrentPresentation(ctx: StateContext<PresentationStateModel>, action: SetCurrentPresentation): void {
     const user: UserModel = this.store.selectSnapshot(AuthState.getUser);
     const roles: string[] = [];
     if (action.supervisor && action.supervisor.id === user.id) {
       roles.push(Constant.ROLE_SUPERVISOR);
+    }
+    if (action.chairperson && action.chairperson.id === user.id) {
+      roles.push(Constant.ROLE_CHAIRPERSON);
     }
     if (action.panels) {
       action.panels.forEach(p => {
@@ -52,6 +63,7 @@ export class PresentationState {
     this.store.dispatch(new ChangePresentationRole(roles));
     ctx.patchState({
       presentationId: action.id,
+      presentationModel: action.presentationModel,
       panels: action.panels,
       supervisor: action.supervisor
     });

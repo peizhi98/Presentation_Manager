@@ -1,0 +1,40 @@
+<mat-card class="mt-2">
+
+  <mat-card-content>
+    <h1 class="pl-2 pt-1" align="center"
+    >{{getTitle()}}</h1>
+
+    <button mat-raised-button style="float:right;" color="primary" (click)="exportexcel()">Export to Excel
+    </button>
+
+    <table mat-table matSort id="excel-table" class="w-100" [dataSource]="dataSource">
+      <!-- criteria Column -->
+      <ng-container [matColumnDef]=displayedColumns[0]>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Criteria</th>
+        <td mat-cell *matCellDef="let row">{{row.name}}</td>
+      </ng-container>
+
+      <!-- weightage Column -->
+      <ng-container [matColumnDef]=displayedColumns[1]>
+        <th mat-header-cell *matHeaderCellDef>Criteria Weightage</th>
+        <td mat-cell *matCellDef="let row">{{row.weightage}}</td>
+      </ng-container>
+
+      <!-- panels Column -->
+      <ng-container *ngFor="let i of panelsIndexColumns">
+        <ng-container [matColumnDef]=getScoreMatColumnDef(i)>
+          <th mat-header-cell *matHeaderCellDef>{{panelsName[i]}}'s evaluation</th>
+          <td mat-cell *matCellDef="let row">{{getScoreDisplay(row.evaluatorCriterionEvaluationModels[i].score)}}</td>
+        </ng-container>
+        <ng-container [matColumnDef]=getCommentMatColumnDef(i)>
+          <th mat-header-cell *matHeaderCellDef>{{panelsName[i]}}'s comment</th>
+          <td mat-cell
+              *matCellDef="let row">{{handleNullDisplay(row.evaluatorCriterionEvaluationModels[i].comment)}}</td>
+        </ng-container>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>

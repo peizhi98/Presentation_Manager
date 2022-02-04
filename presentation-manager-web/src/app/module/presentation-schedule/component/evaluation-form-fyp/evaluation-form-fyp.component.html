@@ -1,15 +1,15 @@
 <ng-container *ngIf="currentForm">
   <form [formGroup]="currentForm" (ngSubmit)="onSubmit()">
-    <div *ngIf="isFypPresentation()&&(isEditMode()||isViewMode())">
-      Max Evaluation Gap between panels:
-      <span *ngIf="isEditMode();else maxGap">
-          <mat-form-field style="width: 5%" appearance="fill">
-            <mat-label>Gap</mat-label>
-            <input type="number" matInput [formControl]="currentForm.get(MAX_GAP)">
-          </mat-form-field>
-        </span>
+    <div>
+      <div *ngIf="isEditMode();else maxGap">
+        <mat-form-field style="width: 200px" appearance="fill">
+          <mat-label>Link of the rubric file</mat-label>
+          <input type="text" matInput [formControl]="currentForm.get(LINK)">
+        </mat-form-field>
+      </div>
       <ng-template #maxGap>
-        {{(currentForm.get(MAX_GAP).value) ? currentForm.get(MAX_GAP).value : '-'}}
+        <a *ngIf="currentForm.get(LINK).value" mat-raised-button color="primary" [href]="currentForm.get(LINK).value" target="_blank"
+           type="button">View rubric</a>
       </ng-template>
     </div>
     <div *ngIf="isEvaluateMode();else weightage">
@@ -49,7 +49,8 @@
             <mat-form-field style="width: 6%" class="right" appearance="fill" *ngIf="isEditMode();else weightage">
               <mat-label>Weightage</mat-label>
               <input matInput type="number" [formControl]="criteria.get(WEIGHTAGE)">
-              <mat-error *ngIf="criteria.get(WEIGHTAGE).invalid&&criteria.get(WEIGHTAGE).touched">Please enter valid integer
+              <mat-error *ngIf="criteria.get(WEIGHTAGE).invalid&&criteria.get(WEIGHTAGE).touched">Please enter valid
+                integer
               </mat-error>
               <!--                   (ngModelChange)="calculateTotalWeightage()"-->
             </mat-form-field>
@@ -102,6 +103,10 @@
         </p>
       </div>
     </div>
+    <mat-form-field style="width: 100%" class="mt-2" appearance="outline">
+      <mat-label>Overall comment</mat-label>
+      <textarea matInput [formControl]="currentForm.get(OVERALL_COMMENT)"></textarea>
+    </mat-form-field>
     <div class="mt-1 mb-1">
       <p align="right">
         <!--        <button *ngIf="isEditMode()" mat-raised-button color="primary" (click)="save()">Save</button>-->

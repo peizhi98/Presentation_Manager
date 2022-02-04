@@ -7,5 +7,7 @@ import java.util.List;
 public interface ScheduleService {
     ScheduleModel addOrEditSchedule(ScheduleModel scheduleModel);
     List<ScheduleModel> findSchedulesByUser();
+    List<ScheduleModel> findMasterSchedules();
     ScheduleModel getSchedule(Integer id);
+    Boolean deleteSchedule(Integer id);
 }

@@ -7,3 +7,7 @@ export class CriterionEvaluationModel {
   comment: string;
   rating: number;
 }
+
+export class CriteriaEvaluationModel {
+  criteriaEvaluation: CriterionEvaluationModel[];
+}

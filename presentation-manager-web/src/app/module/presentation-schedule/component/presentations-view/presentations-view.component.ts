@@ -14,6 +14,7 @@ import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {SystemRole} from '../../../../model/user/user.model';
 import * as XLSX from 'xlsx';
 import {ScheduleType} from '../../../../model/schedule/schedule.model';
+import {PanelModel} from '../../../../model/role/panel.model';
 
 @Component({
   selector: 'app-presentation-list',
@@ -24,11 +25,12 @@ export class PresentationsViewComponent implements OnInit, OnDestroy {
   // @Input() scheduleId: number;
   timeFormat = Constant.TIME_FORMAT;
   routeConstant = RouteConstant;
+  constant = Constant;
   presentationModels = [];
   dataSource: MatTableDataSource<PresentationModel>;
   scheduleId: number;
   scheduleType: ScheduleType;
-  displayedColumns = ['number', 'studentName', 'title', 'sv', 'action'];
+  displayedColumns = ['number', 'studentName', 'title', 'sv','panels' ,'action'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -159,5 +161,21 @@ export class PresentationsViewComponent implements OnInit, OnDestroy {
 
   isMaster(): boolean {
     return this.scheduleType === ScheduleType.MASTER_DISSERTATION;
+  }
+
+  getPanelsListString(panels: PanelModel[]): string {
+    let str = '';
+    if (panels && panels.length !== 0) {
+      panels.forEach((p, index) => {
+        if (index === 0) {
+          str = str + p.name;
+        } else {
+          str = str + ', ' + p.name;
+        }
+      });
+      return str;
+    } else {
+      return '-';
+    }
   }
 }

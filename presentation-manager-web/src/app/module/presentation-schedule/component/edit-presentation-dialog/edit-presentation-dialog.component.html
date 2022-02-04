@@ -1,0 +1,111 @@
+<h1 mat-dialog-title>Edit Presentation</h1>
+<div mat-dialog-content>
+  <div>
+    <div class="mt-1" style="display: inline-block;width: 100px">Presentation Title</div>
+    :
+    <div style="display: inline-block">
+      <mat-form-field appearance="fill">
+        <input type="text" matInput [(ngModel)]="presentation.title">
+      </mat-form-field>
+    </div>
+  </div>
+
+
+  <div>
+    <div class="mt-1" style="display: inline-block;width: 100px">Supervisor</div>
+    :
+    <div style="display: inline-block">
+      <mat-form-field appearance="fill">
+        <mat-label>Supervisor Username (Email)</mat-label>
+        <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)"
+               [(ngModel)]="presentation.supervisorModel.email">
+      </mat-form-field>
+    </div>
+  </div>
+
+
+  <div>
+    <div class="mt-1" style="display: inline-block;width: 100px">Student Name</div>
+    :
+    <div style="display: inline-block">
+      <mat-form-field appearance="fill">
+        <mat-label>Student Name</mat-label>
+        <input matInput [(ngModel)]="presentation.studentName">
+      </mat-form-field>
+    </div>
+  </div>
+
+
+  <div>
+    <div class="mt-1" style="display: inline-block;width: 100px">Matric No.</div>
+    :
+    <div style="display: inline-block">
+      <mat-form-field appearance="fill">
+        <mat-label>Matric No.</mat-label>
+        <input matInput [(ngModel)]="presentation.studentMatrixNo">
+      </mat-form-field>
+    </div>
+  </div>
+
+
+  <div>
+    <div class="mt-1" style="display: inline-block;width: 100px">Student Email</div>
+    :
+    <div style="display: inline-block">
+      <mat-form-field appearance="fill">
+        <mat-label>Student Email</mat-label>
+        <input matInput [(ngModel)]="presentation.studentEmail">
+      </mat-form-field>
+    </div>
+  </div>
+
+
+  <div *ngIf="isMaster()">
+    <div class="mt-1" style="display: inline-block;width: 100px">Chairperson</div>
+    :
+    <div style="display: inline-block">
+      <mat-form-field appearance="fill">
+        <mat-label>Chairperson Username (Email)</mat-label>
+        <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)"
+               [(ngModel)]="presentation.chairperson.email">
+      </mat-form-field>
+    </div>
+  </div>
+
+
+  <div *ngFor="let panel of presentation.panelModels;let i=index;">
+    <div class="mt-1" style="display: inline-block;width: 100px">{{'Panel ' + (i + 1).toString()}}</div>
+    :
+    <mat-form-field appearance="fill">
+      <mat-label>Panel Username (Email)</mat-label>
+      <input matInput [matAutocomplete]="auto" (click)="applyFilter($event)" (keyup)="applyFilter($event)"
+             [(ngModel)]="panel.email">
+    </mat-form-field>
+    <button mat-icon-button color="primary"
+            (click)="removePanel(presentation.panelModels,i)">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <button class="mt-1" mat-raised-button color="primary" (click)="addPanel(presentation)">
+    <span>Add Panel</span>
+  </button>
+
+</div>
+<mat-dialog-actions align="end">
+  <button type="submit" mat-raised-button color="primary" (click)="onSubmit()">Save</button>
+</mat-dialog-actions>
+
+<mat-autocomplete #auto="matAutocomplete">
+  <mat-option *ngFor="let lecturer of filteredLecturers" [value]="lecturer.email">
+    <span>{{lecturer.name || 'Name not registered'}}</span> |
+    <small>{{lecturer.email}}</small>
+  </mat-option>
+</mat-autocomplete>
+<ng-template #titleDisplay let-title="title">
+  <div style="display: inline-block; width: 10%">
+    {{title}}
+  </div>
+  <div style="display: inline-block;">
+    :
+  </div>
+</ng-template>

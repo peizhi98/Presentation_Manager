@@ -36,106 +36,53 @@
   </mat-card-content>
 </mat-card>
 
+<mat-card class="mt-2" *ngxPermissionsOnly="SystemRole.OFFICE">
+  <ng-container>
+    <mat-card-content *ngIf="dataSource">
+      <h1 class="pl-2 pt-1">Manage Master Schedule</h1>
+      <ng-container *ngIf="scheduleList">
+        <div>
+          <table mat-table matSort class="w-100" [dataSource]="dataSource">
+            <!-- Number Column -->
+            <ng-container [matColumnDef]=displayedColumns[0]>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
+              <td mat-cell *matCellDef="let row">{{dataSource.data.indexOf(row) + 1}}</td>
+            </ng-container>
 
-<!--<h1 class="pl-2 pt-1">Dashboard</h1>-->
-<!--<mat-drawer-container style="background-color: #f2f3f6; border: none" class="mt-2">-->
-<!--  <mat-drawer class="ml-1" style="background-color: #f2f3f6; border: none;width: 20%;" mode="side" opened>-->
-<!--    <mat-card>-->
-<!--      <mat-card-content>-->
-<!--        <ng-container-->
-<!--          *ngTemplateOutlet="detailDisplay;context:{title: 'Title',data:presentationModel.title}"></ng-container>-->
-<!--      </mat-card-content>-->
-<!--    </mat-card>-->
-<!--  </mat-drawer>-->
-<!--  <mat-drawer-content style="width: 80%;">-->
-<!--    <div class="main-div">-->
-<!--      <mat-card class="center">-->
-<!--        <mat-card-content>-->
-<!--          <h1 class="pl-2 pt-1">Presentations</h1>-->
-<!--          <mat-accordion multi>-->
-<!--            <mat-expansion-panel>-->
-<!--              <mat-expansion-panel-header>-->
-<!--                <mat-panel-title>-->
-<!--                  Supervising-->
-<!--                </mat-panel-title>-->
-<!--                &lt;!&ndash;          <mat-panel-description>&ndash;&gt;-->
-<!--                &lt;!&ndash;            You are the supervisor of these presentations&ndash;&gt;-->
-<!--                &lt;!&ndash;          </mat-panel-description>&ndash;&gt;-->
-<!--              </mat-expansion-panel-header>-->
-<!--            </mat-expansion-panel>-->
+            <!-- Name Column -->
+            <ng-container [matColumnDef]=displayedColumns[1]>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Schedule Title</th>
+              <td mat-cell *matCellDef="let row">{{row.title}}</td>
+            </ng-container>
 
-<!--            <mat-expansion-panel (opened)="loadPresentationAsPanel()">-->
-<!--              <mat-expansion-panel-header>-->
-<!--                <mat-panel-title>-->
-<!--                  Paneling-->
-<!--                </mat-panel-title>-->
-<!--              </mat-expansion-panel-header>-->
-<!--              <mat-form-field appearance="standard">-->
-<!--                <mat-label>Search</mat-label>-->
-<!--                <input matInput (keyup)="applyFilter($event)">-->
-<!--              </mat-form-field>-->
-<!--              <table mat-table matSort class="w-100" [dataSource]="dataSource">-->
-<!--                &lt;!&ndash; Number Column &ndash;&gt;-->
-<!--                <ng-container [matColumnDef]=displayedColumns[0]>-->
-<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>-->
-<!--                  <td mat-cell *matCellDef="let row">{{dataSource.data.indexOf(row) + 1}}</td>-->
-<!--                </ng-container>-->
+            <!-- Year Column -->
+            <ng-container [matColumnDef]=displayedColumns[2]>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Academic Year</th>
+              <td mat-cell *matCellDef="let row">{{row.year}}</td>
+            </ng-container>
 
-<!--                &lt;!&ndash; Name Column &ndash;&gt;-->
-<!--                <ng-container [matColumnDef]=displayedColumns[1]>-->
-<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name</th>-->
-<!--                  <td mat-cell *matCellDef="let row">{{row.studentName}}</td>-->
-<!--                </ng-container>-->
+            <!-- Sem Column -->
+            <ng-container [matColumnDef]=displayedColumns[3]>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Sem</th>
+              <td mat-cell *matCellDef="let row">{{row.sem}}</td>
+            </ng-container>
 
-<!--                &lt;!&ndash; Title Column &ndash;&gt;-->
-<!--                <ng-container [matColumnDef]=displayedColumns[2]>-->
-<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>-->
-<!--                  <td mat-cell *matCellDef="let row">{{row.title}}</td>-->
-<!--                </ng-container>-->
+            <!-- coordinator Column -->
+            <ng-container [matColumnDef]=displayedColumns[4]>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+              <td mat-cell *matCellDef="let row">{{getScheduleType(row.scheduleType)}}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="routeToSchedule(row.id)"></tr>
 
-<!--                &lt;!&ndash; SV Column &ndash;&gt;-->
-<!--                <ng-container [matColumnDef]=displayedColumns[3]>-->
-<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Supervisor</th>-->
-<!--                  <td mat-cell *matCellDef="let row">{{row.supervisorModel.name}}</td>-->
-<!--                </ng-container>-->
+          </table>
+          <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" aria-label="Select page of presentation"></mat-paginator>
+        </div>
+      </ng-container>
+    </mat-card-content>
+  </ng-container>
 
-<!--                &lt;!&ndash; Action Column &ndash;&gt;-->
-<!--                <ng-container [matColumnDef]=displayedColumns[4]>-->
-<!--                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>-->
-<!--                  <td mat-cell *matCellDef="let row">-->
-<!--                    <a [routerLink]="row.id" matTooltip="Open" mat-icon-button color="primary">-->
-<!--                      <mat-icon>launch</mat-icon>-->
-<!--                    </a>-->
-<!--                  </td>-->
-<!--                </ng-container>-->
-
-<!--                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
-<!--                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
-
-<!--              </table>-->
-<!--              <mat-paginator [pageSizeOptions]="getPaginatorOptions()"-->
-<!--                             aria-label="Select page of presentation"></mat-paginator>-->
-<!--            </mat-expansion-panel>-->
-
-<!--            <mat-expansion-panel>-->
-<!--              <mat-expansion-panel-header>-->
-<!--                <mat-panel-title>-->
-<!--                  Presiding-->
-<!--                </mat-panel-title>-->
-<!--                &lt;!&ndash;          <mat-panel-description>&ndash;&gt;-->
-<!--                &lt;!&ndash;            You are the chairperson of these presentations&ndash;&gt;-->
-<!--                &lt;!&ndash;          </mat-panel-description>&ndash;&gt;-->
-<!--              </mat-expansion-panel-header>-->
-<!--              <p>This is the primary content of the panel.</p>-->
-<!--            </mat-expansion-panel>-->
-
-<!--          </mat-accordion>-->
-<!--        </mat-card-content>-->
-<!--      </mat-card>-->
-<!--    </div>-->
-
-<!--  </mat-drawer-content>-->
-<!--</mat-drawer-container>-->
+</mat-card>
 
 <ng-template #detailDisplay let-title="title" let-data="data">
   <div style="display: inline-block; width: 10%">

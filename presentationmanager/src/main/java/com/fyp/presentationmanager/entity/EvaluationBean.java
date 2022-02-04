@@ -2,6 +2,8 @@ package com.fyp.presentationmanager.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import static com.fyp.presentationmanager.entity.EvaluationBean.*;
@@ -132,5 +134,37 @@ public class EvaluationBean implements Serializable {
 
     public void setCriterionEvaluationBeans(List<CriterionEvaluationBean> criterionEvaluationBeans) {
         this.criterionEvaluationBeans = criterionEvaluationBeans;
+    }
+
+    public BigDecimal calculateTotalScore(Integer scale) {
+        if (this.getCriterionEvaluationBeans() != null) {
+//            Integer total = 0;
+//            for (CriterionEvaluationBean criterionEvaluationBean : this.getCriterionEvaluationBeans()) {
+//                total += criterionEvaluationBean.getRating();
+//            }
+//            Integer Max = scale * this.getEvaluationFormBean().getCriterionBeans().size();
+//            Integer weightage = this.evaluationFormBean.calculateWeightage();
+//            BigDecimal fracScore = new BigDecimal(new BigDecimal(total).divide(new BigDecimal(Max), 4, RoundingMode.HALF_UP).toString());
+//            return new BigDecimal(String.valueOf(fracScore.multiply(new BigDecimal(weightage))));
+            BigDecimal total = new BigDecimal("0");
+            for (CriterionEvaluationBean criterionEvaluationBean : this.getCriterionEvaluationBeans()) {
+                BigDecimal cFracScore = new BigDecimal(String.valueOf(new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(scale), 4, RoundingMode.HALF_UP)));
+                BigDecimal cScore = new BigDecimal(String.valueOf(cFracScore.multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()))));
+                total = new BigDecimal(total.add(cScore).toString());
+            }
+            return total;
+        }
+        return null;
+    }
+
+    public BigDecimal calculateTotalScore() {
+        if (this.getCriterionEvaluationBeans() != null) {
+            Integer total = 0;
+            for (CriterionEvaluationBean criterionEvaluationBean : this.getCriterionEvaluationBeans()) {
+                total += criterionEvaluationBean.getRating();
+            }
+            return new BigDecimal(String.valueOf(total));
+        }
+        return null;
     }
 }

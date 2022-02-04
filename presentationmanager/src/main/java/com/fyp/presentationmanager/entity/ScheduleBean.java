@@ -1,7 +1,6 @@
 package com.fyp.presentationmanager.entity;
 
 import com.fyp.presentationmanager.enums.EvaluationType;
-import com.fyp.presentationmanager.enums.PresentationMode;
 import com.fyp.presentationmanager.enums.ScheduleType;
 import com.fyp.presentationmanager.model.ScheduleModel;
 import org.hibernate.annotations.CreationTimestamp;
@@ -47,10 +46,6 @@ public class ScheduleBean implements Serializable {
     @Column(name = SCHEDULE_TYPE)
     private ScheduleType scheduleType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = PRESENTATION_TYPE)
-    private PresentationMode presentationMode;
-
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = CREATE_DATE)
@@ -73,7 +68,6 @@ public class ScheduleBean implements Serializable {
         this.year = scheduleModel.getYear();
         this.sem = scheduleModel.getSem();
         this.title = scheduleModel.getTitle();
-        this.presentationMode = scheduleModel.getPresentationMode();
         this.scheduleType = scheduleModel.getScheduleType();
     }
 
@@ -123,14 +117,6 @@ public class ScheduleBean implements Serializable {
 
     public void setScheduleType(ScheduleType scheduleType) {
         this.scheduleType = scheduleType;
-    }
-
-    public PresentationMode getPresentationType() {
-        return presentationMode;
-    }
-
-    public void setPresentationType(PresentationMode presentationMode) {
-        this.presentationMode = presentationMode;
     }
 
     public Date getCreateDate() {

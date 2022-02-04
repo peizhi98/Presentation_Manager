@@ -4,14 +4,7 @@
     <ng-container *ngIf="isFyp()">
       <ng-container *ngIf="presentationModel">
         <p align="right">
-        <span>
-          <button *ngxPermissionsOnly="SystemRole.COORDINATOR"
-                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PRESENTATION" mat-raised-button
-                  color="primary">
-          Edit
-        </button>
-        </span>
-          <span class="ml-1">
+          <span>
           <button *ngxPermissionsOnly="constant.ROLE_PANEL"
                   [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PRESENTATION" mat-raised-button
                   color="primary">
@@ -23,17 +16,39 @@
                   [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.REPORT" mat-raised-button
                   color="primary">Evaluate Report
         </button>
+            <span class="ml-1">
+          <button
+            [matMenuTriggerFor]="fypReports"
+            mat-raised-button
+            color="primary">
+          Generate Evaluation Report
+        </button>
         </span>
-
+            <mat-menu #fypReports="matMenu">
+              <button mat-menu-item [routerLink]="routeConstant.REPORT+'/'+EvaluationType.PRESENTATION">
+                {{getTitle(EvaluationType.PRESENTATION)}}
+              </button>
+              <button mat-menu-item [routerLink]="routeConstant.REPORT+'/'+EvaluationType.REPORT">
+                {{getTitle(EvaluationType.REPORT)}}
+                </button>
+            </mat-menu>
+        </span>
+          <span class="ml-1">
+            <button *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR" [matMenuTriggerFor]="more_menu"
+                    type="button"
+                    mat-icon-button color="primary">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </span>
+          <mat-menu #more_menu="matMenu">
+            <button mat-menu-item  (click)="editPresentationDialog()" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+              Edit
+            </button>
+            <button mat-menu-item (click)="deletePresentationConfirmation()" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+              Delete this presentation
+            </button>
+          </mat-menu>
         </p>
-        <ng-template #detailDisplay let-title="title" let-data="data">
-          <div style="display: inline-block; width: 10%">
-            {{title}}
-          </div>
-          <div style="display: inline-block;width: 90%">
-            : {{(data) ? data : '-'}}
-          </div>
-        </ng-template>
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Title',data:presentationModel.title}"></ng-container>
         <ng-container
@@ -41,36 +56,24 @@
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Student Email',data:presentationModel.studentEmail}"></ng-container>
         <ng-container
-          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:presentationModel.supervisorModel.name}"></ng-container>
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Student Matric No.',data:presentationModel.studentMatrixNo}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:(presentationModel.supervisorModel)?presentationModel.supervisorModel.name:''}"></ng-container>
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Start Time',data:presentationModel.startTime|date:timeFormat}"></ng-container>
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'End Time',data:presentationModel.endTime|date:timeFormat}"></ng-container>
+        <!--        <ng-container-->
+        <!--          *ngTemplateOutlet="detailDisplay;context:{title: 'Status',data:''}"></ng-container>-->
         <ng-container
-          *ngTemplateOutlet="detailDisplay;context:{title: 'Status',data:''}"></ng-container>
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Panel',data:getPanelsListString(presentationModel.panelModels)}"></ng-container>
 
-        <div>Panel:
-          <ng-container *ngIf="!presentationModel.panelModels">
-            -
-          </ng-container>
-        </div>
-
-        <div *ngFor="let panel of presentationModel.panelModels; let i = index">
-          Panel {{i + 1}}: {{panel.name}}
-        </div>
       </ng-container>
     </ng-container>
     <ng-container *ngIf="isMaster()">
       <ng-container *ngIf="presentationModel">
         <p align="right">
-        <span>
-          <button *ngxPermissionsOnly="SystemRole.COORDINATOR"
-                  [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PRESENTATION" mat-raised-button
-                  color="primary">
-          Edit
-        </button>
-        </span>
-          <span class="ml-1">
+          <span>
           <button *ngxPermissionsOnly="constant.ROLE_PANEL"
                   [routerLink]="routeConstant.EVALUATE+'/'+EvaluationType.PANEL" mat-raised-button
                   color="primary">
@@ -84,15 +87,41 @@
         </button>
         </span>
 
+          <span class="ml-1">
+          <button
+            [matMenuTriggerFor]="masterReport"
+            mat-raised-button
+            color="primary">
+          Generate Evaluation Report
+        </button>
+        </span>
+          <mat-menu #masterReport="matMenu">
+            <button mat-menu-item [routerLink]="routeConstant.REPORT+'/'+EvaluationType.PANEL">
+              {{getTitle(EvaluationType.PANEL)}}
+            </button>
+            <button mat-menu-item [routerLink]="routeConstant.REPORT+'/'+EvaluationType.CONFIRMATION">
+              {{getTitle(EvaluationType.CONFIRMATION)}}
+            </button>
+          </mat-menu>
+
+          <span class="ml-1">
+            <button *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR" [matMenuTriggerFor]="more_menu"
+                    type="button"
+                    mat-icon-button color="primary">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </span>
+          <mat-menu #more_menu="matMenu">
+            <button mat-menu-item (click)="editPresentationDialog()" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+              Edit
+            </button>
+            <button mat-menu-item (click)="deletePresentationConfirmation()" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+              Delete this presentation
+            </button>
+          </mat-menu>
+
         </p>
-        <ng-template #detailDisplay let-title="title" let-data="data">
-          <div style="display: inline-block; width: 10%">
-            {{title}}
-          </div>
-          <div style="display: inline-block;width: 90%">
-            : {{(data) ? data : '-'}}
-          </div>
-        </ng-template>
+
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Title',data:presentationModel.title}"></ng-container>
         <ng-container
@@ -100,27 +129,42 @@
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Student Email',data:presentationModel.studentEmail}"></ng-container>
         <ng-container
-          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:presentationModel.supervisorModel.name}"></ng-container>
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Student Matric No.',data:presentationModel.studentMatrixNo}"></ng-container>
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'Start Time',data:presentationModel.startTime|date:timeFormat}"></ng-container>
         <ng-container
           *ngTemplateOutlet="detailDisplay;context:{title: 'End Time',data:presentationModel.endTime|date:timeFormat}"></ng-container>
+        <!--        <ng-container-->
+        <!--          *ngTemplateOutlet="detailDisplay;context:{title: 'Status',data:''}"></ng-container>-->
         <ng-container
-          *ngTemplateOutlet="detailDisplay;context:{title: 'Status',data:''}"></ng-container>
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Supervisor',data:(presentationModel.supervisorModel)?presentationModel.supervisorModel.name:''}"></ng-container>
+        <ng-container *ngIf="isMaster()">
+          <ng-container
+            *ngTemplateOutlet="detailDisplay;context:{title: 'Chairperson',data:(presentationModel.chairperson)?presentationModel.chairperson.name:''}"></ng-container>
+        </ng-container>
+        <ng-container
+          *ngTemplateOutlet="detailDisplay;context:{title: 'Panel',data:getPanelsListString(presentationModel.panelModels)}"></ng-container>
+        <!--        <div>Panel:-->
+        <!--          <ng-container *ngIf="!presentationModel.panelModels">-->
+        <!--            - -->
+        <!--          </ng-container>-->
+        <!--        </div>-->
 
-        <div>Panel:
-          <ng-container *ngIf="!presentationModel.panelModels">
-            -
-          </ng-container>
-        </div>
-
-        <div *ngFor="let panel of presentationModel.panelModels; let i = index">
-          Panel {{i + 1}}: {{panel.name}}
-        </div>
+        <!--        <div *ngFor="let panel of presentationModel.panelModels; let i = index">-->
+        <!--          Panel {{i + 1}}: {{panel.name}}-->
+        <!--        </div>-->
       </ng-container>
     </ng-container>
 
   </mat-card-content>
 
 </mat-card>
+<ng-template #detailDisplay let-title="title" let-data="data">
+  <div style="display: inline-block; width: 15%">
+    {{title}}
+  </div>
+  <div style="display: inline-block;width: 85%">
+    : {{(data) ? data : '-'}}
+  </div>
+</ng-template>
 <router-outlet></router-outlet>

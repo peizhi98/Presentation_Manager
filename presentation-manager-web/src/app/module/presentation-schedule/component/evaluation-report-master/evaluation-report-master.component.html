@@ -1,0 +1,96 @@
+<mat-card>
+  <mat-card-content>
+    <ng-container *ngIf="dataSource">
+      <p align="right">
+        <button mat-raised-button color="primary" (click)="openMarkingScheme()">
+          Confirmation Form Marking Scheme
+        </button>
+        <span class="ml-1">
+          <button mat-raised-button  color="primary" (click)="exportexcel()">Export to Excel
+        </button>
+        </span>
+
+
+      </p>
+
+      <mat-form-field appearance="standard">
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="applyFilter($event)">
+      </mat-form-field>
+      <div>
+        <table id="excel-table" mat-table matSort class="w-100" [dataSource]="dataSource">
+          <!-- Name Column -->
+          <ng-container [matColumnDef]=displayedColumns[0]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name</th>
+            <td mat-cell *matCellDef="let row">{{row.studentName}}</td>
+          </ng-container>
+
+          <!-- matrix Column -->
+          <ng-container [matColumnDef]=displayedColumns[1]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Matric No.</th>
+            <td mat-cell *matCellDef="let row">{{row.matrix}}</td>
+          </ng-container>
+
+          <!-- panels Column -->
+          <ng-container [matColumnDef]=displayedColumns[2]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Number of Panels</th>
+            <td mat-cell *matCellDef="let row"><p align="center">{{row.numberOfPanels}}</p></td>
+          </ng-container>
+
+          <!-- evaluated Column -->
+          <ng-container [matColumnDef]=displayedColumns[3]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Evaluated Panels</th>
+            <td mat-cell *matCellDef="let row">{{scoreDisplay(row.numberOfPanelsEvaluated)}}</td>
+          </ng-container>
+
+          <!-- highest Column -->
+          <ng-container [matColumnDef]=displayedColumns[4]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Highest Score Given By Panel</th>
+            <td mat-cell *matCellDef="let row">{{scoreDisplay(row.highestEvaluationGivenByPanel)}}</td>
+          </ng-container>
+
+          <!-- lowest Column -->
+          <ng-container [matColumnDef]=displayedColumns[5]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Lowest Score Given By Panel</th>
+            <td mat-cell *matCellDef="let row">{{scoreDisplay(row.lowestEvaluationGivenByPanel)}}</td>
+          </ng-container>
+
+          <!-- lowest Column -->
+          <ng-container [matColumnDef]=displayedColumns[6]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Max Diff Among Panels (highest - lowest)</th>
+            <td mat-cell *matCellDef="let row">{{scoreDisplay(row.maxDifferenceInEvaluation)}}</td>
+          </ng-container>
+
+          <!-- Presentation Score Column -->
+          <ng-container [matColumnDef]=displayedColumns[7]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Average Evaluation Score ({{presentationWeightage()}}
+              )
+            </th>
+            <td mat-cell *matCellDef="let row">{{scoreDisplay(row.avgPanelEvaluationScore)}}</td>
+          </ng-container>
+
+          <!-- percent Score Column -->
+          <ng-container [matColumnDef]=displayedColumns[8]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Score in percentage (total/{{presentationWeightage()}}
+              x100%)
+            </th>
+            <td mat-cell *matCellDef="let row">{{scoreDisplay(row.totalInPercent)}}</td>
+          </ng-container>
+
+          <!-- Confirmation Column -->
+          <ng-container [matColumnDef]=displayedColumns[9]>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Confirmation Form Result</th>
+            <td mat-cell *matCellDef="let row">{{getConfirmationScaleName(row.confirmationResult)}}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        </table>
+        <mat-paginator [pageSizeOptions]="getPaginatorOptions()"
+                       aria-label="Select page of presentation"></mat-paginator>
+
+      </div>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

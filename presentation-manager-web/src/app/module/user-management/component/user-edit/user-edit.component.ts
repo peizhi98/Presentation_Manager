@@ -19,6 +19,7 @@ export class UserEditComponent implements OnInit {
   filteredRoles: Observable<string[]>;
   allRoles = [];
   readonly NAME = 'name';
+  readonly EMAIL = 'email';
   readonly SYSTEM_ROLES = 'systemRoles';
 
 
@@ -38,6 +39,7 @@ export class UserEditComponent implements OnInit {
     console.log(this.userModel);
     this.userEditForm = this.formBuilder.group({
       name: this.formBuilder.control(this.userModel.name, Validators.required),
+      email: this.formBuilder.control(this.userModel.email, [Validators.required, Validators.email]),
       systemRoles: this.formBuilder.control(this.userModel.systemRoles, Validators.required),
     });
   }
@@ -47,7 +49,7 @@ export class UserEditComponent implements OnInit {
       const loadingRef = this.loadingUtil.openLoadingDialog('Saving...');
       const editedUser: UserModel = new UserModel();
       editedUser.id = this.userModel.id;
-      editedUser.email = this.userModel.email;
+      editedUser.email = this.userEditForm.get(this.EMAIL).value;
       editedUser.name = this.userEditForm.get(this.NAME).value;
       editedUser.systemRoles = this.userEditForm.get(this.SYSTEM_ROLES).value;
 

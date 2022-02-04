@@ -13,6 +13,7 @@ import {EvaluatePresentationComponent} from './component/evaluate-presentation/e
 import {EvaluationReportComponent} from './component/evaluation-report/evaluation-report.component';
 import {AutoSchedulingSettingComponent} from './component/auto-scheduling-setting/auto-scheduling-setting.component';
 import {GoogleIntegrationComponent} from './component/google-integration/google-integration.component';
+import {PresentationEvalautionReportComponent} from './component/presentation-evalaution-report/presentation-evalaution-report.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,12 @@ const routes: Routes = [
                     path: RouteConstant.EVALUATE, component: null,
                     children: [
                       {path: RouteConstant.FORM, component: EvaluatePresentationComponent}
+                    ]
+                  },
+                  {
+                    path: RouteConstant.REPORT, component: null,
+                    children: [
+                      {path: RouteConstant.FORM, component: PresentationEvalautionReportComponent}
                     ]
                   },
                 ]

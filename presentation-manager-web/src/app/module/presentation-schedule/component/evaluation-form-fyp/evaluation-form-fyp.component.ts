@@ -15,6 +15,8 @@ import {EvaluationModel} from '../../../../model/evaluation/evaluation.model';
 import {PresentationState} from '../../../../store/presentation/presentation.store';
 import {CriterionEvaluationModel} from '../../../../model/evaluation/criterion-evaluation.model';
 import {EvaluationService} from '../../../../service/evaluation.service';
+import {ShowSnackBar} from '../../../../store/app/app.action';
+import {ChangeEvaluationFormMode} from '../../../../store/evaluation/evaluation.action';
 
 @Component({
   selector: 'app-evaluation-form-fyp',
@@ -27,7 +29,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
   evaluationFormModel: EvaluationFormModel;
   evaluationModel: EvaluationModel;
   criteriaModels: CriterionModel[] = [];
-  scaleOptions = [1, 2, 3, 4, 5];
+  scaleOptions = [0,1, 2, 3, 4, 5];
   evaluationFormMode = EvaluationFormMode.VIEW;
   currentForm: FormGroup;
   evaluationForm: FormGroup;
@@ -38,9 +40,11 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
   readonly RATING = 'rating';
   readonly COMMENT = 'comment';
   readonly WEIGHTAGE = 'weightage';
+  readonly LINK = 'link';
   readonly CRITERION_ID = 'criterionId';
   readonly CRITERION_EVALUATION_ID = 'criterionEvaluationId';
   readonly CRITERIA_EVALUATION = 'criteriaEvaluation';
+  readonly OVERALL_COMMENT = 'overallComment';
   readonly MAX_GAP = 'maxGap';
   subs: Subscription[] = [];
 
@@ -66,6 +70,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
     this.subs.forEach(s => {
       s.unsubscribe();
     });
+    this.store.dispatch(new ChangeEvaluationFormMode(null));
   }
 
   ngOnInit(): void {
@@ -133,6 +138,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
       && this.scheduleId
       && this.evaluationType
       && this.evaluationFormMode) {
+      this.currentForm = null;
       console.log(' initiating...' + this.scheduleId + '-' + this.evaluationType + '-' + this.evaluationFormMode + '-' + this.presentationId + '-');
       switch (this.evaluationFormMode) {
         case EvaluationFormMode.EVALUATE:
@@ -155,6 +161,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
         .subscribe(resp => {
           if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
             this.evaluationModel = resp.data;
+            console.log(this.evaluationModel);
             if (!this.evaluationModel.id) {
               this.evaluationModel.presentationId = this.presentationId;
             }
@@ -164,13 +171,16 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
             // this.criteriaModels = this.evaluationFormModel.criterionModels;
             // build form
             this.evaluationForm = this.formBuilder.group({
-              maxGap: this.formBuilder.control(156),
-              criteriaEvaluation: this.formBuilder.array([])
+              criteriaEvaluation: this.formBuilder.array([]),
+              overallComment: this.formBuilder.control(this.evaluationModel.comment),
+              link: this.formBuilder.control(this.evaluationModel.rubricUrl)
             });
             this.evaluationModel.criterionEvaluationModelList.forEach(c => {
               this.addCriterionEvaluationControl(c);
             });
             this.currentForm = this.evaluationForm;
+          } else {
+            this.openSnackBar('Failed to retrieve form. Form has not been created.');
           }
           loadingRef.close();
         });
@@ -203,6 +213,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
       .subscribe(resp => {
         if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
           this.evaluationFormModel = resp.data;
+          console.log(this.evaluationFormModel);
           if (!this.evaluationFormModel.id) {
             this.evaluationFormModel.evaluationType = this.evaluationType;
             this.evaluationFormModel.scheduleId = this.scheduleId;
@@ -213,7 +224,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
           this.criteriaModels = this.evaluationFormModel.criterionModels;
           //build form
           this.evaluationFormEditingForm = this.formBuilder.group({
-            maxGap: this.formBuilder.control(this.evaluationFormModel.maxGap),
+            link: this.formBuilder.control(this.evaluationFormModel.rubricUrl),
             criteriaEvaluation: this.formBuilder.array([])
           });
           this.evaluationFormModel.criterionModels.forEach(c => {
@@ -231,7 +242,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
   addCriterionEditingControl(criterionModel: CriterionModel): void {
     (this.evaluationFormEditingForm.get(this.CRITERIA_EVALUATION) as FormArray).push(this.formBuilder.group({
       name: this.formBuilder.control(criterionModel.name, Validators.required),
-      weightage: this.formBuilder.control(criterionModel.weightage, [Validators.required, Validators.pattern("^[0-9]*$")]),
+      weightage: this.formBuilder.control(criterionModel.weightage, [Validators.required, Validators.pattern('^[0-9]*$')]),
       rating: this.formBuilder.control({value: '', disabled: true}),
       comment: this.formBuilder.control({value: '', disabled: true}),
       criterionId: this.formBuilder.control(criterionModel.id)
@@ -314,6 +325,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
       evaluationModel.id = this.evaluationModel.id;
       evaluationModel.presentationId = this.evaluationModel.presentationId;
       evaluationModel.evaluationFormId = this.evaluationModel.evaluationFormId;
+      evaluationModel.comment=this.currentForm.get(this.OVERALL_COMMENT).value;
       const criteriaEvaluation: CriterionEvaluationModel[] = [];
       console.log(this.criteriaEvaluation);
       this.criteriaEvaluation.controls.forEach(c => {
@@ -343,6 +355,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
     editedEvaluationForm.id = this.evaluationFormModel.id;
     editedEvaluationForm.evaluationType = this.evaluationType;
     editedEvaluationForm.scheduleId = this.scheduleId;
+    editedEvaluationForm.rubricUrl = this.currentForm.get(this.LINK).value;
     const criterionModels: CriterionModel[] = [];
     editedEvaluationForm.criterionModels = criterionModels;
     this.criteriaEvaluation.controls.forEach(c => {
@@ -362,6 +375,14 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
           this.openSnackBar('Failed to save evaluation criteria');
         }
       });
+  }
+
+  checkEmpty(str: string): boolean {
+    if (str) {
+      return true;
+    }
+    this.store.dispatch(new ShowSnackBar('Rubric not provided'));
+    return false;
   }
 
   openSnackBar(message: string): void {

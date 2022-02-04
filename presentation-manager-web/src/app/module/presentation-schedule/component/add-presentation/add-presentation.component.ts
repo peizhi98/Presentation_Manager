@@ -15,6 +15,7 @@ import {UserState} from '../../../../store/user/user.store';
 import {LecturerModel} from '../../../../model/role/lecturer.model';
 import {ScheduleType} from '../../../../model/schedule/schedule.model';
 import {SystemRole} from '../../../../model/user/user.model';
+import {ShowSnackBar} from '../../../../store/app/app.action';
 
 @Component({
   selector: 'app-add-presentation',
@@ -97,8 +98,25 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
+    for (const p of this.presentationModels) {
+      if (p.panelModels) {
+        for (const panels of p.panelModels) {
+          let counter = 0;
+          for (const otherPanels of p.panelModels) {
+            console.log(otherPanels);
+            console.log(p.panelModels);
+            if (panels.email === otherPanels.email) {
+              counter++;
+            }
+            if (counter === 2) {
+              this.store.dispatch(new ShowSnackBar('Same panel assigned more than once to a presentation. Please assign other panel.'));
+              return;
+            }
+          }
+        }
+      }
+    }
     const loadingRef = this.loadingUtil.openLoadingDialog();
-    console.log(this.presentationModels);
     this.presentationService.addPresentationList(this.presentationModels).subscribe(resp => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
         this.openSnackBar('Successfully Added Presentations.');

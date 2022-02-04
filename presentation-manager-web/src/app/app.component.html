@@ -17,10 +17,23 @@
     <a mat-button [routerLink]="routeConstant.USER_MANAGEMENT" *ngxPermissionsOnly="SystemRole.ADMIN"
        routerLinkActive="router-link-active">User Management</a>
     <a mat-button [routerLink]="routeConstant.SCHEDULE_VIEW"
-       *ngxPermissionsOnly="[SystemRole.COORDINATOR,SystemRole.LECTURER]"
+       *ngxPermissionsOnly="[SystemRole.COORDINATOR]"
        routerLinkActive="router-link-active">Schedule</a>
     <a mat-button [routerLink]="routeConstant.AVAILABILITY" *ngxPermissionsOnly="SystemRole.LECTURER"
        routerLinkActive="router-link-active">Availability</a>
+
+    <button [matMenuTriggerFor]="more_menu" mat-button color="primary">
+      <div style="color: white">
+        <mat-icon>person</mat-icon>
+        {{user.name}}
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </div>
+    </button>
+    <mat-menu #more_menu="matMenu">
+      <button (click)="logout()" mat-menu-item>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
   </div>
   <!--  <button mat-button color="primary" [routerLink]="routeConstant.SCHEDULE">-->
   <!--    <div style="color: white">Schedule</div>-->
@@ -28,9 +41,7 @@
   <!--  <button mat-button color="primary" [routerLink]="routeConstant.AVAILABILITY">-->
   <!--    <div style="color: white">Availability</div>-->
   <!--  </button>-->
-  <button mat-button color="primary" (click)="logout()">
-    <div style="color: white">Logout</div>
-  </button>
+
 </mat-toolbar>
 <mat-progress-bar [mode]="progressBarMode" value="0"></mat-progress-bar>
 
