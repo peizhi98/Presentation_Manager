@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "pm_user")
 public class UserBean implements Serializable {
 
     public static final String ID = "id";
