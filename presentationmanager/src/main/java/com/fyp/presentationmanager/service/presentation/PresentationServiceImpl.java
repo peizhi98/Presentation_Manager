@@ -441,7 +441,7 @@ public class PresentationServiceImpl implements PresentationService {
         //build online room and init slot with duration
         Room room = Room.buildAndInitMeetingSlots(autoSchedulingModel.getOnlinePresentationSlotsModel(), autoSchedulingModel.getPresentationDuration());
         if (room.getMeetingSlots().size() < autoSchedulingModel.getPresentationsToScheduleOnline().size()) {
-            throw new RuntimeException("Not enough physical presentation slot provided.");
+            throw new RuntimeException("Not enough online presentation slot provided.");
         }
         ScheduleData scheduleData =
                 new ScheduleData(

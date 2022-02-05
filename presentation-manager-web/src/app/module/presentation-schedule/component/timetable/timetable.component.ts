@@ -48,7 +48,7 @@ import {SystemRole} from '../../../../model/user/user.model';
   ]
 })
 export class TimetableComponent implements OnInit, OnDestroy {
-
+  constant = Constant;
   @ViewChild('scheduleObj') scheduleObj: ScheduleComponent;
   scheduleType: ScheduleType;
   startHour = Constant.SCHEDULER_START_HOUR;
@@ -190,7 +190,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
           this.eventSettings = {
             fields: {
               id: 'schedulerId',
-              subject: {name: 'title', title: 'Title'},
+              subject: {name: 'studentName', title: 'Student'},
               // location: {name: 'Location', title: 'Location'},
               // description: {name: 'Description', title: 'Comments'},
               startTime: {name: 'startTime', title: 'From'},
@@ -223,6 +223,23 @@ export class TimetableComponent implements OnInit, OnDestroy {
           this.store.dispatch(new ShowSnackBar('Add or edit presentation in history is not allowed.'));
           return;
         }
+
+        // check same panel
+        for (const p of this.scheduledPresentations) {
+          if (p.panelModels && this.draggingPresentation.panelModels) {
+            for (const panel of p.panelModels) {
+              for (const thisPresentationPanel of this.draggingPresentation.panelModels) {
+                if (thisPresentationPanel.id === panel.id) {
+                  if ((new Date(p.startTime).valueOf() <= new Date(cellData.startTime.getTime() + (this.duration * 60 * 1000)).valueOf())
+                    && new Date(cellData.startTime).valueOf() <= (new Date(p.endTime).valueOf())) {
+                    this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are schedule in other presentation of this time range'));
+                    return;
+                  }
+                }
+              }
+            }
+          }
+        }
         // disable overlapping physical presentation
         if (!(resourceDetails.resourceData.name === 'Online')
         ) {
@@ -231,7 +248,6 @@ export class TimetableComponent implements OnInit, OnDestroy {
             return;
           }
         }
-        console.log(123);
         this.draggingPresentation.startTime = cellData.startTime;
         // this.draggingPresentation.endTime = cellData.endTime;
         this.draggingPresentation.endTime = new Date(cellData.startTime.getTime() + (this.duration * 60 * 1000));
@@ -376,6 +392,25 @@ export class TimetableComponent implements OnInit, OnDestroy {
       args.cancel = true;
       this.store.dispatch(new ShowSnackBar('Add or edit presentation in history is not allowed.'));
       return;
+    }
+    // cheack same panel
+    if ((args.requestType === 'eventCreate' || args.requestType === 'eventChange') && eventData) {
+      for (const p of this.scheduledPresentations) {
+        if (p.panelModels && eventData.panelModels && eventData.id !== p.id) {
+          for (const panel of p.panelModels) {
+            for (const thisPresentationPanel of eventData.panelModels) {
+              if (thisPresentationPanel.id === panel.id) {
+                if ((new Date(p.startTime).valueOf() <= new Date(eventData.startTime.getTime() + (this.duration * 60 * 1000)).valueOf())
+                  && new Date(eventData.startTime).valueOf() <= (new Date(p.endTime).valueOf())) {
+                  this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are schedule in other presentation of this time range'));
+                  args.cancel = true;
+                  return;
+                }
+              }
+            }
+          }
+        }
+      }
     }
     // disable overlapping physical presentation
     if (!(eventData && eventData && this.getRoomName(eventData.roomId) === 'Online') &&

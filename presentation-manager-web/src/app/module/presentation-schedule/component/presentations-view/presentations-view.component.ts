@@ -30,7 +30,7 @@ export class PresentationsViewComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<PresentationModel>;
   scheduleId: number;
   scheduleType: ScheduleType;
-  displayedColumns = ['number', 'studentName', 'title', 'sv','panels' ,'action'];
+  displayedColumns = ['number', 'studentName', 'time', 'sv','panels' ,'action'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -99,7 +99,7 @@ export class PresentationsViewComponent implements OnInit, OnDestroy {
         case this.displayedColumns[1]:
           return item.studentName;
         case this.displayedColumns[2]:
-          return item.title;
+          return item.startTime;
         case this.displayedColumns[3]:
           return item.supervisorModel.name;
         default:

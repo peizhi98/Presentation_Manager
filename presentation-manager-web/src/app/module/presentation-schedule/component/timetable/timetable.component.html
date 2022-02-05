@@ -2,7 +2,7 @@
   <p align="right">
     <span class="pr-1"><button mat-raised-button (click)="navigateToAutoSchedule()" color="primary">Auto-schedule
     </button></span>
-    <span><button mat-raised-button (click)="save()" *ngxPermissionsOnly="SystemRole.COORDINATOR"
+    <span><button mat-raised-button (click)="save()" *ngxPermissionsOnly="[constant.ROLE_SCHEDULE_COORDINATOR,SystemRole.OFFICE]"
                   color="primary">Save</button></span>
 
   </p>

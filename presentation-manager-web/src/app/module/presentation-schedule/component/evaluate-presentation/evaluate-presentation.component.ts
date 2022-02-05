@@ -30,7 +30,7 @@ export class EvaluatePresentationComponent implements OnInit {
   getTitle(): string {
     switch (this.evaluationType) {
       case EvaluationType.PRESENTATION:
-        return 'VIVA Assessment Form';
+        return 'Presentation Assessment Form';
       case EvaluationType.REPORT:
         return 'Supervisor Assessment Form';
       case EvaluationType.PANEL:

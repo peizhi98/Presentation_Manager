@@ -124,7 +124,7 @@ export class PresentationEvalautionReportComponent implements OnInit, OnDestroy 
     let title = '';
     switch (this.evaluationType) {
       case EvaluationType.PRESENTATION:
-        title = 'VIVA Assessment Form';
+        title = 'Presentation Assessment Form';
         break;
       case EvaluationType.REPORT:
         title = 'Supervisor Assessment Form';

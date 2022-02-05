@@ -19,7 +19,7 @@
     <a mat-button [routerLink]="routeConstant.SCHEDULE_VIEW"
        *ngxPermissionsOnly="[SystemRole.COORDINATOR]"
        routerLinkActive="router-link-active">Schedule</a>
-    <a mat-button [routerLink]="routeConstant.AVAILABILITY" *ngxPermissionsOnly="SystemRole.LECTURER"
+    <a mat-button [routerLink]="routeConstant.AVAILABILITY"
        routerLinkActive="router-link-active">Availability</a>
 
     <button [matMenuTriggerFor]="more_menu" mat-button color="primary">

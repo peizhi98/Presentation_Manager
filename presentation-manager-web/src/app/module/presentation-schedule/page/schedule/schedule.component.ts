@@ -29,6 +29,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   routeConstant = RouteConstant;
   subs: Subscription[] = [];
   permissionsToNavbar = [];
+  activeLink = '';
 
   constructor(private scheduleService: ScheduleService,
               private activatedRoute: ActivatedRoute,

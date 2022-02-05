@@ -175,7 +175,7 @@ export class EvaluationCriteriaComponent implements OnInit {
   getTitle(evaluationType: EvaluationType): string {
     switch (evaluationType) {
       case EvaluationType.PRESENTATION:
-        return 'VIVA Assessment Form';
+        return 'Presentation Assessment Form';
       case EvaluationType.REPORT:
         return 'Supervisor Assessment Form';
       case EvaluationType.PANEL:

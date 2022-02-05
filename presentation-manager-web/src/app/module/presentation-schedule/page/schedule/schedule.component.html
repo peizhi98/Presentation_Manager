@@ -26,33 +26,33 @@
       <!--      </a>-->
       <a mat-tab-link
          [routerLink]="routeConstant.PRESENTATION_VIEW"
-         routerLinkActive #rla="routerLinkActive"
-         [active]="rla.isActive">
+         (click)="activeLink = routeConstant.PRESENTATION_VIEW"
+         [active]="activeLink == routeConstant.PRESENTATION_VIEW">
         Presentation
       </a>
       <a mat-tab-link
          [routerLink]="routeConstant.TIMETABLE"
-         routerLinkActive #rla="routerLinkActive"
-         [active]="rla.isActive">
+         (click)="activeLink = routeConstant.TIMETABLE"
+         [active]="activeLink == routeConstant.TIMETABLE">
         Timetable
       </a>
       <a mat-tab-link
          *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR"
          [routerLink]="routeConstant.CRITERIA"
-         routerLinkActive #rla="routerLinkActive"
-         [active]="rla.isActive">
+         (click)="activeLink = routeConstant.CRITERIA"
+         [active]="activeLink == routeConstant.CRITERIA">
         Evaluation Criteria
       </a>
       <a mat-tab-link
          [routerLink]="routeConstant.EVALUATION_VIEW"
-         routerLinkActive #rla="routerLinkActive"
-         [active]="rla.isActive">
+         (click)="activeLink = routeConstant.EVALUATION_VIEW"
+         [active]="activeLink == routeConstant.EVALUATION_VIEW">
         Evaluation Report
       </a>
       <a mat-tab-link
          [routerLink]="routeConstant.GOOGLE_CALENDAR"
-         routerLinkActive #rla="routerLinkActive"
-         [active]="rla.isActive">
+         (click)="activeLink = routeConstant.GOOGLE_CALENDAR"
+         [active]="activeLink == routeConstant.GOOGLE_CALENDAR">
         Google Calendar
       </a>
     </nav>

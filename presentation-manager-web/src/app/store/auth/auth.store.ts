@@ -6,7 +6,7 @@ import {AuthService} from '../../service/auth.service';
 import {Constant} from '../../../assets/constant/app.constant';
 import {NgxPermissionsService} from 'ngx-permissions';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {LoadingDialogUtil} from '../../util/loading-dialog.util';
+import {ProgressBarStopLoading} from '../app/app.action';
 
 export class AuthStateModel {
   jwt: string;
@@ -43,8 +43,7 @@ export class AuthState implements NgxsOnInit {
 
   constructor(private matSnackBar: MatSnackBar,
               private authService: AuthService,
-              private permissionsService: NgxPermissionsService,
-              private loadingUtil: LoadingDialogUtil) {
+              private permissionsService: NgxPermissionsService) {
   }
 
   ngxsOnInit(ctx: StateContext<AuthStateModel>): void {
@@ -58,7 +57,7 @@ export class AuthState implements NgxsOnInit {
 
   @Action(Login)
   login(ctx: StateContext<AuthStateModel>, action: Login): void {
-    const loadingRef = this.loadingUtil.openLoadingDialog('Logging in...');
+    // const loadingRef = this.loadingUtil.openLoadingDialog('Logging in...');
     this.authService.login(action.username, action.password).subscribe(resp => {
       if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
         this.permissionsService.loadPermissions(resp.data.authUserModel.systemRoles);
@@ -79,8 +78,8 @@ export class AuthState implements NgxsOnInit {
       } else {
         this.openSnackBar('Invalid Credential');
       }
-      loadingRef.close();
-      // ctx.dispatch(new ProgressBarStopLoading());
+      // loadingRef.close();
+      ctx.dispatch(new ProgressBarStopLoading());
     });
   }
 

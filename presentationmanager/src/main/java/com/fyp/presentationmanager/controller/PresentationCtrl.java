@@ -151,7 +151,7 @@ public class PresentationCtrl {
             responseModel.success(presentationService.getAutoSchedulingResultScheduler(autoSchedulingModel));
         } catch (Exception e) {
             e.printStackTrace();
-            responseModel.failed();
+            responseModel.failed(null,e.getMessage());
         }
         return responseModel;
     }

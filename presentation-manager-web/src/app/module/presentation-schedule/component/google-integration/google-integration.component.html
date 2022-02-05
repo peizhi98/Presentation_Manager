@@ -21,7 +21,7 @@
 
         <!-- schedule Column -->
         <ng-container [matColumnDef]=displayedColumns[1]>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 25%">Scheduled Time</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 25%">Presentation Time</th>
           <td mat-cell *matCellDef="let row">{{(row.startTime|date:timeFormat)}}
             - {{(row.endTime|date:timeFormat)}}</td>
         </ng-container>

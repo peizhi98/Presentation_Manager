@@ -5,6 +5,16 @@
   <!--  first step-->
   <mat-step label="Select presentation to schedule">
     <form [formGroup]="firstFormGroup">
+      <div>Select all as:
+        <mat-form-field style="width: 15%" appearance="fill">
+          <mat-label>presentation mode</mat-label>
+          <mat-select>
+            <mat-option (click)="clearAllCheckBox()" value="none">None</mat-option>
+            <mat-option (click)="checkAllOnline()" value="online">Online</mat-option>
+            <mat-option (click)="checkAllPhysical()" value="physical">Physical</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
       <!--      <ng-template matStepLabel>Select presentation to schedule</ng-template>-->
       <ng-container *ngIf="presentationModels">
         <table mat-table matSort class="w-100" *ngIf="dataSource" [dataSource]="dataSource">

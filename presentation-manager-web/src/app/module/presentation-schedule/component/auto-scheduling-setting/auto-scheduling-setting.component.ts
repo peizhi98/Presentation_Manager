@@ -275,9 +275,9 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
             this.scheduleGenerated = true;
 
           } else {
-            this.store.dispatch(new ShowSnackBar('Failed to auto generate valid presentation schedule. Please make sure panels are available on presentation slots.'));
+            this.store.dispatch(new ShowSnackBar('Failed to auto generate valid presentation schedule. ' + res.message));
           }
-        loadingRef.close();
+          loadingRef.close();
         }
       );
     }
@@ -352,7 +352,7 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
     this.eventSettings = {
       fields: {
         id: 'schedulerId',
-        subject: {name: 'title', title: 'Title'},
+        subject: {name: 'studentName', title: 'Student'},
         startTime: {name: 'startTime', title: 'From'},
         endTime: {name: 'endTime', title: 'To'},
         isBlock: 'true',
@@ -473,6 +473,26 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
         this.store.dispatch(new ShowSnackBar('Overlapping physical presentation is not allowed.'));
       }
     }
+
+    // cheack same panel
+    if ((args.requestType === 'eventCreate' || args.requestType === 'eventChange') && eventData) {
+      for (const p of this.autoScheduledPresentations) {
+        if (p.panelModels && eventData.panelModels && eventData.id !== p.id) {
+          for (const panel of p.panelModels) {
+            for (const thisPresentationPanel of eventData.panelModels) {
+              if (thisPresentationPanel.id === panel.id) {
+                if ((new Date(p.startTime).valueOf() <= new Date(eventData.endTime).valueOf())
+                  && new Date(eventData.startTime).valueOf() <= (new Date(p.endTime).valueOf())) {
+                  this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are schedule in other presentation of this time range'));
+                  args.cancel = true;
+                  return;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   onActionComplete(args: ActionEventArgs): void {
@@ -494,5 +514,25 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
 
   get SystemRole() {
     return SystemRole;
+  }
+
+  clearAllCheckBox(){
+    this.presentationModels.forEach(p => {
+      p.online = false;
+      p.physical = false;
+    });
+  }
+
+  checkAllOnline(){
+    this.presentationModels.forEach(p => {
+      p.online = true;
+      p.physical = false;
+    });
+  }
+  checkAllPhysical(){
+    this.presentationModels.forEach(p => {
+      p.online = false;
+      p.physical = true;
+    });
   }
 }

@@ -3,11 +3,11 @@
     <p class="pt-1 pr-1" align="right">
                   <span>
               <button mat-raised-button color="primary" (click)="exportexcel()"
-                      *ngxPermissionsOnly="SystemRole.COORDINATOR">Export Schedule to Excel
+                      *ngxPermissionsOnly="[constant.ROLE_SCHEDULE_COORDINATOR,SystemRole.OFFICE]">Export Schedule to Excel
               </button>
             </span>
       <span class="ml-1">
-        <button mat-raised-button color="primary" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR" [routerLink]="routeConstant.ADD_PRESENTATION">Add New Presentations
+        <button mat-raised-button color="primary" *ngxPermissionsOnly="[constant.ROLE_SCHEDULE_COORDINATOR,SystemRole.OFFICE]" [routerLink]="routeConstant.ADD_PRESENTATION">Add New Presentations
       </button>
       </span>
 
@@ -32,8 +32,9 @@
 
         <!-- Title Column -->
         <ng-container [matColumnDef]=displayedColumns[2]>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-          <td mat-cell *matCellDef="let row">{{row.title}}</td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Presentation Time</th>
+          <td mat-cell *matCellDef="let row">{{(row.startTime|date:timeFormat)}}
+            - {{(row.endTime|date:timeFormat)}}</td>
         </ng-container>
 
         <!-- SV Column -->

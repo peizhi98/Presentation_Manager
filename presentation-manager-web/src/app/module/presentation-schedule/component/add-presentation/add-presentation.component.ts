@@ -23,6 +23,7 @@ import {ShowSnackBar} from '../../../../store/app/app.action';
   styleUrls: ['./add-presentation.component.css']
 })
 export class AddPresentationComponent implements OnInit, OnDestroy {
+  constant = Constant;
   presentationModels: PresentationModel[] = [];
   scheduleId: number;
   scheduleType: ScheduleType;
