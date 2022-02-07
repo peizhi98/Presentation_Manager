@@ -13,7 +13,8 @@ import {
   ResourceDetails,
   ScheduleComponent,
   TimelineViewsService,
-  View
+  View,
+  ResourcesModel
 } from '@syncfusion/ej2-angular-schedule';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {PresentationService} from '../../../../service/presentation.service';
@@ -227,16 +228,38 @@ export class TimetableComponent implements OnInit, OnDestroy {
         // check same panel
         for (const p of this.scheduledPresentations) {
           if (p.panelModels && this.draggingPresentation.panelModels) {
+            let pHasChairperson = false;
+            let draggingHasChairperson = false;
+            if (p.chairperson) {
+              p.panelModels.push(p.chairperson);
+              pHasChairperson = true;
+            }
+            if (this.draggingPresentation.chairperson) {
+              this.draggingPresentation.panelModels.push(this.draggingPresentation.chairperson);
+              draggingHasChairperson = true;
+            }
             for (const panel of p.panelModels) {
               for (const thisPresentationPanel of this.draggingPresentation.panelModels) {
                 if (thisPresentationPanel.id === panel.id) {
-                  if ((new Date(p.startTime).valueOf() <= new Date(cellData.startTime.getTime() + (this.duration * 60 * 1000)).valueOf())
-                    && new Date(cellData.startTime).valueOf() <= (new Date(p.endTime).valueOf())) {
+                  if ((new Date(p.startTime).valueOf() < new Date(cellData.startTime.getTime() + (this.duration * 60 * 1000)).valueOf())
+                    && new Date(cellData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
                     this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are schedule in other presentation of this time range'));
+                    if (pHasChairperson) {
+                      p.panelModels.pop();
+                    }
+                    if (draggingHasChairperson) {
+                      this.draggingPresentation.panelModels.pop();
+                    }
                     return;
                   }
                 }
               }
+            }
+            if (pHasChairperson) {
+              p.panelModels.pop();
+            }
+            if (draggingHasChairperson) {
+              this.draggingPresentation.panelModels.pop();
             }
           }
         }
@@ -271,6 +294,45 @@ export class TimetableComponent implements OnInit, OnDestroy {
       args.element.style.backgroundColor = Constant.SCHEDULER_COLOR_BLOCKED;
       return;
     }
+    const eventData = args.data;
+    // check same panel
+    for (const p of this.scheduledPresentations) {
+      if (p.panelModels && eventData.panelModels && eventData.id !== p.id) {
+        let pHasChairperson = false;
+        let draggingHasChairperson = false;
+        if (p.chairperson) {
+          p.panelModels.push(p.chairperson);
+          pHasChairperson = true;
+        }
+        if (eventData.chairperson) {
+          eventData.panelModels.push(eventData.chairperson);
+          draggingHasChairperson = true;
+        }
+        for (const panel of p.panelModels) {
+          for (const thisPresentationPanel of eventData.panelModels) {
+            if (thisPresentationPanel.id === panel.id) {
+              if ((new Date(p.startTime).valueOf() < new Date(eventData.endTime).valueOf())
+                && new Date(eventData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
+                if (pHasChairperson) {
+                  p.panelModels.pop();
+                }
+                if (draggingHasChairperson) {
+                  eventData.panelModels.pop();
+                }
+                args.element.style.backgroundColor = 'black';
+                return;
+              }
+            }
+          }
+        }
+        if (pHasChairperson) {
+          p.panelModels.pop();
+        }
+        if (draggingHasChairperson) {
+          eventData.panelModels.pop();
+        }
+      }
+    }
     if (args.data && args.data.commonAvailabilityList) {
       for (const ca of args.data.commonAvailabilityList) {
         if ((new Date(ca.startTime).valueOf() <= new Date(args.data.startTime).valueOf())
@@ -286,7 +348,6 @@ export class TimetableComponent implements OnInit, OnDestroy {
   onSchedulerDragStart(args: DragEventArgs): void {
     args.interval = 5;
     args.navigation.enable = true;
-    console.log(args);
     let eventData: any = null;
     if (args != null && args.data && args.data[0]) {
       eventData = args.data[0];
@@ -393,21 +454,62 @@ export class TimetableComponent implements OnInit, OnDestroy {
       this.store.dispatch(new ShowSnackBar('Add or edit presentation in history is not allowed.'));
       return;
     }
-    // cheack same panel
+    // // check same panel
+    // if ((args.requestType === 'eventCreate' || args.requestType === 'eventChange') && eventData) {
+    //   for (const p of this.scheduledPresentations) {
+    //     if (p.panelModels && eventData.panelModels && eventData.id !== p.id) {
+    //       for (const panel of p.panelModels) {
+    //         for (const thisPresentationPanel of eventData.panelModels) {
+    //           if (thisPresentationPanel.id === panel.id) {
+    //             if ((new Date(p.startTime).valueOf() < new Date(eventData.startTime.getTime() + (this.duration * 60 * 1000)).valueOf())
+    //               && new Date(eventData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
+    //               this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are schedule in other presentation of this time range'));
+    //               args.cancel = true;
+    //               return;
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+    // check same panel
     if ((args.requestType === 'eventCreate' || args.requestType === 'eventChange') && eventData) {
       for (const p of this.scheduledPresentations) {
-        if (p.panelModels && eventData.panelModels && eventData.id !== p.id) {
+        if (p.panelModels && eventData.panelModels && eventData.id != p.id) {
+          let pHasChairperson = false;
+          let draggingHasChairperson = false;
+          if (p.chairperson) {
+            p.panelModels.push(p.chairperson);
+            pHasChairperson = true;
+          }
+          if (eventData.chairperson) {
+            eventData.panelModels.push(eventData.chairperson);
+            draggingHasChairperson = true;
+          }
           for (const panel of p.panelModels) {
             for (const thisPresentationPanel of eventData.panelModels) {
               if (thisPresentationPanel.id === panel.id) {
-                if ((new Date(p.startTime).valueOf() <= new Date(eventData.startTime.getTime() + (this.duration * 60 * 1000)).valueOf())
-                  && new Date(eventData.startTime).valueOf() <= (new Date(p.endTime).valueOf())) {
+                if ((new Date(p.startTime).valueOf() < new Date(eventData.endTime).valueOf())
+                  && new Date(eventData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
                   this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are schedule in other presentation of this time range'));
+                  if (pHasChairperson) {
+                    p.panelModels.pop();
+                  }
+                  if (draggingHasChairperson) {
+                    eventData.panelModels.pop();
+                  }
                   args.cancel = true;
                   return;
                 }
               }
             }
+          }
+          if (pHasChairperson) {
+            p.panelModels.pop();
+          }
+          if (draggingHasChairperson) {
+            eventData.panelModels.pop();
           }
         }
       }
@@ -444,4 +546,19 @@ export class TimetableComponent implements OnInit, OnDestroy {
   get SystemRole() {
     return SystemRole;
   }
+
+  // public getHeaderStyles(data: Record<string, any>): Record<string, any> {
+  //   if (data.elementType === 'cell') {
+  //     return { 'align-items': 'center', color: '#919191' };
+  //   } else {
+  //     const resourceData: Record<string, any> = this.getResourceData(data);
+  //     return { background: resourceData.Color, color: 'black' };
+  //   }
+  // }
+  // public getResourceData(data: Record<string, any>): Record<string, any> {
+  //   const resources: ResourcesModel = this.scheduleObj.getResourceCollections()[0];
+  //   const resourceData: Record<string, any> = (resources.dataSource as Record<string, any>[]).filter((resource: Record<string, any>) =>
+  //     resource.Id === data.RoomId)[0] as Record<string, any>;
+  //   return resourceData;
+  // }
 }

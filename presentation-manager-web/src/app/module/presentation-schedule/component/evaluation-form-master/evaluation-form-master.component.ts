@@ -372,7 +372,7 @@ export class EvaluationFormMasterComponent implements OnInit, OnDestroy {
         if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
           this.openSnackBar('Successfully save evaluation criteria');
         } else {
-          this.openSnackBar('Failed to save evaluation criteria');
+          this.openSnackBar('Failed to save changes. '+resp.message);
         }
       });
   }

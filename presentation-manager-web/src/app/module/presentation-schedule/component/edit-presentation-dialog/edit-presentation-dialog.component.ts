@@ -64,6 +64,20 @@ export class EditPresentationDialogComponent implements OnInit {
   }
 
   onSubmit() {
+      if (this.presentation.panelModels) {
+        for (const panels of this.presentation.panelModels) {
+          let counter = 0;
+          for (const otherPanels of this.presentation.panelModels) {
+            if (panels.email === otherPanels.email) {
+              counter++;
+            }
+            if (counter === 2) {
+              this.store.dispatch(new ShowSnackBar('Same panel assigned more than once to a presentation. Please assign other panel.'));
+              return;
+            }
+          }
+        }
+      }
     const loadingRef = this.loadingUtil.openLoadingDialog('Saving...');
 
     this.presentationService.editPresentation(this.presentation)

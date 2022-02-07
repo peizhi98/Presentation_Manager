@@ -117,3 +117,32 @@
 .schedule-block-events.e-schedule .employee-designation {
   font-size: 10px;
 }
+
+
+.quick-info-header {
+  background-color: white;
+  padding: 8px 18px;
+}
+
+.quick-info-header-content {
+  justify-content: flex-end;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px 5px;
+}
+
+.material-dark .quick-info-header {
+  background-color: #424242;
+}
+
+.highcontrast .quick-info-header,
+.tailwind-dark .quick-info-header,
+.bootstrap-dark .quick-info-header,
+.bootstrap5-dark .quick-info-header,
+.fabric-dark .quick-info-header {
+  background-color: transparent;
+}
+
+.tailwind-dark .quick-info-header-content, .bootstrap-dark .quick-info-header-content, .fabric-dark .quick-info-header-content, .material-dark .quick-info-header-content, .highcontrast .quick-info-header-content {
+  color: #fff !important;
+}

@@ -4,6 +4,7 @@ import {PresentationModel} from '../../../../model/presentation/presentation.mod
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {RouteConstant} from '../../../../../assets/constant/route.contant';
+import {Constant} from '../../../../../assets/constant/app.constant';
 
 @Component({
   selector: 'app-presentations-table',
@@ -12,9 +13,10 @@ import {RouteConstant} from '../../../../../assets/constant/route.contant';
 })
 export class PresentationsTableComponent implements OnInit {
   routeConstant = RouteConstant;
+  timeFormat = Constant.TIME_FORMAT;
 
   dataSource: MatTableDataSource<PresentationModel>;
-  displayedColumns = ['number', 'studentName', 'title', 'schedule', 'year', 'sem', 'action'];
+  displayedColumns = ['number', 'studentName', 'time', 'schedule', 'year', 'sem', 'action'];
 
   @ViewChild(MatPaginator, {static: false}) set paginator(matPaginator: MatPaginator) {
     this.dataSource.paginator = matPaginator;
@@ -55,7 +57,7 @@ export class PresentationsTableComponent implements OnInit {
         case this.displayedColumns[1]:
           return item.studentName;
         case this.displayedColumns[2]:
-          return item.title;
+          return item.startTime;
         case this.displayedColumns[3]:
           return item.scheduleModel.title;
         case this.displayedColumns[4]:

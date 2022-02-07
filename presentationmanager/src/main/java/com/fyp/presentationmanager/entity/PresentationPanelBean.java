@@ -1,5 +1,7 @@
 package com.fyp.presentationmanager.entity;
 
+import com.fyp.presentationmanager.enums.EvaluationType;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -72,5 +74,9 @@ public class PresentationPanelBean implements Serializable {
 
     public void setPanelBean(UserBean panelBean) {
         this.panelBean = panelBean;
+    }
+
+    public EvaluationFormBean getEvaluationFormOf(EvaluationType evaluationType) {
+        return this.presentationBean.getEvaluationFormOf(evaluationType);
     }
 }

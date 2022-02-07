@@ -32,7 +32,8 @@
           <div class="example-box">
             <div>{{presentation.title}}</div>
             <div>Student Name: {{presentation.studentName}}</div>
-            <div>Supervisor: {{presentation.supervisorModel.name}}</div>
+            <div>Supervisor: {{(presentation.supervisorModel)?presentation.supervisorModel.name:'-'}}</div>
+            <div>Chairperson: {{(presentation.chairperson)?presentation.chairperson.name:'-'}}</div>
             <ng-container *ngIf="presentation.panelModels">
               <ng-container *ngFor="let panel of presentation.panelModels; let i = index">
                 <div>Panel {{(i + 1) + ': ' + panel.name}}</div>
@@ -114,6 +115,22 @@
         </ng-template>
 
 
+<!--        &lt;!&ndash; Header template &ndash;&gt;-->
+<!--        <ng-template #quickInfoTemplatesHeader let-data>-->
+<!--          <div class="quick-info-header">-->
+<!--            <div class="quick-info-header-content" [ngStyle]="getHeaderStyles(data)">-->
+<!--              <div class="quick-info-title">aa</div>-->
+<!--              <div class="duration-text">aaaaa</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </ng-template>-->
+        <ng-template #quickInfoTemplatesFooter let-data>
+          <div class="quick-info-footer-wrapper">
+            <button mat-raised-button class="mr-1" style="float:right;" color="primary">
+              Delete
+            </button>
+          </div>
+        </ng-template>
       </ejs-schedule>
     </ng-container>
   </mat-sidenav-content>

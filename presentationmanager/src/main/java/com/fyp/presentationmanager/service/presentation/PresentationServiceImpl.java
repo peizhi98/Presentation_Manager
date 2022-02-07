@@ -1,7 +1,9 @@
 package com.fyp.presentationmanager.service.presentation;
 
 import com.fyp.presentationmanager.entity.*;
+import com.fyp.presentationmanager.enums.EvaluationType;
 import com.fyp.presentationmanager.enums.PresentationMode;
+import com.fyp.presentationmanager.enums.ScheduleType;
 import com.fyp.presentationmanager.model.auth.CustomUserDetails;
 import com.fyp.presentationmanager.model.presentation.AutoSchedulingModel;
 import com.fyp.presentationmanager.model.presentation.PresentationModel;
@@ -16,10 +18,7 @@ import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.Present
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.Room;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.ScheduleData;
 import com.fyp.presentationmanager.model.scheduleGeneticAlgo.scheduleDNA.TimeRange;
-import com.fyp.presentationmanager.repo.PanelRepo;
-import com.fyp.presentationmanager.repo.PresentationPanelRepo;
-import com.fyp.presentationmanager.repo.PresentationRepo;
-import com.fyp.presentationmanager.repo.ScheduleRepo;
+import com.fyp.presentationmanager.repo.*;
 import com.fyp.presentationmanager.service.auth.AuthService;
 import com.fyp.presentationmanager.service.google.GoogleAPIService;
 import com.fyp.presentationmanager.service.user.UserService;
@@ -49,6 +48,8 @@ public class PresentationServiceImpl implements PresentationService {
     private AuthService authService;
     @Autowired
     private GoogleAPIService googleAPIService;
+    @Autowired
+    private EvaluationRepo evaluationRepo;
 
     @Override
     public List<PresentationModel> addPresentationList(List<PresentationModel> presentationModelList) {
@@ -97,11 +98,26 @@ public class PresentationServiceImpl implements PresentationService {
                 this.userService.getUserByEmail(presentationModel.getSupervisorModel().getEmail());
         UserBean chairperson =
                 this.userService.getUserByEmail(presentationModel.getChairperson().getEmail());
-        presentationBean.setSupervisorId(sv.getId());
         if (sv != null) {
+            if (presentationBean.getSupervisorBean() != null && sv.getId() != presentationBean.getSupervisorBean().getId()) {
+                EvaluationFormBean reportForm = presentationBean.getEvaluationFormOf(EvaluationType.REPORT);
+                EvaluationBean reportEvaluation
+                        = this.evaluationRepo.getEvaluationBeanByEvaluationFormIdAndPresentationIdAndEvaluatorId(reportForm.getId(), presentationBean.getId(), presentationBean.getSupervisorId());
+                if (reportEvaluation != null) {
+                    this.evaluationRepo.deleteById(reportEvaluation.getId());
+                }
+            }
             presentationBean.setSupervisorId(sv.getId());
         }
         if (chairperson != null) {
+            if (presentationBean.getChairPersonBean() != null && chairperson.getId() != presentationBean.getChairPersonBean().getId()) {
+                EvaluationFormBean reportForm = presentationBean.getEvaluationFormOf(EvaluationType.CONFIRMATION);
+                EvaluationBean reportEvaluation
+                        = this.evaluationRepo.getEvaluationBeanByEvaluationFormIdAndPresentationIdAndEvaluatorId(reportForm.getId(), presentationBean.getId(), presentationBean.getChairPersonId());
+                if (reportEvaluation != null) {
+                    this.evaluationRepo.deleteById(reportEvaluation.getId());
+                }
+            }
             presentationBean.setChairPersonId(chairperson.getId());
         }
 
@@ -131,6 +147,24 @@ public class PresentationServiceImpl implements PresentationService {
             List<PresentationPanelBean> presentationPanelsCopy = new ArrayList<>(presentationPanelBeans);
             for (PresentationPanelBean pp : presentationPanelsCopy) {
                 if (!findBeanFromModelsByUsername(pp, panelModelList)) {
+                    ScheduleType scheduleType = pp.getPresentationBean().getScheduleBean().getScheduleType();
+                    // delete existing evaluation
+                    EvaluationType panelEvaluationType;
+                    if (scheduleType.equals(ScheduleType.MASTER_DISSERTATION)) {
+                        panelEvaluationType = EvaluationType.PANEL;
+                    } else {
+                        panelEvaluationType = EvaluationType.PRESENTATION;
+                    }
+
+                    EvaluationBean presentationEvaluation
+                            = this.evaluationRepo.getEvaluationBeanByEvaluationFormIdAndPresentationIdAndEvaluatorId
+                            (pp.getEvaluationFormOf(panelEvaluationType).getId(),
+                                    pp.getPresentationId(),
+                                    pp.getPanelId());
+                    if (presentationEvaluation != null) {
+                        this.evaluationRepo.deleteById(presentationEvaluation.getId());
+                    }
+
                     presentationPanelBeans.remove(presentationPanelBeans.indexOf(pp));
                     this.presentationPanelRepo.deleteById(pp.getId());
                 }

@@ -12,6 +12,8 @@ public interface EvaluationRepo extends JpaRepository<EvaluationBean, Integer> {
             (Integer evaluationFormId, Integer presentationId,Integer evaluatorId);
     List<EvaluationBean> getEvaluationBeansByEvaluationFormIdAndPresentationId
             (Integer evaluationFormId, Integer presentationId);
+    List<EvaluationBean> getEvaluationBeansByEvaluationFormId
+            (Integer evaluationFormId);
     EvaluationBean getEvaluationBeanByEvaluationFormIdAndPresentationId
             (Integer evaluationFormId, Integer presentationId);
 }

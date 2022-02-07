@@ -390,4 +390,8 @@ public class PresentationBean implements Serializable {
         }
         return false;
     }
+
+    public EvaluationFormBean getEvaluationFormOf(EvaluationType evaluationType) {
+        return this.scheduleBean.getEvaluationFormBeanOf(evaluationType);
+    }
 }

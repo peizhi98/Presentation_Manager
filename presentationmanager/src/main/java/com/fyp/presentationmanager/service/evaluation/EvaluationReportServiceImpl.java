@@ -76,7 +76,7 @@ public class EvaluationReportServiceImpl implements EvaluationReportService {
                             if (presentationEvaluation.getCriterionEvaluationBeans() != null) {
                                 for (CriterionEvaluationBean criterionEvaluationBean : presentationEvaluation.getCriterionEvaluationBeans()) {
                                     BigDecimal criterionRating
-                                            = new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(5)).multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()));
+                                            = new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(5),4,RoundingMode.HALF_UP).multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()));
                                     total = new BigDecimal(total.add(criterionRating).toString());
                                 }
                                 totalOfPanels = new BigDecimal(totalOfPanels.add(total).toString());
@@ -97,7 +97,7 @@ public class EvaluationReportServiceImpl implements EvaluationReportService {
                             pEvaluationOverview.setMaxDifferenceInEvaluation(highest.subtract(lowest));
                         }
                         if (numberOfPanels == numberOfPanelsEvaluated) {
-                            pEvaluationOverview.setPresentationScore(totalOfPanels.divide(new BigDecimal(numberOfPanels)));
+                            pEvaluationOverview.setPresentationScore(totalOfPanels.divide(new BigDecimal(numberOfPanels),4,RoundingMode.HALF_UP));
                         }
                     }
                 }
@@ -158,7 +158,7 @@ public class EvaluationReportServiceImpl implements EvaluationReportService {
                             if (presentationEvaluation.getCriterionEvaluationBeans() != null) {
                                 for (CriterionEvaluationBean criterionEvaluationBean : presentationEvaluation.getCriterionEvaluationBeans()) {
                                     BigDecimal criterionRating
-                                            = new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(scale)).multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()));
+                                            = new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(scale),4,RoundingMode.HALF_UP).multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()));
                                     total = new BigDecimal(total.add(criterionRating).toString());
                                 }
                                 totalOfPanels = new BigDecimal(totalOfPanels.add(total).toString());
@@ -179,7 +179,7 @@ public class EvaluationReportServiceImpl implements EvaluationReportService {
                             pEvaluationOverview.setMaxDifferenceInEvaluation(highest.subtract(lowest));
                         }
                         if (numberOfPanels == numberOfPanelsEvaluated) {
-                            pEvaluationOverview.setAvgPanelEvaluationScore(totalOfPanels.divide(new BigDecimal(numberOfPanels)));
+                            pEvaluationOverview.setAvgPanelEvaluationScore(totalOfPanels.divide(new BigDecimal(numberOfPanels),4,RoundingMode.HALF_UP));
                         }
                     }
                 }
@@ -322,13 +322,13 @@ public class EvaluationReportServiceImpl implements EvaluationReportService {
                 if (presentationEvaluation.getCriterionEvaluationBeans() != null) {
                     for (CriterionEvaluationBean criterionEvaluationBean : presentationEvaluation.getCriterionEvaluationBeans()) {
                         BigDecimal criterionRating
-                                = new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(5)).multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()));
+                                = new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(5),4,RoundingMode.HALF_UP).multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()));
                         total = new BigDecimal(total.add(criterionRating).toString());
                     }
                 }
 
             }
-            return total.divide(new BigDecimal(presentationEvaluationBeans.size()));
+            return total.divide(new BigDecimal(presentationEvaluationBeans.size()),4,RoundingMode.HALF_UP);
         }
         return null;
     }
@@ -343,7 +343,7 @@ public class EvaluationReportServiceImpl implements EvaluationReportService {
                 if (presentationEvaluation.getCriterionEvaluationBeans() != null) {
                     for (CriterionEvaluationBean criterionEvaluationBean : presentationEvaluation.getCriterionEvaluationBeans()) {
                         BigDecimal criterionRating
-                                = new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(5)).multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()));
+                                = new BigDecimal(criterionEvaluationBean.getRating()).divide(new BigDecimal(5),4,RoundingMode.HALF_UP).multiply(new BigDecimal(criterionEvaluationBean.getCriterionBean().getWeightage()));
                         total = new BigDecimal(total.add(criterionRating).toString());
                     }
                     if (highest == null || lowest == null) {

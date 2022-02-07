@@ -28,7 +28,9 @@
               <button mat-menu-item [routerLink]="routeConstant.REPORT+'/'+EvaluationType.PRESENTATION">
                 {{getTitle(EvaluationType.PRESENTATION)}}
               </button>
-              <button mat-menu-item [routerLink]="routeConstant.REPORT+'/'+EvaluationType.REPORT">
+              <button mat-menu-item
+                      *ngxPermissionsOnly="[constant.ROLE_SCHEDULE_COORDINATOR,constant.ROLE_CHAIRPERSON,constant.ROLE_SUPERVISOR,SystemRole.OFFICE]"
+                      [routerLink]="routeConstant.REPORT+'/'+EvaluationType.REPORT">
                 {{getTitle(EvaluationType.REPORT)}}
                 </button>
             </mat-menu>
@@ -41,10 +43,12 @@
             </button>
           </span>
           <mat-menu #more_menu="matMenu">
-            <button mat-menu-item  (click)="editPresentationDialog()" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+            <button mat-menu-item (click)="editPresentationDialog()"
+                    *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
               Edit
             </button>
-            <button mat-menu-item (click)="deletePresentationConfirmation()" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+            <button mat-menu-item (click)="deletePresentationConfirmation()"
+                    *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
               Delete this presentation
             </button>
           </mat-menu>
@@ -112,10 +116,12 @@
             </button>
           </span>
           <mat-menu #more_menu="matMenu">
-            <button mat-menu-item (click)="editPresentationDialog()" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+            <button mat-menu-item (click)="editPresentationDialog()"
+                    *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
               Edit
             </button>
-            <button mat-menu-item (click)="deletePresentationConfirmation()" *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
+            <button mat-menu-item (click)="deletePresentationConfirmation()"
+                    *ngxPermissionsOnly="constant.ROLE_SCHEDULE_COORDINATOR">
               Delete this presentation
             </button>
           </mat-menu>

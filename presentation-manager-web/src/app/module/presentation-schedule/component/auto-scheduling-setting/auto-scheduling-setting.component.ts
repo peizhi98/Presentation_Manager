@@ -374,6 +374,61 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
       args.element.style.backgroundColor = Constant.SCHEDULER_COLOR_BLOCKED;
       return;
     }
+    // // check same panel
+    // for (const p of this.autoScheduledPresentations) {
+    //   if (p.panelModels && args.data.panelModels && args.data.id !== p.id) {
+    //     for (const panel of p.panelModels) {
+    //       for (const thisPresentationPanel of args.data.panelModels) {
+    //         if (thisPresentationPanel.id === panel.id) {
+    //           if ((new Date(p.startTime).valueOf() < new Date(args.data.endTime).valueOf())
+    //             && new Date(args.data.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
+    //             args.element.style.backgroundColor = 'black';
+    //             return;
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+    const eventData = args.data;
+    // check same panel
+    for (const p of this.autoScheduledPresentations) {
+      if (p.panelModels && eventData.panelModels && eventData.id !== p.id) {
+        let pHasChairperson = false;
+        let draggingHasChairperson = false;
+        if (p.chairperson) {
+          p.panelModels.push(p.chairperson);
+          pHasChairperson = true;
+        }
+        if (eventData.chairperson) {
+          eventData.panelModels.push(eventData.chairperson);
+          draggingHasChairperson = true;
+        }
+        for (const panel of p.panelModels) {
+          for (const thisPresentationPanel of eventData.panelModels) {
+            if (thisPresentationPanel.id === panel.id) {
+              if ((new Date(p.startTime).valueOf() < new Date(eventData.endTime).valueOf())
+                && new Date(eventData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
+                if (pHasChairperson) {
+                  p.panelModels.pop();
+                }
+                if (draggingHasChairperson) {
+                  eventData.panelModels.pop();
+                }
+                args.element.style.backgroundColor = 'black';
+                return;
+              }
+            }
+          }
+        }
+        if (pHasChairperson) {
+          p.panelModels.pop();
+        }
+        if (draggingHasChairperson) {
+          eventData.panelModels.pop();
+        }
+      }
+    }
     if (args.data && args.data.commonAvailabilityList) {
       for (const ca of args.data.commonAvailabilityList) {
         if ((new Date(ca.startTime).valueOf() <= new Date(args.data.startTime).valueOf())
@@ -384,6 +439,7 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
       }
       args.element.style.backgroundColor = '#f64747';
     }
+
   }
 
   onSchedulerDragStart(args: DragEventArgs): void {
@@ -474,15 +530,15 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
       }
     }
 
-    // cheack same panel
+    // check same panel
     if ((args.requestType === 'eventCreate' || args.requestType === 'eventChange') && eventData) {
       for (const p of this.autoScheduledPresentations) {
         if (p.panelModels && eventData.panelModels && eventData.id !== p.id) {
           for (const panel of p.panelModels) {
             for (const thisPresentationPanel of eventData.panelModels) {
               if (thisPresentationPanel.id === panel.id) {
-                if ((new Date(p.startTime).valueOf() <= new Date(eventData.endTime).valueOf())
-                  && new Date(eventData.startTime).valueOf() <= (new Date(p.endTime).valueOf())) {
+                if ((new Date(p.startTime).valueOf() < new Date(eventData.endTime).valueOf())
+                  && new Date(eventData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
                   this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are schedule in other presentation of this time range'));
                   args.cancel = true;
                   return;
@@ -516,20 +572,21 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
     return SystemRole;
   }
 
-  clearAllCheckBox(){
+  clearAllCheckBox() {
     this.presentationModels.forEach(p => {
       p.online = false;
       p.physical = false;
     });
   }
 
-  checkAllOnline(){
+  checkAllOnline() {
     this.presentationModels.forEach(p => {
       p.online = true;
       p.physical = false;
     });
   }
-  checkAllPhysical(){
+
+  checkAllPhysical() {
     this.presentationModels.forEach(p => {
       p.online = false;
       p.physical = true;
