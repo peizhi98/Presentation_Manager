@@ -13,8 +13,8 @@ export class Constant {
   public static readonly SCHEDULER_COLOR_BLOCKED = '#616161';
 
   // scheduler
-  public static readonly SCHEDULER_START_HOUR = '08:00';
-  public static readonly SCHEDULER_END_HOUR = '22:00';
+  public static readonly SCHEDULER_START_HOUR = '00:00';
+  public static readonly SCHEDULER_END_HOUR = '24:00';
 
   // date
   public static readonly TIME_FORMAT = 'dd MMM yyyy hh:mm a';

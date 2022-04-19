@@ -127,25 +127,34 @@
     <ng-template #eventSettingsTooltipTemplate let-data>
       <div class="tooltip-wrap">
         <div class="content-area">
-          <div *ngIf="isMaster()">
-            Chairperson: {{(data.chairperson) ? data.chairperson.name : '-'}}
-          </div>
-          <div>
-            Panel:
-            <ng-container *ngIf="data.panelModels&&data.panelModels.length>0;else dash">
-              <ng-container *ngFor="let panel of data.panelModels;let i=index">
-                <ng-container *ngIf="i!==0">,</ng-container>
-                {{panel.name}}
+          <ng-container *ngIf="!data.isBlock">
+            <ng-container>
+              <div *ngIf="isMaster()">
+                Chairperson: {{(data.chairperson) ? data.chairperson.name : ''}}
+              </div>
+              <div>
+                Panel:
+                <ng-container *ngIf="data.panelModels&&data.panelModels.length>0;else dash">
+                  <ng-container *ngFor="let panel of data.panelModels;let i=index">
+                    <ng-container *ngIf="i!==0">,</ng-container>
+                    {{panel.name}}
+                  </ng-container>
+                </ng-container>
+                <ng-template #dash>-</ng-template>
+              </div>
+              <ng-container>Common Availability</ng-container>
+              <ng-container
+                *ngIf="data.commonAvailabilityList&&data.commonAvailabilityList.length>0;else noCommon">
+                <ng-container *ngFor="let timeRange of data.commonAvailabilityList; let i = index">
+                  <div>{{(timeRange.startTime|date:timeFormat) + ' - ' + (timeRange.endTime|date:timeFormat)}}</div>
+                </ng-container>
               </ng-container>
             </ng-container>
-          </div>
-          <ng-template #dash>-</ng-template>
-          <ng-container>Common Availability</ng-container>
-          <ng-container
-            *ngIf="data.commonAvailabilityList&&data.commonAvailabilityList.length>0;else noCommon">
-            <ng-container *ngFor="let timeRange of data.commonAvailabilityList; let i = index">
-              <div>{{(timeRange.startTime|date:timeFormat) + ' - ' + (timeRange.endTime|date:timeFormat)}}</div>
-            </ng-container>
+
+
+          </ng-container>
+          <ng-container *ngIf="data.isBlock">
+            This time range is occupied by a presentation of {{data.scheduleModel.title}}
           </ng-container>
         </div>
       </div>

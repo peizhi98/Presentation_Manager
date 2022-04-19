@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder} from '@angular/forms';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -12,7 +12,7 @@ import {PresentationModel} from '../../../../model/presentation/presentation.mod
 import {PresentationService} from '../../../../service/presentation.service';
 import {LecturerModel} from '../../../../model/role/lecturer.model';
 import {UserState} from '../../../../store/user/user.store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {PatchLecturerFromBackend} from '../../../../store/user/user.action';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
 import {PanelModel} from '../../../../model/role/panel.model';
@@ -23,7 +23,7 @@ import {SupervisorModel} from '../../../../model/role/supervisor.model';
   templateUrl: './edit-presentation-dialog.component.html',
   styleUrls: ['./edit-presentation-dialog.component.css']
 })
-export class EditPresentationDialogComponent implements OnInit {
+export class EditPresentationDialogComponent implements OnInit, OnDestroy {
   lecturers: LecturerModel[] = [];
   filteredLecturers: LecturerModel[] = [];
   scheduleType: ScheduleType;
@@ -31,6 +31,8 @@ export class EditPresentationDialogComponent implements OnInit {
   lecturers$: Observable<LecturerModel[]>;
   @Select(ScheduleState.getScheduleType)
   scheduleType$: Observable<ScheduleType>;
+
+  subs: Subscription[] = [];
 
   constructor(private loadingUtil: LoadingDialogUtil,
               private matSnackBar: MatSnackBar,
@@ -41,14 +43,20 @@ export class EditPresentationDialogComponent implements OnInit {
               private store: Store) {
   }
 
+  ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
+    });
+  }
+
   ngOnInit(): void {
     this.store.dispatch(new PatchLecturerFromBackend());
-    this.lecturers$.subscribe(lec => {
+    this.subs.push(this.lecturers$.subscribe(lec => {
       this.lecturers = lec;
-    });
-    this.scheduleType$.subscribe(type => {
+    }));
+    this.subs.push(this.scheduleType$.subscribe(type => {
       this.scheduleType = type;
-    });
+    }));
     if (!this.presentation.supervisorModel) {
       this.presentation.supervisorModel = new SupervisorModel();
     }
@@ -64,29 +72,29 @@ export class EditPresentationDialogComponent implements OnInit {
   }
 
   onSubmit() {
-      if (this.presentation.panelModels) {
-        for (const panels of this.presentation.panelModels) {
-          let counter = 0;
-          for (const otherPanels of this.presentation.panelModels) {
-            if (panels.email === otherPanels.email) {
-              counter++;
-            }
-            if (counter === 2) {
-              this.store.dispatch(new ShowSnackBar('Same panel assigned more than once to a presentation. Please assign other panel.'));
-              return;
-            }
+    if (this.presentation.panelModels) {
+      for (const panels of this.presentation.panelModels) {
+        let counter = 0;
+        for (const otherPanels of this.presentation.panelModels) {
+          if (panels.email === otherPanels.email) {
+            counter++;
+          }
+          if (counter === 2) {
+            this.store.dispatch(new ShowSnackBar('Same panel assigned more than once to a presentation. Please assign other panel.'));
+            return;
           }
         }
       }
+    }
     const loadingRef = this.loadingUtil.openLoadingDialog('Saving...');
 
     this.presentationService.editPresentation(this.presentation)
       .subscribe(resp => {
         if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
-          this.store.dispatch(new ShowSnackBar('Successfully edited schedule.'));
+          this.store.dispatch(new ShowSnackBar('Successfully edited presentation.'));
           this.dialogRef.close({reload: true});
         } else {
-          this.store.dispatch(new ShowSnackBar('Failed to edit schedule.'));
+          this.store.dispatch(new ShowSnackBar('Failed to edit presentation.'));
         }
         loadingRef.close();
       });

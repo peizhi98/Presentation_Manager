@@ -6,7 +6,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {PanelModel} from '../../../../model/role/panel.model';
 import {Select, Store} from '@ngxs/store';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {XlsxUtil} from '../../../../util/xlsx.util';
 import {SupervisorModel} from '../../../../model/role/supervisor.model';
@@ -39,6 +39,7 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
 
   @Select(ScheduleState.getScheduleType)
   scheduleType$: Observable<ScheduleType>;
+  subs: Subscription[] = [];
 
   constructor(private presentationService: PresentationService,
               private store: Store,
@@ -46,22 +47,24 @@ export class AddPresentationComponent implements OnInit, OnDestroy {
               private matSnackBar: MatSnackBar,
               private xlsxUtil: XlsxUtil) {
   }
-
   ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
+    });
     this.presentationModels = [];
   }
 
   ngOnInit(): void {
-    this.scheduleId$.subscribe(id => {
+    this.subs.push(this.scheduleId$.subscribe(id => {
       this.scheduleId = id;
-    });
-    this.scheduleType$.subscribe(type => {
+    }));
+    this.subs.push(this.scheduleType$.subscribe(type => {
       this.scheduleType = type;
-    });
+    }));
     this.store.dispatch(new PatchLecturerFromBackend());
-    this.lecturers$.subscribe(lec => {
+    this.subs.push(this.lecturers$.subscribe(lec => {
       this.lecturers = lec;
-    });
+    }));
     this.addForm();
   }
 

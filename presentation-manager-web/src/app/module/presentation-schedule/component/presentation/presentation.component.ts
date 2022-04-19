@@ -10,7 +10,7 @@ import {SetCurrentPresentation} from '../../../../store/presentation/presentatio
 import {SystemRole} from '../../../../model/user/user.model';
 import {ScheduleType} from '../../../../model/schedule/schedule.model';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
 import {PanelModel} from '../../../../model/role/panel.model';
 import {ConfirmationDialogComponent} from '../../../../component/confirmation-dialog/confirmation-dialog.component';
@@ -32,6 +32,7 @@ export class PresentationComponent implements OnInit, OnDestroy {
   scheduleType: ScheduleType;
   @Select(ScheduleState.getScheduleType)
   scheduleType$: Observable<ScheduleType>;
+  subs: Subscription[] = [];
 
   constructor(private presentationService: PresentationService,
               private store: Store,
@@ -42,6 +43,10 @@ export class PresentationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
+    });
+
     this.store.dispatch(new SetCurrentPresentation(null, new PresentationModel(), null, null, null));
   }
 
@@ -63,11 +68,11 @@ export class PresentationComponent implements OnInit, OnDestroy {
           });
       }
     });
-    this.scheduleType$.subscribe(type => {
+    this.subs.push(this.scheduleType$.subscribe(type => {
       console.log('this.scheduleType');
       console.log(this.scheduleType);
       this.scheduleType = type;
-    });
+    }));
 
   }
 

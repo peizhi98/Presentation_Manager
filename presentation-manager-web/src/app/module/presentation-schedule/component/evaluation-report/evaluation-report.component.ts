@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Select} from '@ngxs/store';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {ScheduleType} from '../../../../model/schedule/schedule.model';
 import {ChangeEvaluationType} from '../../../../store/evaluation/evaluation.action';
 
@@ -10,18 +10,24 @@ import {ChangeEvaluationType} from '../../../../store/evaluation/evaluation.acti
   templateUrl: './evaluation-report.component.html',
   styleUrls: ['./evaluation-report.component.scss']
 })
-export class EvaluationReportComponent implements OnInit {
+export class EvaluationReportComponent implements OnInit, OnDestroy {
   scheduleType: ScheduleType;
   @Select(ScheduleState.getScheduleType)
   scheduleType$: Observable<ScheduleType>;
+  subs: Subscription[] = [];
 
   constructor() {
   }
+  ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
+    });
+  }
 
   ngOnInit(): void {
-    this.scheduleType$.subscribe(type => {
+    this.subs.push(this.scheduleType$.subscribe(type => {
       this.scheduleType = type;
-    });
+    }));
   }
 
   isFyp(): boolean {

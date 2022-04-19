@@ -17,6 +17,7 @@ import {CriterionEvaluationModel} from '../../../../model/evaluation/criterion-e
 import {EvaluationService} from '../../../../service/evaluation.service';
 import {ShowSnackBar} from '../../../../store/app/app.action';
 import {ChangeEvaluationFormMode} from '../../../../store/evaluation/evaluation.action';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-evaluation-form-fyp',
@@ -29,7 +30,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
   evaluationFormModel: EvaluationFormModel;
   evaluationModel: EvaluationModel;
   criteriaModels: CriterionModel[] = [];
-  scaleOptions = [0,1, 2, 3, 4, 5];
+  scaleOptions = [0, 1, 2, 3, 4, 5];
   evaluationFormMode = EvaluationFormMode.VIEW;
   currentForm: FormGroup;
   evaluationForm: FormGroup;
@@ -63,7 +64,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
 
   constructor(private evaluationFormService: EvaluationFormService, private matSnackBar: MatSnackBar,
               private loadingUtil: LoadingDialogUtil, private evaluationService: EvaluationService,
-              private formBuilder: FormBuilder, private store: Store) {
+              private formBuilder: FormBuilder, private store: Store, private router: Router, private activatedRoute: ActivatedRoute) {
   }
 
   ngOnDestroy(): void {
@@ -325,7 +326,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
       evaluationModel.id = this.evaluationModel.id;
       evaluationModel.presentationId = this.evaluationModel.presentationId;
       evaluationModel.evaluationFormId = this.evaluationModel.evaluationFormId;
-      evaluationModel.comment=this.currentForm.get(this.OVERALL_COMMENT).value;
+      evaluationModel.comment = this.currentForm.get(this.OVERALL_COMMENT).value;
       const criteriaEvaluation: CriterionEvaluationModel[] = [];
       console.log(this.criteriaEvaluation);
       this.criteriaEvaluation.controls.forEach(c => {
@@ -342,6 +343,7 @@ export class EvaluationFormFypComponent implements OnInit, OnDestroy {
         loadingRef.close();
         if (resp.data && resp.status === Constant.RESPONSE_SUCCESS) {
           this.openSnackBar('Successfully submit evaluation form');
+          this.router.navigate(['../../'], {relativeTo: this.activatedRoute});
         } else {
           this.openSnackBar('Failed to submit evaluation form.');
         }

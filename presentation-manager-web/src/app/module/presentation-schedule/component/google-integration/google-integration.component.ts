@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingDialogUtil} from '../../../../util/loading-dialog.util';
@@ -8,7 +8,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {Select, Store} from '@ngxs/store';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {Constant} from '../../../../../assets/constant/app.constant';
 import {SystemRole} from '../../../../model/user/user.model';
 import {ShowSnackBar} from '../../../../store/app/app.action';
@@ -18,7 +18,7 @@ import {ShowSnackBar} from '../../../../store/app/app.action';
   templateUrl: './google-integration.component.html',
   styleUrls: ['./google-integration.component.css']
 })
-export class GoogleIntegrationComponent implements OnInit {
+export class GoogleIntegrationComponent implements OnInit, OnDestroy {
   timeFormat = Constant.TIME_FORMAT;
   presentationModels = [];
   dataSource: MatTableDataSource<PresentationModel>;
@@ -29,6 +29,7 @@ export class GoogleIntegrationComponent implements OnInit {
 
   @Select(ScheduleState.getScheduleId)
   scheduleId$: Observable<number>;
+  subs: Subscription[] = [];
 
   constructor(private router: Router,
               private activatedRoute: ActivatedRoute,
@@ -36,9 +37,14 @@ export class GoogleIntegrationComponent implements OnInit {
               private presentationService: PresentationService,
               private store: Store) {
   }
+  ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
+    });
+  }
 
   ngOnInit(): void {
-    this.scheduleId$.subscribe(id => {
+    this.subs.push(this.scheduleId$.subscribe(id => {
       this.scheduleId = id;
       const loadingRef = this.loadingUtil.openLoadingDialog();
       this.presentationService.getPresentations(id).subscribe(res => {
@@ -48,7 +54,7 @@ export class GoogleIntegrationComponent implements OnInit {
           loadingRef.close();
         }
       });
-    });
+    }));
   }
 
   initTable(): void {

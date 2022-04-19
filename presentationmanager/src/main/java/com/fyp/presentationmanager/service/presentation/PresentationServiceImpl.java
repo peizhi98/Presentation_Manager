@@ -99,7 +99,7 @@ public class PresentationServiceImpl implements PresentationService {
         UserBean chairperson =
                 this.userService.getUserByEmail(presentationModel.getChairperson().getEmail());
         if (sv != null) {
-            if (presentationBean.getSupervisorBean() != null && sv.getId() != presentationBean.getSupervisorBean().getId()) {
+            if (presentationBean.getScheduleBean().getScheduleType().equals(ScheduleType.FYP) && presentationBean.getSupervisorBean() != null && sv.getId() != presentationBean.getSupervisorBean().getId()) {
                 EvaluationFormBean reportForm = presentationBean.getEvaluationFormOf(EvaluationType.REPORT);
                 EvaluationBean reportEvaluation
                         = this.evaluationRepo.getEvaluationBeanByEvaluationFormIdAndPresentationIdAndEvaluatorId(reportForm.getId(), presentationBean.getId(), presentationBean.getSupervisorId());
@@ -176,7 +176,7 @@ public class PresentationServiceImpl implements PresentationService {
     private boolean findBeanFromModelsByUsername(PresentationPanelBean presentationPanelBean, List<PanelModel> panelModelList) {
         if (panelModelList != null) {
             for (PanelModel p : panelModelList) {
-                if (presentationPanelBean.getPanelBean().getEmail() == p.getEmail())
+                if (presentationPanelBean.getPanelBean().getEmail().equals(p.getEmail()))
                     return true;
             }
         }
@@ -389,7 +389,7 @@ public class PresentationServiceImpl implements PresentationService {
         ScheduleBean scheduleBean = this.scheduleRepo.getById(autoSchedulingModel.getScheduleId());
         List<PresentationBean> presentationBeans = scheduleBean.getPresentationBeans();
         List<Presentation> presentationsToSchedule = new ArrayList<>();
-        List<Presentation> presentationsNotToSchedule = new ArrayList<>();//to-do: handle this!!!!!
+        List<Presentation> presentationsNotToSchedule = new ArrayList<>();//
         //merge online slot
         if (autoSchedulingModel.getOnlinePresentationSlotsModel() != null
                 && autoSchedulingModel.getOnlinePresentationSlotsModel().getSlots() != null) {

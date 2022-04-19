@@ -301,7 +301,7 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
     this.autoSchedulingResultScheduler = schedulerModel;
     this.resourceDataSource = this.presentationSlotScheduler.resourceDataSource;
     let counter = 0;
-    let selectedTime = new Date();
+
     this.autoSchedulingResultScheduler.presentationToSchedule.forEach((presentationData, index) => {
       const schedulerPresentationModel: SchedulerPresentationModel = new SchedulerPresentationModel();
       schedulerPresentationModel.id = presentationData.id;
@@ -321,15 +321,17 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
       this.autoScheduledPresentations.push(schedulerPresentationModel);
 
       if (this.scheduleFirstLoad && schedulerPresentationModel.startTime) {
+        let selectedTime = new Date();
         if (counter === 0) {
           selectedTime = schedulerPresentationModel.startTime;
           counter++;
         } else if (selectedTime.valueOf() > schedulerPresentationModel.startTime.valueOf()) {
           selectedTime = schedulerPresentationModel.startTime;
         }
+        this.selectedDate = selectedTime;
       }
     });
-    this.selectedDate = selectedTime;
+
     // populate blocked time range
     if (this.autoSchedulingResultScheduler.unAvailableTime) {
       this.autoSchedulingResultScheduler.unAvailableTime.forEach((presentationData, index) => {
@@ -337,7 +339,7 @@ export class AutoSchedulingSettingComponent implements OnInit, OnDestroy {
           const schedulerPresentationModel: SchedulerPresentationModel = new SchedulerPresentationModel();
           schedulerPresentationModel.roomId = presentationData.roomId;
           schedulerPresentationModel.roomName = presentationData.roomName;
-          schedulerPresentationModel.title = 'Unavailable';
+          schedulerPresentationModel.studentName = 'Unavailable';
           schedulerPresentationModel.isBlock = true;
           schedulerPresentationModel.scheduleModel = presentationData.scheduleModel;
           if (presentationData.startTime && presentationData.endTime) {

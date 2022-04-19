@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {EvaluationFormService} from '../../../../service/evluation-form.service';
 import {EvaluationFormMode, EvaluationFormModel, EvaluationType} from '../../../../model/evaluation/evaluation-form.model';
 import {Constant} from '../../../../../assets/constant/app.constant';
@@ -7,7 +7,7 @@ import {MatTable} from '@angular/material/table';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Select, Store} from '@ngxs/store';
 import {ScheduleState} from '../../../../store/schedule/schedule.store';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {ChangeEvaluationFormMode, ChangeEvaluationType} from '../../../../store/evaluation/evaluation.action';
 import {EvaluationState} from '../../../../store/evaluation/evaluation.store';
@@ -18,7 +18,7 @@ import {ScheduleType} from '../../../../model/schedule/schedule.model';
   templateUrl: './evaluation-criteria.component.html',
   styleUrls: ['./evaluation-criteria.component.css']
 })
-export class EvaluationCriteriaComponent implements OnInit {
+export class EvaluationCriteriaComponent implements OnInit, OnDestroy {
   constant = Constant;
   displayedColumns: string[] = ['position', 'criteria', 'weightage', 'max', 'delete'];
   @ViewChild(MatTable) table: MatTable<CriterionModel>;
@@ -39,13 +39,19 @@ export class EvaluationCriteriaComponent implements OnInit {
   scheduleType$: Observable<ScheduleType>;
   @Select(EvaluationState.getEvaluationFormMode)
   evaluationFormMode$: Observable<EvaluationFormMode>;
+  subs: Subscription[] = [];
 
   constructor(private evaluationFormService: EvaluationFormService, private matSnackBar: MatSnackBar, private store: Store) {
+  }
+  ngOnDestroy(): void {
+    this.subs.forEach(s => {
+      s.unsubscribe();
+    });
   }
 
   ngOnInit(): void {
     this.store.dispatch(new ChangeEvaluationFormMode(EvaluationFormMode.VIEW));
-    this.scheduleId$.subscribe(id => {
+    this.subs.push(this.scheduleId$.subscribe(id => {
       if (id) {
         this.scheduleId = id;
         this.scheduleType$.subscribe(type => {
@@ -62,10 +68,10 @@ export class EvaluationCriteriaComponent implements OnInit {
         // this.loadEvaluationForm(this.fypEvaluationType[0]);
       }
 
-    });
-    this.evaluationFormMode$.subscribe(mode => {
+    }));
+    this.subs.push(this.evaluationFormMode$.subscribe(mode => {
       this.evaluationFormMode = mode;
-    });
+    }));
   }
 
   loadEvaluationForm(evaluationType: EvaluationType): void {

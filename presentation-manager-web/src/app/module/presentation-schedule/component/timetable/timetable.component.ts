@@ -13,8 +13,7 @@ import {
   ResourceDetails,
   ScheduleComponent,
   TimelineViewsService,
-  View,
-  ResourcesModel
+  View
 } from '@syncfusion/ej2-angular-schedule';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import {PresentationService} from '../../../../service/presentation.service';
@@ -170,11 +169,12 @@ export class TimetableComponent implements OnInit, OnDestroy {
           }
           if (this.scheduler.unAvailableTime) {
             this.scheduler.unAvailableTime.forEach((presentationData, index) => {
+              console.log(presentationData);
               if (presentationData.roomName !== 'Online') {
                 const schedulerPresentationModel: SchedulerPresentationModel = new SchedulerPresentationModel();
                 schedulerPresentationModel.roomId = presentationData.roomId;
                 schedulerPresentationModel.roomName = presentationData.roomName;
-                schedulerPresentationModel.title = 'Unavailable';
+                schedulerPresentationModel.studentName = 'Unavailable';
                 schedulerPresentationModel.isBlock = true;
                 schedulerPresentationModel.scheduleModel = presentationData.scheduleModel;
                 if (presentationData.startTime && presentationData.endTime) {
@@ -225,7 +225,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // check same panel
+        // check same panel within schedule
         for (const p of this.scheduledPresentations) {
           if (p.panelModels && this.draggingPresentation.panelModels) {
             let pHasChairperson = false;
@@ -263,6 +263,48 @@ export class TimetableComponent implements OnInit, OnDestroy {
             }
           }
         }
+        // check same panel of other schedule
+        if (this.scheduler && this.scheduler.unAvailableTime) {
+          for (const p of this.scheduler.unAvailableTime) {
+            if (p.panelModels && this.draggingPresentation.panelModels) {
+              let pHasChairperson = false;
+              let draggingHasChairperson = false;
+              if (p.chairperson) {
+                p.panelModels.push(p.chairperson);
+                pHasChairperson = true;
+              }
+              if (this.draggingPresentation.chairperson) {
+                this.draggingPresentation.panelModels.push(this.draggingPresentation.chairperson);
+                draggingHasChairperson = true;
+              }
+              for (const panel of p.panelModels) {
+                for (const thisPresentationPanel of this.draggingPresentation.panelModels) {
+                  if (thisPresentationPanel.id === panel.id) {
+                    if ((new Date(p.startTime).valueOf() < new Date(cellData.startTime.getTime() + (this.duration * 60 * 1000)).valueOf())
+                      && new Date(cellData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
+                      this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are scheduled in ' + p.scheduleModel.title));
+                      if (pHasChairperson) {
+                        p.panelModels.pop();
+                      }
+                      if (draggingHasChairperson) {
+                        this.draggingPresentation.panelModels.pop();
+                      }
+                      return;
+                    }
+                  }
+                }
+              }
+              if (pHasChairperson) {
+                p.panelModels.pop();
+              }
+              if (draggingHasChairperson) {
+                this.draggingPresentation.panelModels.pop();
+              }
+            }
+          }
+        }
+
+
         // disable overlapping physical presentation
         if (!(resourceDetails.resourceData.name === 'Online')
         ) {
@@ -333,6 +375,50 @@ export class TimetableComponent implements OnInit, OnDestroy {
         }
       }
     }
+
+
+    // check same panel of other schedule
+    if (this.scheduler && this.scheduler.unAvailableTime) {
+      for (const p of this.scheduler.unAvailableTime) {
+        if (p.panelModels && eventData.panelModels && eventData.id !== p.id) {
+          let pHasChairperson = false;
+          let draggingHasChairperson = false;
+          if (p.chairperson) {
+            p.panelModels.push(p.chairperson);
+            pHasChairperson = true;
+          }
+          if (eventData.chairperson) {
+            eventData.panelModels.push(eventData.chairperson);
+            draggingHasChairperson = true;
+          }
+          for (const panel of p.panelModels) {
+            for (const thisPresentationPanel of eventData.panelModels) {
+              if (thisPresentationPanel.id === panel.id) {
+                if ((new Date(p.startTime).valueOf() < new Date(eventData.endTime).valueOf())
+                  && new Date(eventData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
+                  if (pHasChairperson) {
+                    p.panelModels.pop();
+                  }
+                  if (draggingHasChairperson) {
+                    eventData.panelModels.pop();
+                  }
+                  args.element.style.backgroundColor = 'black';
+                  return;
+                }
+              }
+            }
+          }
+          if (pHasChairperson) {
+            p.panelModels.pop();
+          }
+          if (draggingHasChairperson) {
+            eventData.panelModels.pop();
+          }
+        }
+      }
+    }
+
+
     if (args.data && args.data.commonAvailabilityList) {
       for (const ca of args.data.commonAvailabilityList) {
         if ((new Date(ca.startTime).valueOf() <= new Date(args.data.startTime).valueOf())
@@ -514,6 +600,51 @@ export class TimetableComponent implements OnInit, OnDestroy {
         }
       }
     }
+
+    // check same panel from other schedule
+    if (this.scheduler && this.scheduler.unAvailableTime) {
+      if ((args.requestType === 'eventCreate' || args.requestType === 'eventChange') && eventData) {
+        for (const p of this.scheduler.unAvailableTime) {
+          if (p.panelModels && eventData.panelModels && eventData.id != p.id) {
+            let pHasChairperson = false;
+            let draggingHasChairperson = false;
+            if (p.chairperson) {
+              p.panelModels.push(p.chairperson);
+              pHasChairperson = true;
+            }
+            if (eventData.chairperson) {
+              eventData.panelModels.push(eventData.chairperson);
+              draggingHasChairperson = true;
+            }
+            for (const panel of p.panelModels) {
+              for (const thisPresentationPanel of eventData.panelModels) {
+                if (thisPresentationPanel.id === panel.id) {
+                  if ((new Date(p.startTime).valueOf() < new Date(eventData.endTime).valueOf())
+                    && new Date(eventData.startTime).valueOf() < (new Date(p.endTime).valueOf())) {
+                    this.store.dispatch(new ShowSnackBar('Unable to schedule. Panel of this presentation are scheduled in ' + p.scheduleModel.title));
+                    if (pHasChairperson) {
+                      p.panelModels.pop();
+                    }
+                    if (draggingHasChairperson) {
+                      eventData.panelModels.pop();
+                    }
+                    args.cancel = true;
+                    return;
+                  }
+                }
+              }
+            }
+            if (pHasChairperson) {
+              p.panelModels.pop();
+            }
+            if (draggingHasChairperson) {
+              eventData.panelModels.pop();
+            }
+          }
+        }
+      }
+    }
+
     // disable overlapping physical presentation
     if (!(eventData && eventData && this.getRoomName(eventData.roomId) === 'Online') &&
       !(args.changedRecords && args.changedRecords[0] && this.getRoomName(args.changedRecords[0].roomId) === 'Online') &&
